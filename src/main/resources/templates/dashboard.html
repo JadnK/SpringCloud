@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpringCloud Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top left, #4b0082, #1a1a2e); /* Lila-Schimmer */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2b2b2b;
+            padding: 15px 30px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar:hover {
+            background-color: #3a3a3a; /* Dunklerer Hintergrund bei Hover */
+        }
+
+        /* Left: SpringCloud Text */
+        .navbar .brand {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #b259ff; /* Lila für den Brand-Text */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .brand:hover {
+            color: #9d4ae2; /* Helleres Lila beim Hover */
+        }
+
+        /* Username Box */
+        .username-box {
+            position: relative;
+            cursor: pointer;
+            background-color: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .username-box:hover {
+            background-color: #444;
+        }
+
+        /* Logout Dropdown */
+        .logout-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 5px;
+            padding: 10px;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+
+        .logout-dropdown a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-dropdown a:hover {
+            background-color: #b259ff;
+        }
+
+        /* Show the dropdown when hovered */
+        .username-box:hover .logout-dropdown {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Main content */
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            font-size: 1.5em;
+        }
+
+        .content h1 {
+            font-size: 2em;
+            font-weight: 300;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <!-- Left: "SpringCloud" -->
+    <div class="brand">
+        SpringCloud
+    </div>
+
+    <!-- Right: Username with Logout Dropdown -->
+    <div class="username-box">
+        <span>Username</span> <!-- Dynamischer Benutzername -->
+        <div class="logout-dropdown">
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+    <h1>Welcome to your Cloud Dashboard!</h1>
+</div>
+
+</body>
+</html>
