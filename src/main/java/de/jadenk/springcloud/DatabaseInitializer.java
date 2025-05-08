@@ -49,6 +49,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             if (!tableExists(statement, "logs")) {
                 createLogsTable(statement);
             }
+
+            if (!tableExists(statement, "uploaded_files")) {
+                createFilesTable(statement);
+            }
         }
     }
 
@@ -64,6 +68,17 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "username VARCHAR(255) NOT NULL UNIQUE, " +
                 "email VARCHAR(255) NOT NULL UNIQUE, " +
                 "password VARCHAR(255) NOT NULL);");
+    }
+
+    private void createFilesTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE uploaded_files (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "file_name VARCHAR(255) NOT NULL," +
+                "file_type VARCHAR(50) NOT NULL," +
+                "file_data LONGBLOB NOT NULL," +
+                "upload_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "file_owner_id INT NOT NULL, " +
+                "FOREIGN KEY (`file_owner_id`) REFERENCES `users`(`id`));");
     }
 
     private void createRolesTable(Statement statement) throws SQLException {
