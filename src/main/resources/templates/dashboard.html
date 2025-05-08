@@ -8,11 +8,12 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at top left, #4b0082, #1a1a2e);
+            background: linear-gradient(to bottom right, #4b0082, #1a1a2e); /* Weicherer Verlauf */
             color: #fff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .navbar {
@@ -21,6 +22,7 @@
             align-items: center;
             background-color: #2b2b2b;
             padding: 15px 30px;
+            position: relative;
         }
 
         .navbar .brand {
@@ -35,6 +37,8 @@
             border-radius: 20px;
             cursor: pointer;
             position: relative;
+            display: flex;
+            align-items: center;
         }
 
         .logout-dropdown {
@@ -47,6 +51,8 @@
             margin-top: 5px;
             padding: 10px;
             z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .logout-dropdown a {
@@ -54,29 +60,63 @@
             text-decoration: none;
             padding: 8px 15px;
             display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-dropdown a:hover {
+            background-color: #b259ff;
+        }
+
+        .admin-tag {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
         }
 
         .username-box:hover .logout-dropdown {
             display: block;
+            opacity: 1;
         }
 
         .content {
             flex: 1;
             padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Neuer Upload-Button als rundes Pluszeichen */
         .upload-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
             background-color: #b259ff;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 2em;
             cursor: pointer;
-            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .upload-btn:hover {
             background-color: #9d4ae2;
+            transform: scale(1.1);
         }
 
         #uploadPopup {
@@ -86,76 +126,154 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             justify-content: center;
             align-items: center;
         }
 
         .popup-content {
-            background: white;
-            color: black;
-            padding: 30px;
+            background: #333;
+            color: white;
+            padding: 40px;
             border-radius: 8px;
             text-align: center;
+            width: 450px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .popup-content input[type="file"] {
+            padding: 10px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .popup-content input[type="file"]:hover {
+            background-color: #5b5b5b;
+        }
+
+        .popup-content button {
+            background-color: #b259ff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .popup-content button:hover {
+            background-color: #9d4ae2;
+            transform: scale(1.05);
         }
 
         .close-btn {
             background-color: red;
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
             margin-top: 10px;
         }
 
-        .file-table {
+        .close-btn:hover {
+            background-color: #da190b;
+        }
+
+        /* File List */
+        .file-list {
+            list-style-type: none;
+            padding: 0;
             width: 100%;
-            border-collapse: collapse;
-            background-color: #222;
-            color: white;
+        }
+
+        .file-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #2d2d2d;
             border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            border-left: 5px solid transparent;
+        }
+
+        .file-list li:hover {
+            background-color: #333;
+            border-left: 5px solid #b259ff;
+        }
+
+        .file-info {
+            display: flex;
+            gap: 20px;
+            width: 50%;
+        }
+
+        .file-info span {
+            flex: 1;
+            text-align: center;
+            text-transform: capitalize;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .actions a {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .actions a:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .actions .delete {
+            background-color: #f44336;
+        }
+
+        .actions .delete:hover {
+            background-color: #da190b;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            margin-top: 20px;
+            display: none;
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
             overflow: hidden;
         }
 
-        .file-table th, .file-table td {
-            padding: 12px 20px;
-            border-bottom: 1px solid #444;
-        }
-
-        .file-table tr:hover {
-            background-color: #333;
-        }
-
-        .file-table th {
-            background-color: #2d2d2d;
-            color: #b259ff;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            margin-right: 8px;
-            transition: background-color 0.2s ease;
-        }
-
-        .action-btn.download {
+        .progress-bar {
+            height: 10px;
+            width: 0%;
             background-color: #4caf50;
-            color: white;
+            transition: width 0.3s ease;
         }
 
-        .action-btn.download:hover {
-            background-color: #45a049;
+        .logout-dropdown a.admin-link {
+            color: #ffd700;
+            font-weight: bold;
         }
 
-        .action-btn.delete {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .action-btn.delete:hover {
-            background-color: #da190b;
-        }
     </style>
 </head>
 <body>
@@ -165,6 +283,7 @@
     <div class="username-box">
         <span th:text="${username}">Username</span>
         <div class="logout-dropdown">
+            <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/admin}">Admin</a>
             <a th:href="@{/logout}">Logout</a>
         </div>
     </div>
@@ -172,43 +291,43 @@
 
 <div class="content">
     <h1>Welcome to your Cloud Dashboard!</h1>
-    <button class="upload-btn" onclick="showUploadPopup()">Upload File</button>
 
-    <div id="uploadPopup">
-        <div class="popup-content">
-            <h2>Upload Your File</h2>
-            <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
-                <input type="file" name="file">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit">Upload</button>
-            </form>
-            <button class="close-btn" onclick="closeUploadPopup()">Close</button>
-        </div>
+    <!-- File List -->
+    <ul class="file-list" id="fileList">
+        <li th:each="file : ${files}">
+            <div class="file-info">
+                <span th:text="${file.fileName}">File Name</span>
+                <span th:text="${file.fileType}">File Type</span>
+                <span th:text="${file.fileOwner.username}">Uploader</span>
+                <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Upload Date</span>
+            </div>
+            <div class="actions">
+                <a th:href="@{'/download/' + ${file.id}}">Download</a>
+                <a th:href="@{'/delete/' + ${file.id}}" class="delete">Delete</a>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<!-- New Upload Button -->
+<button class="upload-btn" onclick="showUploadPopup()">+</button>
+
+<!-- File Upload Popup -->
+<div id="uploadPopup">
+    <div class="popup-content">
+        <h2>Upload Your File</h2>
+        <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">Upload</button>
+        </form>
+        <button class="close-btn" onclick="closeUploadPopup()">Close</button>
     </div>
+</div>
 
-    <table class="file-table" th:if="${files}">
-        <thead>
-        <tr>
-            <th>Dateiname</th>
-            <th>Typ</th>
-            <th>Uploader</th>
-            <th>Upload-Datum</th>
-            <th>Aktionen</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="file : ${files}">
-            <td th:text="${file.fileName}">file.txt</td>
-            <td th:text="${file.fileType}">text/plain</td>
-            <td th:text="${file.fileOwner.username}">User</td>
-            <td th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Datum</td>
-            <td>
-                <a th:href="@{'/download/' + ${file.id}}" class="action-btn download">Download</a>
-                <a th:href="@{'/delete/' + ${file.id}}" class="action-btn delete">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<!-- Progress Bar -->
+<div class="progress-bar-container" id="progressBarContainer">
+    <div class="progress-bar" id="progressBar"></div>
 </div>
 
 <script>

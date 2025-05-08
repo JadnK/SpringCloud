@@ -27,13 +27,14 @@ public class UploadedFile {
     public UploadedFile() {}
 
     public UploadedFile(String fileName, String fileType, byte[] fileData, User fileOwner) {
-        this.fileData=fileData;
-        this.fileName=fileName;
-        this.fileType=fileType;
-        this.uploadTime=LocalDateTime.now();
-        this.fileOwner=fileOwner;
+        this.fileData = fileData;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.uploadTime = LocalDateTime.now();
+        this.fileOwner = fileOwner;
     }
 
+    // Getter und Setter
     public Long getId() {
         return id;
     }

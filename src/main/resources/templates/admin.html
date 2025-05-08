@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #2b2b2b;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar .brand {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #b259ff;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .table th, .table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #444;
+        }
+
+        .table th {
+            background-color: #333;
+        }
+
+        .table td {
+            background-color: #444;
+        }
+
+        .button {
+            background-color: #b259ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #9d4ae2;
+        }
+
+        .log-entry {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 5px;
+        }
+
+        .log-entry .action {
+            font-weight: bold;
+        }
+
+        .log-entry .timestamp {
+            font-size: 0.85em;
+            color: #bbb;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="brand">SpringCloud Admin</div>
+    <div>
+        <span th:text="${username}">Admin Username</span>
+        <a href="/logout" class="button">Logout</a>
+    </div>
+</div>
+
+<h1>Admin Dashboard</h1>
+
+<!-- User List -->
+<h2>Benutzer</h2>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Rolle</th>
+        <th>Aktionen</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.username}">Username</td>
+        <td th:text="${user.email}">Email</td>
+        <td>
+            <span th:each="role : ${user.role}" th:text="${role.name}">Role</span>
+        </td>
+        <td>
+            <a th:href="@{'/admin/user/edit/' + ${user.id}}" class="button">Bearbeiten</a>
+            <a th:href="@{'/admin/user/delete/' + ${user.id}}" class="button">Löschen</a>
+            <a th:href="@{'/admin/user/reset-password/' + ${user.id}}" class="button">Passwort Zurücksetzen</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Logs -->
+<h2>Logs</h2>
+<div th:each="log : ${logs}">
+    <div class="log-entry">
+        <span class="action" th:text="${log.action}">Action</span>
+        <span class="timestamp" th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}">Timestamp</span>
+        <p>Durchgeführt von: <span th:text="${log.user.username}">Username</span></p>
+    </div>
+</div>
+
+</body>
+</html>

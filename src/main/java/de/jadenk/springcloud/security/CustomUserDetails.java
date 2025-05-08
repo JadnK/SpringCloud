@@ -22,7 +22,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream()
+        return user.getRole().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())) // "ROLE_" ist wichtig
                 .collect(Collectors.toList());
     }

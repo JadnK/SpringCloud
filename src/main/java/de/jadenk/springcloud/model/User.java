@@ -22,13 +22,17 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> role;
 
     @OneToMany(mappedBy = "user")
     private Set<Ban> bans;
 
     @OneToMany(mappedBy = "user")
     private Set<Log> logs;
+
+    public Long getId() {
+        return id;
+    }
 
     public Set<Ban> getBans() {
         return bans;
@@ -70,11 +74,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Set<Role> getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Set<Role> roles) {
+        this.role = roles;
     }
 }
