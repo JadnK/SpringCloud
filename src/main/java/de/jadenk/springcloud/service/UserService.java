@@ -22,13 +22,15 @@ public class UserService {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private LogService logService;
+
     public void register(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
-
         Role userRole = roleRepo.findById(1L).orElseThrow(() -> new RuntimeException("Role not found"));
-
         user.setRoles(Set.of(userRole));
-
         userRepo.save(user);
+
+        logService.log(user.getUsername(), "User registered");
     }
 }
