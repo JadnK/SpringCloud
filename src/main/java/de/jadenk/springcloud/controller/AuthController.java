@@ -1,6 +1,7 @@
 package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.model.User;
+import de.jadenk.springcloud.service.FileUploadService;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.security.Principal;
 
 @Controller
 public class AuthController {
@@ -43,4 +47,23 @@ public class AuthController {
         }
         return "dashboard";
     }
+
+    @Autowired
+    private FileUploadService fileUploadService;
+
+    @PostMapping("/upload")
+    public String handleUpload(@RequestParam("file") MultipartFile file) {
+        if (!file.isEmpty()) {
+            try {
+                fileUploadService.uploadFile(file);
+                return "redirect:/dashboard?uploadSuccess";
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/dashboard?uploadError";
+            }
+        } else {
+            return "redirect:/dashboard?fileEmpty";
+        }
+    }
+
 }
