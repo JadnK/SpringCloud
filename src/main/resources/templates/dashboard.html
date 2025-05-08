@@ -121,7 +121,7 @@
 
     <!-- Right: Username with Logout Dropdown -->
     <div class="username-box">
-        <span>Username</span> <!-- Dynamischer Benutzername -->
+        <span th:text="${username}">Username</span> <!-- Dynamischer Benutzername -->
         <div class="logout-dropdown">
             <a th:href="@{/logout}">Logout</a>
         </div>
