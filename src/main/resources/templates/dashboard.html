@@ -8,58 +8,35 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at top left, #4b0082, #1a1a2e); /* Lila-Schimmer */
+            background: radial-gradient(circle at top left, #4b0082, #1a1a2e);
             color: #fff;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
         }
 
-        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: #2b2b2b;
             padding: 15px 30px;
-            position: relative;
-            transition: background-color 0.3s ease;
         }
 
-        .navbar:hover {
-            background-color: #3a3a3a; /* Dunklerer Hintergrund bei Hover */
-        }
-
-        /* Left: SpringCloud Text */
         .navbar .brand {
             font-size: 1.8em;
             font-weight: bold;
-            color: #b259ff; /* Lila für den Brand-Text */
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: color 0.3s ease;
+            color: #b259ff;
         }
 
-        .navbar .brand:hover {
-            color: #9d4ae2; /* Helleres Lila beim Hover */
-        }
-
-        /* Username Box */
         .username-box {
-            position: relative;
-            cursor: pointer;
             background-color: #333;
             padding: 8px 20px;
             border-radius: 20px;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
+            position: relative;
         }
 
-        .username-box:hover {
-            background-color: #444;
-        }
-
-        /* Logout Dropdown */
         .logout-dropdown {
             display: none;
             position: absolute;
@@ -67,11 +44,9 @@
             right: 0;
             background-color: #333;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             margin-top: 5px;
             padding: 10px;
             z-index: 10;
-            transition: opacity 0.3s ease;
         }
 
         .logout-dropdown a {
@@ -79,50 +54,31 @@
             text-decoration: none;
             padding: 8px 15px;
             display: block;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
         }
 
-        .logout-dropdown a:hover {
-            background-color: #b259ff;
-        }
-
-        /* Show the dropdown when hovered */
         .username-box:hover .logout-dropdown {
             display: block;
-            opacity: 1;
         }
 
-        /* Main content */
         .content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             flex: 1;
-            font-size: 1.5em;
+            padding: 30px;
         }
 
-        .content h1 {
-            font-size: 2em;
-            font-weight: 300;
-            text-align: center;
-        }
-
-                .upload-btn {
+        .upload-btn {
             background-color: #b259ff;
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
         }
 
         .upload-btn:hover {
             background-color: #9d4ae2;
         }
 
-        /* Styles für das Upload-Popup */
         #uploadPopup {
             display: none;
             position: fixed;
@@ -137,6 +93,7 @@
 
         .popup-content {
             background: white;
+            color: black;
             padding: 30px;
             border-radius: 8px;
             text-align: center;
@@ -147,19 +104,64 @@
             color: white;
             border: none;
             padding: 10px;
-            cursor: pointer;
             border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #222;
+            color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .file-table th, .file-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid #444;
+        }
+
+        .file-table tr:hover {
+            background-color: #333;
+        }
+
+        .file-table th {
+            background-color: #2d2d2d;
+            color: #b259ff;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .action-btn.download {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .action-btn.download:hover {
+            background-color: #45a049;
+        }
+
+        .action-btn.delete {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background-color: #da190b;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
-    <div class="brand">
-        SpringCloud
-    </div>
-
+    <div class="brand">SpringCloud</div>
     <div class="username-box">
         <span th:text="${username}">Username</span>
         <div class="logout-dropdown">
@@ -168,25 +170,45 @@
     </div>
 </div>
 
-<!-- Content -->
 <div class="content">
     <h1>Welcome to your Cloud Dashboard!</h1>
-
-    <!-- Upload Button -->
     <button class="upload-btn" onclick="showUploadPopup()">Upload File</button>
-</div>
 
-<!-- File Upload Popup -->
-<div id="uploadPopup">
-    <div class="popup-content">
-        <h2>Upload Your File</h2>
-        <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit">Upload</button>
-        </form>
-        <button class="close-btn" onclick="closeUploadPopup()">Close</button>
+    <div id="uploadPopup">
+        <div class="popup-content">
+            <h2>Upload Your File</h2>
+            <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit">Upload</button>
+            </form>
+            <button class="close-btn" onclick="closeUploadPopup()">Close</button>
+        </div>
     </div>
+
+    <table class="file-table" th:if="${files}">
+        <thead>
+        <tr>
+            <th>Dateiname</th>
+            <th>Typ</th>
+            <th>Uploader</th>
+            <th>Upload-Datum</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="file : ${files}">
+            <td th:text="${file.fileName}">file.txt</td>
+            <td th:text="${file.fileType}">text/plain</td>
+            <td th:text="${file.fileOwner.username}">User</td>
+            <td th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Datum</td>
+            <td>
+                <a th:href="@{'/download/' + ${file.id}}" class="action-btn download">Download</a>
+                <a th:href="@{'/delete/' + ${file.id}}" class="action-btn delete">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <script>
