@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.controller;
 
+import de.jadenk.springcloud.config.SecurityConfig;
 import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.Role;
 import de.jadenk.springcloud.model.UploadedFile;
@@ -40,6 +41,9 @@ public class AdminController {
     private LogRepository logRepository;
 
     @Autowired
+    private SecurityConfig securityConfig;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -78,7 +82,8 @@ public class AdminController {
     public String updateUser(@RequestParam("id") Long id,
                              @RequestParam("username") String username,
                              @RequestParam("email") String email,
-                             @RequestParam("role") String role) {
+                             @RequestParam("role") String role,
+                             @RequestParam(value = "password", required = false) String password) {
 
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -105,6 +110,12 @@ public class AdminController {
             logService.log(currentUser.getUsername(), "Role Change for USER: '" + user.getUsername() + "' Role: " + currentRole.getName() + " -> " + foundRole.getName());
             user.getRole().clear();
             user.getRole().add(foundRole);
+        }
+
+        if (password != null && !password.trim().isEmpty()) {
+            String encodedPassword = securityConfig.passwordEncoder().encode(password);
+            user.setPassword(encodedPassword);
+            logService.log(currentUser.getUsername(), "Password changed for USER: '" + user.getUsername() + "'");
         }
 
         userRepository.save(user);
