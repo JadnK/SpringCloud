@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud Registrierung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+<body>
+<div class="container">
+    <form class="register-form" th:action="@{/register}" th:object="${user}" method="post">
+        <h2>Registrieren</h2>
+
+        <div class="input-group">
+            <input type="text" th:field="*{username}" required placeholder=" " />
+            <label>Benutzername</label>
+        </div>
+
+        <div class="input-group">
+            <input type="email" th:field="*{email}" required placeholder=" " />
+            <label>E-Mail</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" th:field="*{password}" required placeholder=" " />
+            <label>Passwort</label>
+        </div>
+
+        <button type="submit">Registrieren</button>
+
+        <p class="register-link">Bereits ein Konto? <a th:href="@{/login}">Login</a></p>
+    </form>
+</div>
+
+<script>
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        confirmPasswordField.type = type;
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwörter stimmen nicht überein!');
+            event.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>
