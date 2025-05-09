@@ -1,0 +1,152 @@
+/* Übernehme Styles aus deinem bestehenden Cloud Dashboard */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom right, #4b0082, #1a1a2e);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2b2b2b;
+    padding: 15px 30px;
+}
+
+.navbar .brand {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #b259ff;
+}
+
+.content {
+    padding: 30px;
+}
+
+h1, h2 {
+    text-align: center;
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+/* User table */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.user-table th, .user-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+}
+
+.user-table th {
+    background-color: #333;
+}
+
+.user-table td {
+    background-color: #2d2d2d;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #3c3c3c;
+}
+
+.button {
+    background-color: #b259ff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #9d4ae2;
+}
+
+/* Log Filter */
+.log-filter {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.log-filter input, .log-filter select {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+/* Log entries */
+.log-entry {
+    background-color: #2d2d2d;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.log-entry .log-info {
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+.log-entry .log-timestamp {
+    color: #aaa;
+}
+
+/* Popup */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #2d2d2d;
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+}
+
+.modal-content input, .modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+}
+
+.modal-content button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 48%;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
