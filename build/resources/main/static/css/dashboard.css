@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to bottom right, #4b0082, #1a1a2e); /* Weicherer Verlauf */
+    background: linear-gradient(to bottom right, #4b0082, #1a1a2e);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -98,13 +98,13 @@ h1 {
     background-color: #b259ff;
     color: white;
     border: none;
-    width: 70px; /* Feste Breite */
-    height: 70px; /* Feste Höhe */
-    border-radius: 50%; /* Macht den Button rund */
-    font-size: 2.5em; /* Größeres Pluszeichen */
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 2.5em;
     display: flex;
-    justify-content: center; /* Zentriert horizontal */
-    align-items: center; /* Zentriert vertikal */
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -124,14 +124,14 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Schwacher, halbtransparenter Hintergrund */
+    background: rgba(0, 0, 0, 0.3);
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
 #uploadPopup .popup-content {
-    background: #333; /* Dunkler Hintergrund nur für das Upload-Popup */
+    background: #333;
     color: white;
     padding: 40px;
     border-radius: 8px;
@@ -188,7 +188,6 @@ h1 {
     background-color: #da190b;
 }
 
-/* File List */
 .file-list {
     list-style-type: none;
     padding: 0;
@@ -251,7 +250,6 @@ h1 {
     background-color: #da190b;
 }
 
-/* Vorschau Popup */
 #previewPopup {
     display: none;
     position: fixed;
@@ -261,20 +259,19 @@ h1 {
     width: 80%;
     max-width: 1200px;
     height: 80%;
-    background: rgba(0, 0, 0, 0.8); /* Dunklerer, aber transparenter Hintergrund */
+    background: rgba(0, 0, 0, 0.8);
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    border-radius: 12px; /* Runde Ecken für das Popup */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Weicher Schatten */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Popup-Inhalt */
 #previewPopup .popup-content {
     background: #333;
     color: white;
     padding: 40px;
-    border-radius: 12px; /* Abgerundete Ecken */
+    border-radius: 12px;
     text-align: center;
     width: 100%;
     height: 100%;
@@ -283,10 +280,9 @@ h1 {
     justify-content: center;
     align-items: center;
     overflow-y: auto;
-    transition: all 0.3s ease-in-out; /* Sanfte Übergänge */
+    transition: all 0.3s ease-in-out;
 }
 
-/* Vorschau Container */
 #previewContainer {
     width: 100%;
     height: 90%;
@@ -294,17 +290,16 @@ h1 {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    border-radius: 8px; /* Abgerundete Ecken für den Container */
+    border-radius: 8px;
 }
 
 #previewContainer img, #previewContainer video {
     max-width: 90%;
     max-height: 90%;
-    border-radius: 8px; /* Ecken der Vorschau abrunden */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sanfter Schatten für Bild/Video */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Vorschau für Textdateien */
 #previewContainer pre {
     background-color: #444;
     color: white;
@@ -314,29 +309,28 @@ h1 {
     overflow: auto;
     font-size: 1.1em;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Schatten für den Textbereich */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Close Button */
 #previewPopup .close-btn {
     background-color: #b259ff;
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 30px; /* Abgerundete Ecken */
+    border-radius: 30px;
     cursor: pointer;
     margin-top: 20px;
     font-size: 1.1em;
     transition: background-color 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Schatten für den Button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 #previewPopup .close-btn:hover {
     background-color: #9d4ae2;
-    transform: scale(1.05); /* Sanfte Vergrößerung beim Hover */
+    transform: scale(1.05);
 }
 
 #previewPopup .close-btn:focus {
-    outline: none; /* Entfernt den Fokusrahmen */
+    outline: none;
 }
 
