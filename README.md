@@ -11,8 +11,6 @@ A simple and modern web-based dashboard application built using **Spring Boot** 
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [File Structure](#file-structure)
-6. [Contributing](#contributing)
-7. [License](#license)
 
 ---
 
