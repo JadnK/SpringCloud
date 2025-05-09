@@ -33,11 +33,11 @@ public class SecurityConfig {
                         .permitAll())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/css/**").permitAll()
-                        .requestMatchers("/upload").authenticated()
+//                        .requestMatchers("/upload").authenticated()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successHandler(successHandler)  // Hier ist dein Handler
+                        .successHandler(successHandler)
                         .permitAll());
 
         return http.build();

@@ -40,24 +40,29 @@
             margin-bottom: 20px;
         }
 
-        .table {
+        /* User table */
+        .user-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
 
-        .table th, .table td {
+        .user-table th, .user-table td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #444;
         }
 
-        .table th {
+        .user-table th {
             background-color: #333;
         }
 
-        .table td {
+        .user-table td {
             background-color: #2d2d2d;
+        }
+
+        .user-table tr:nth-child(even) {
+            background-color: #3c3c3c;
         }
 
         .button {
@@ -74,6 +79,37 @@
 
         .button:hover {
             background-color: #9d4ae2;
+        }
+
+        /* Log Filter */
+        .log-filter {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .log-filter input, .log-filter select {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        /* Log entries */
+        .log-entry {
+            background-color: #2d2d2d;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .log-entry .log-info {
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        .log-entry .log-timestamp {
+            color: #aaa;
         }
 
         /* Popup */
@@ -117,6 +153,11 @@
             justify-content: space-between;
         }
 
+        .button.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
     </style>
 </head>
 <body>
@@ -134,7 +175,7 @@
 
     <!-- User List -->
     <h2>Benutzer</h2>
-    <table class="table">
+    <table class="user-table">
         <thead>
         <tr>
             <th>Username</th>
@@ -152,23 +193,41 @@
             </td>
             <td>
                 <button class="button"
-                        th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}"
+                        th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role[0].name}"
                         onclick="showEditPopupFromButton(this)">
                     Bearbeiten
                 </button>
-                <a th:href="@{'/admin/user/delete/' + ${user.id}}" class="button">Löschen</a>
-                <a th:href="@{'/admin/user/reset-password/' + ${user.id}}" class="button">Passwort</a>
+                <form th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" style="display:inline;">
+                    <button class="button" type="submit"
+                            th:text="${user.banned} ? 'Entbannen' : 'Bannen'"
+                            th:attr="style=${user.banned}
+                ? 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'
+                : 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'">
+                    </button>
+                </form>
+
             </td>
+
         </tr>
         </tbody>
     </table>
 
+    <!-- Log Filtering -->
+    <div class="log-filter">
+        <div>
+            <input type="text" id="logUserSearch" placeholder="Nach Benutzer suchen" oninput="filterLogs()">
+        </div>
+        <div>
+            <input type="date" id="logDateSearch" oninput="filterLogs()">
+        </div>
+    </div>
+
     <!-- Logs -->
     <h2>Logs</h2>
-    <div th:each="log : ${logs}">
-        <div class="log-entry">
+    <div th:each="log : ${logs}" class="log-entry" th:id="'log-' + ${log.id}">
+        <div class="log-info">
             <span th:text="${log.action}">Aktion</span> –
-            <span th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}">Zeit</span>
+            <span class="log-timestamp" th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}">Zeit</span>
             <p>Durchgeführt von: <span th:text="${log.user.username}">Username</span></p>
         </div>
     </div>
@@ -187,8 +246,9 @@
 
             <label>Rolle:</label>
             <select name="role" id="editRole">
-                <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}">ROLE_USER</option>
+                <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
             </select>
+
 
             <div class="form-actions">
                 <button type="submit" class="button">Speichern</button>
@@ -203,17 +263,39 @@
         const id = button.getAttribute('data-id');
         const username = button.getAttribute('data-username');
         const email = button.getAttribute('data-email');
+        const user_role = button.getAttribute('data-user-role');
 
         document.getElementById('editUserId').value = id;
         document.getElementById('editUsername').value = username;
         document.getElementById('editEmail').value = email;
+        document.getElementById('editRole').value = user_role;
         document.getElementById('editModal').style.display = 'flex';
     }
 
+    function closeEditPopup() {
+        document.getElementById('editModal').style.display = 'none';
+    }
 
-        function closeEditPopup() {
-            document.getElementById('editModal').style.display = 'none';
-        }
+    function filterLogs() {
+        const usernameFilter = document.getElementById('logUserSearch').value.toLowerCase();
+        const dateFilter = document.getElementById('logDateSearch').value;
+
+        const logEntries = document.querySelectorAll('.log-entry');
+
+        logEntries.forEach(function (logEntry) {
+            const username = logEntry.querySelector('.log-info span:last-child').innerText.toLowerCase();
+            const timestamp = logEntry.querySelector('.log-timestamp').innerText;
+
+            const matchesUsername = username.includes(usernameFilter);
+            const matchesDate = dateFilter ? timestamp.includes(dateFilter) : true;
+
+            if (matchesUsername && matchesDate) {
+                logEntry.style.display = '';
+            } else {
+                logEntry.style.display = 'none';
+            }
+        });
+    }
 </script>
 
 </body>

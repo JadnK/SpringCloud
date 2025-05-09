@@ -42,10 +42,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                 createUserRolesTable(statement);
             }
 
-            if (!tableExists(statement, "bans")) {
-                createBansTable(statement);
-            }
-
             if (!tableExists(statement, "logs")) {
                 createLogsTable(statement);
             }
@@ -67,7 +63,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
                 "username VARCHAR(255) NOT NULL UNIQUE, " +
                 "email VARCHAR(255) NOT NULL UNIQUE, " +
-                "password VARCHAR(255) NOT NULL);");
+                "password VARCHAR(255) NOT NULL)," +
+                "is_banned BOOLEAN DEFAULT FALSE);");
     }
 
     private void createFilesTable(Statement statement) throws SQLException {
@@ -94,15 +91,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "PRIMARY KEY (user_id, role_id), " +
                 "FOREIGN KEY (user_id) REFERENCES users(id), " +
                 "FOREIGN KEY (role_id) REFERENCES roles(id));");
-    }
-
-    private void createBansTable(Statement statement) throws SQLException {
-        statement.executeUpdate("CREATE TABLE bans (" +
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
-                "user_id BIGINT, " +
-                "reason VARCHAR(255), " +
-                "banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                "FOREIGN KEY (user_id) REFERENCES users(id));");
     }
 
     private void createLogsTable(Statement statement) throws SQLException {
