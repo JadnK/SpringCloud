@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud Registrierung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top left, #4b0082, #1a1a2e);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(30, 30, 60, 0.85);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(200, 100, 255, 0.4);
+            animation: fadeIn 1s ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .register-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #b983ff, #d3bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2em;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #2e2e4d;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #aaa;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -8px;
+            left: 8px;
+            font-size: 0.75em;
+            color: #c79eff;
+            background-color: #2e2e4d;
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+
+        .input-group .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #a259ff, #6d28d9);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #b983ff, #8a42ff);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .register-link a {
+            color: #c79eff;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form class="register-form" th:action="@{/register}" th:object="${user}" method="post">
+        <h2>Registrieren</h2>
+
+        <!-- Username Input -->
+        <div class="input-group">
+            <input type="text" th:field="*{username}" required placeholder=" " />
+            <label>Benutzername</label>
+        </div>
+
+        <!-- E-Mail Input -->
+        <div class="input-group">
+            <input type="email" th:field="*{email}" required placeholder=" " />
+            <label>E-Mail</label>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-group">
+            <input type="password" id="password" th:field="*{password}" required placeholder=" " />
+            <label>Passwort</label>
+        </div>
+
+        <button type="submit">Registrieren</button>
+
+        <!-- Login Link -->
+        <p class="register-link">Bereits ein Konto? <a th:href="@{/login}">Login</a></p>
+    </form>
+</div>
+
+<script>
+    // Toggle visibility of the password input field
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        confirmPasswordField.type = type;
+    }
+
+    // Validate password confirmation
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwörter stimmen nicht überein!');
+            event.preventDefault(); // Verhindert das Absenden des Formulars
+        }
+    });
+</script>
+</body>
+</html>
