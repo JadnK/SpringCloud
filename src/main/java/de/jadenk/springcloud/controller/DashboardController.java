@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.controller;
 
+import de.jadenk.springcloud.exception.ResourceNotFoundException;
 import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
@@ -8,7 +9,9 @@ import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -98,6 +101,18 @@ public class DashboardController {
                 .header(HttpHeaders.CONTENT_TYPE, file.getFileType())
                 .body(new ByteArrayResource(file.getFileData()));
     }
+
+    @GetMapping("/file/{fileId}")
+    public ResponseEntity<Resource> getFile(@PathVariable Long fileId) {
+        UploadedFile file = uploadedFileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+
+        Resource fileResource = new ByteArrayResource(file.getFileData());
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(file.getFileType()))
+                .body(fileResource);
+    }
+
 
 
 }
