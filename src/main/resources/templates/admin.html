@@ -91,6 +91,9 @@
                 <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
             </select>
 
+            <label>Neues Passwort:</label>
+            <input type="password" name="password" id="editPassword">
+
 
             <div class="form-actions">
                 <button type="submit" class="button">Speichern</button>
