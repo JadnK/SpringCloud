@@ -1,0 +1,342 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom right, #4b0082, #1a1a2e); /* Weicherer Verlauf */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2b2b2b;
+    padding: 15px 30px;
+    position: relative;
+}
+
+.navbar .brand {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #b259ff;
+}
+
+.username-box {
+    background-color: #333;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.logout-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #333;
+    border-radius: 8px;
+    margin-top: 5px;
+    padding: 10px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.logout-dropdown a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-dropdown a:hover {
+    background-color: #b259ff;
+}
+
+.admin-tag {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.username-box:hover .logout-dropdown {
+    display: block;
+    opacity: 1;
+}
+
+.content {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.upload-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #b259ff;
+    color: white;
+    border: none;
+    width: 70px; /* Feste Breite */
+    height: 70px; /* Feste Höhe */
+    border-radius: 50%; /* Macht den Button rund */
+    font-size: 2.5em; /* Größeres Pluszeichen */
+    display: flex;
+    justify-content: center; /* Zentriert horizontal */
+    align-items: center; /* Zentriert vertikal */
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #9d4ae2;
+    transform: scale(1.1);
+}
+
+
+
+#uploadPopup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Schwacher, halbtransparenter Hintergrund */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#uploadPopup .popup-content {
+    background: #333; /* Dunkler Hintergrund nur für das Upload-Popup */
+    color: white;
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    width: 450px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#uploadPopup .popup-content h2 {
+    margin-bottom: 20px;
+}
+
+#uploadPopup .popup-content input[type="file"] {
+    padding: 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+#uploadPopup .popup-content input[type="file"]:hover {
+    background-color: #5b5b5b;
+}
+
+#uploadPopup .popup-content button {
+    background-color: #b259ff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#uploadPopup .popup-content button:hover {
+    background-color: #9d4ae2;
+    transform: scale(1.05);
+}
+
+#uploadPopup .close-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#uploadPopup .close-btn:hover {
+    background-color: #da190b;
+}
+
+/* File List */
+.file-list {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+
+.file-list li {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    border-left: 5px solid transparent;
+}
+
+.file-list li:hover {
+    background-color: #333;
+    border-left: 5px solid #b259ff;
+}
+
+.file-info {
+    display: flex;
+    gap: 20px;
+    width: 50%;
+}
+
+.file-info span {
+    flex: 1;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+}
+
+.actions a {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.actions a:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.actions .delete {
+    background-color: #f44336;
+}
+
+.actions .delete:hover {
+    background-color: #da190b;
+}
+
+/* Vorschau Popup */
+#previewPopup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 1200px;
+    height: 80%;
+    background: rgba(0, 0, 0, 0.8); /* Dunklerer, aber transparenter Hintergrund */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 12px; /* Runde Ecken für das Popup */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Weicher Schatten */
+}
+
+/* Popup-Inhalt */
+#previewPopup .popup-content {
+    background: #333;
+    color: white;
+    padding: 40px;
+    border-radius: 12px; /* Abgerundete Ecken */
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out; /* Sanfte Übergänge */
+}
+
+/* Vorschau Container */
+#previewContainer {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px; /* Abgerundete Ecken für den Container */
+}
+
+#previewContainer img, #previewContainer video {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px; /* Ecken der Vorschau abrunden */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sanfter Schatten für Bild/Video */
+}
+
+/* Vorschau für Textdateien */
+#previewContainer pre {
+    background-color: #444;
+    color: white;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    font-size: 1.1em;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Schatten für den Textbereich */
+}
+
+/* Close Button */
+#previewPopup .close-btn {
+    background-color: #b259ff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px; /* Abgerundete Ecken */
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Schatten für den Button */
+}
+
+#previewPopup .close-btn:hover {
+    background-color: #9d4ae2;
+    transform: scale(1.05); /* Sanfte Vergrößerung beim Hover */
+}
+
+#previewPopup .close-btn:focus {
+    outline: none; /* Entfernt den Fokusrahmen */
+}
+
