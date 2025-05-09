@@ -4,6 +4,8 @@ import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import org.apache.tomcat.util.http.fileupload.FileItemFactory;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,14 +26,23 @@ public class FileUploadService {
     @Autowired
     private LogService logService;
 
+
     public void uploadFile(MultipartFile file) throws IOException {
+        FileUploadProgressListener progressListener = new FileUploadProgressListener(file);
+
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(currentUser.getUsername()).orElse(null);
+
+        byte[] fileBytes = file.getBytes();
+
+        for (int i = 0; i < fileBytes.length; i++) {
+            progressListener.updateProgress(i);
+        }
 
         UploadedFile uploadedFile = new UploadedFile(
                 file.getOriginalFilename(),
                 file.getContentType(),
-                file.getBytes(),
+                fileBytes,
                 user
         );
         uploadedFileRepository.save(uploadedFile);

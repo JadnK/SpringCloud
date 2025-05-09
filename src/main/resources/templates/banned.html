@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gesperrt</title>
+  <link rel="stylesheet" th:href="@{/css/banned.css}">
 </head>
 <body>
-<h1>Du wurdest gebannt</h1>
-<p>Du hast keinen Zugriff auf diese Seite. Wende dich an den Administrator.</p>
+  <div class="brand">SpringCloud</div>
+  <div class="container">
+    <h1>Du wurdest gebannt!</h1>
+    <p class="message">Du hast keinen Zugriff auf diese Seite. Wende dich an den Administrator, um mehr zu erfahren.</p>
+    <a href="/logout" class="action-btn">Logout</a>
+  </div>
 </body>
 </html>

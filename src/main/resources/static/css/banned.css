@@ -1,0 +1,80 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #4b0082, #1a1a2e);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    flex-direction: column;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.brand {
+    font-size: 3rem;
+    color: #b983ff;
+    font-weight: bold;
+    background: linear-gradient(90deg, #b983ff, #d3bfff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 40px;
+    text-align: center;
+    animation: slideIn 1s ease-in-out;
+}
+
+.container {
+    background: rgba(30, 30, 60, 0.85);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(200, 100, 255, 0.6);
+    animation: popIn 0.8s ease-out;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #f9f9f9;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.message {
+    font-size: 1.2rem;
+    color: #f9f9f9;
+    margin-bottom: 30px;
+}
+
+.action-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #6d28d9;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    transition: background 0.3s ease;
+    margin-top: 20px;
+}
+
+.action-btn:hover {
+    background-color: #a259ff;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
