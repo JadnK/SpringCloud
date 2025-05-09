@@ -13,6 +13,9 @@ public class User {
     private String username;
     private String password;
 
+    @Column(name = "is_banned")
+    private boolean banned;
+
     @Column(unique = true)
     private String email;
 
@@ -25,22 +28,12 @@ public class User {
     private Set<Role> role;
 
     @OneToMany(mappedBy = "user")
-    private Set<Ban> bans;
-
-    @OneToMany(mappedBy = "user")
     private Set<Log> logs;
 
     public Long getId() {
         return id;
     }
 
-    public Set<Ban> getBans() {
-        return bans;
-    }
-
-    public void setBans(Set<Ban> bans) {
-        this.bans = bans;
-    }
 
     public Set<Log> getLogs() {
         return logs;
@@ -80,5 +73,13 @@ public class User {
 
     public void setRole(Set<Role> roles) {
         this.role = roles;
+    }
+
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
 }
