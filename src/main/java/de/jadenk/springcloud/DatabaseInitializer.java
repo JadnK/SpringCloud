@@ -1,7 +1,11 @@
 package de.jadenk.springcloud;
 
+import de.jadenk.springcloud.config.SecurityConfig;
 import de.jadenk.springcloud.model.Role;
+import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.RoleRepository;
+import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -20,10 +24,18 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private SecurityConfig securityConfig;
+
+
     @Override
     public void run(String... args) throws Exception {
         checkAndCreateTables();
         checkAndCreateDefaultRoles();
+        createDefaultAdminUser();
     }
 
     private void checkAndCreateTables() throws SQLException {
@@ -51,6 +63,24 @@ public class DatabaseInitializer implements CommandLineRunner {
             }
         }
     }
+
+    private void createDefaultAdminUser() {
+        if (userRepository.findByUsername("admin").isEmpty()) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setEmail("admin@jadenk.de");
+            admin.setPassword(securityConfig.passwordEncoder().encode("jadenk_§!"));
+
+            Role adminRole = roleRepository.findByName("ADMIN")
+                    .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
+
+            admin.getRole().add(adminRole);
+
+            userRepository.save(admin);
+            System.out.println("Default admin user created.");
+        }
+    }
+
 
     private boolean tableExists(Statement statement, String tableName) throws SQLException {
         try (var resultSet = statement.executeQuery("SHOW TABLES LIKE '" + tableName + "'")) {
