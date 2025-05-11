@@ -2,6 +2,7 @@ package de.jadenk.springcloud.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,7 +26,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> role;
+    private Set<Role> role = new HashSet<>();;
 
     @OneToMany(mappedBy = "user")
     private Set<Log> logs;
