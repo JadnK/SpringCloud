@@ -11,6 +11,7 @@ A simple and modern web-based dashboard application built using **Spring Boot** 
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [File Structure](#file-structure)
+6. [Contributing](#contributing)
 
 ---
 
@@ -169,3 +170,33 @@ springcloud-dashboard/
 - **`src/main/resources/templates/`**: Contains the Thymeleaf templates (HTML files) that render the UI.
 - **`src/main/resources/application.properties`**: Configuration file for Spring Boot.
 - **`build.gradle`**: Gradle build configuration file.
+
+## Contributing
+
+We welcome contributions to the SpringCloud Dashboard project! If you'd like to contribute, please follow the guidelines below.
+
+### How to Contribute
+
+1. **Fork the repository**: Start by forking the repository to your own GitHub account.
+2. **Create a new branch**: Always create a new branch for each feature or bug fix you are working on. Use descriptive names for your branches (e.g., `feature/upload-improvement` or `bugfix/missing-icon`).
+3. **Write tests**: Ensure that any changes you make are covered by appropriate tests.
+4. **Submit a pull request**: Once you're done with your changes, submit a pull request to the `main` branch. Make sure to describe your changes in detail.
+
+### Code of Conduct
+
+- Be respectful and considerate of others.
+- Follow the existing code style and practices of the project.
+- Submit clear, well-documented code with a detailed description of your changes.
+
+### How to Mention or Credit Me
+
+If you're using or building upon this project, I’d appreciate it if you could credit me as the original creator. A simple acknowledgment in your repository or project would be great! Here’s an example of how you can do it:
+
+- **In your `README.md`**:
+   ```markdown
+   Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud-dashboard) by [@verpxnter](https://github.com/verpxnter).
+   ```
+
+## Reporting Issues
+
+If you encounter any bugs or have suggestions for improvements, feel free to open an issue on the GitHub repository. Please provide a detailed description of the problem and, if applicable, steps to reproduce.
