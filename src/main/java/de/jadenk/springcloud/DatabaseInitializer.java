@@ -57,6 +57,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             if (!tableExists(statement, "uploaded_files")) {
                 createFilesTable(statement);
             }
+
+            if (!tableExists(statement, "shared_links")) {
+                createSharedLinks(statement);
+            }
         }
     }
 
@@ -93,6 +97,18 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "password VARCHAR(255) NOT NULL," +
                 "is_banned BOOLEAN DEFAULT FALSE,"+
                 "FOREIGN KEY (role_id) REFERENCES roles(id));");
+    }
+
+    private void createSharedLinks(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE shared_links (" +
+                "    id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "    user_id BIGINT NOT NULL," +
+                "    file_id INT NOT NULL," +
+                "    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "    expire_date TIMESTAMP NOT NULL," +
+                "    token VARCHAR(255) UNIQUE NOT NULL," +
+                "    FOREIGN KEY (user_id) REFERENCES users(id)," +
+                "    FOREIGN KEY (file_id) REFERENCES uploaded_files(id));");
     }
 
     private void createFilesTable(Statement statement) throws SQLException {

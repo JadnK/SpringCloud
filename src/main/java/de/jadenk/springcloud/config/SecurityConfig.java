@@ -33,9 +33,14 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID", "remember-me")
                         .permitAll())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/css/**").permitAll()
-//                        .requestMatchers("/upload").authenticated()
+                        .requestMatchers(
+                                "/share/**",
+                                "/css/**",
+                                "/js/**",
+                                "/link-expired"
+                        ).permitAll()
                         .anyRequest().authenticated())
+
                 .rememberMe(remember -> remember
                         .key("cookie_remember_me_jadenk_292929")
                         .tokenValiditySeconds(7 * 24 * 60 * 60)

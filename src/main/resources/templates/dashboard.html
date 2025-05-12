@@ -34,6 +34,7 @@
                 <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Upload Date</span>
             </div>
             <div class="actions">
+                <a th:href="@{'/share/' + ${file.id}}">Share</a>
                 <a th:href="@{'/download/' + ${file.id}}">Download</a>
                 <a th:onclick='showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])'>Preview</a>
                 <a th:href="@{'/delete/' + ${file.id}}" class="delete">Delete</a>
@@ -69,6 +70,7 @@
     <div class="loading-content">Uploading...</div>
 </div>
 <script>
+
     function showLoadingBar() {
         document.getElementById('loadingOverlay').style.display = 'flex';
     }

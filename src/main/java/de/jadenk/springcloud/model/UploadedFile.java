@@ -82,4 +82,5 @@ public class UploadedFile {
     public void setFileOwner(User fileOwner) {
         this.fileOwner = fileOwner;
     }
+
 }

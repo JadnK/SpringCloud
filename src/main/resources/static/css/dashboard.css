@@ -349,3 +349,111 @@ h1 {
 }
 
 
+/* Share Modal Styles */
+#shareModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 1200px;
+    height: 80%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+#shareModal .modal-content {
+    background: #333;
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    width: ;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+}
+
+#previewContainer {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+#shareModal h3 {
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #b259ff;
+}
+
+#shareModal label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+#shareDuration {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#shareDuration option {
+    background-color: #333;
+    color: white;
+}
+
+#shareModal button {
+    background-color: #b259ff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#shareModal button:hover {
+    background-color: #9d4ae2;
+    transform: scale(1.05);
+}
+
+#shareResult {
+    margin-top: 15px;
+    font-size: 0.95em;
+    word-break: break-all;
+    color: #ccc;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
