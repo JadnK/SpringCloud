@@ -45,7 +45,7 @@ To run this project locally, follow these steps:
 - **Java 17** (JDK 17 or newer)
 - **Gradle** (for building the project)
 - **IDE** (like IntelliJ IDEA, Eclipse, etc.)
-- Optional: **MariaDB-Datenbank** (falls du eine eigene Datenbank angeben möchtest)
+- Optional: **MariaDB-Datenbank** 
 
 ### Steps
 
