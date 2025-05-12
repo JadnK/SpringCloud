@@ -38,7 +38,7 @@
             </td>
             <td>
                 <button class="button"
-                        th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role[0].name}"
+                        th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role.name}"
                         onclick="showEditPopupFromButton(this)">
                     Bearbeiten
                 </button>

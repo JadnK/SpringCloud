@@ -50,10 +50,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                 createRolesTable(statement);
             }
 
-            if (!tableExists(statement, "user_roles")) {
-                createUserRolesTable(statement);
-            }
-
             if (!tableExists(statement, "logs")) {
                 createLogsTable(statement);
             }
@@ -74,7 +70,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             Role adminRole = roleRepository.findByName("ADMIN")
                     .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
 
-            admin.getRole().add(adminRole);
+            admin.setRole(adminRole);
 
             userRepository.save(admin);
             System.out.println("Default admin user created.");
@@ -91,10 +87,12 @@ public class DatabaseInitializer implements CommandLineRunner {
     private void createUsersTable(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE users (" +
                 "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                "role_id BIGINT, " +
                 "username VARCHAR(255) NOT NULL UNIQUE, " +
                 "email VARCHAR(255) NOT NULL UNIQUE, " +
-                "password VARCHAR(255) NOT NULL)," +
-                "is_banned BOOLEAN DEFAULT FALSE);");
+                "password VARCHAR(255) NOT NULL," +
+                "is_banned BOOLEAN DEFAULT FALSE,"+
+                "FOREIGN KEY (role_id) REFERENCES roles(id));");
     }
 
     private void createFilesTable(Statement statement) throws SQLException {
@@ -112,15 +110,6 @@ public class DatabaseInitializer implements CommandLineRunner {
         statement.executeUpdate("CREATE TABLE roles (" +
                 "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
                 "name VARCHAR(50) NOT NULL UNIQUE);");
-    }
-
-    private void createUserRolesTable(Statement statement) throws SQLException {
-        statement.executeUpdate("CREATE TABLE user_roles (" +
-                "user_id BIGINT, " +
-                "role_id BIGINT, " +
-                "PRIMARY KEY (user_id, role_id), " +
-                "FOREIGN KEY (user_id) REFERENCES users(id), " +
-                "FOREIGN KEY (role_id) REFERENCES roles(id));");
     }
 
     private void createLogsTable(Statement statement) throws SQLException {
