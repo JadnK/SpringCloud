@@ -20,13 +20,9 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> role = new HashSet<>();;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id") // Spalte in Tabelle "users"
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private Set<Log> logs;
@@ -68,12 +64,12 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(Set<Role> roles) {
-        this.role = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public boolean isBanned() {

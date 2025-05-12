@@ -105,11 +105,10 @@ public class AdminController {
             throw new IllegalArgumentException("Role not found: " + role);
         }
 
-        Role currentRole = user.getRole().iterator().next();
+        Role currentRole = user.getRole();
         if (!currentRole.equals(foundRole)) {
             logService.log(currentUser.getUsername(), "Role Change for USER: '" + user.getUsername() + "' Role: " + currentRole.getName() + " -> " + foundRole.getName());
-            user.getRole().clear();
-            user.getRole().add(foundRole);
+            user.setRole(foundRole);
         }
 
         if (password != null && !password.trim().isEmpty()) {
