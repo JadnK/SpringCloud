@@ -17,10 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collection;
@@ -74,6 +71,15 @@ public class AdminController {
         model.addAttribute("roles", roles);
 
         String username = authentication.getName();
+        model.addAttribute("username", username);
+
+        String role = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("UNKNOWN");
+
+        model.addAttribute("role", role);
+
         logService.log(username, "Access to /admin page");
         return "admin";
     }

@@ -30,11 +30,16 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
+                        .deleteCookies("JSESSIONID", "remember-me")
                         .permitAll())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/css/**").permitAll()
 //                        .requestMatchers("/upload").authenticated()
                         .anyRequest().authenticated())
+                .rememberMe(remember -> remember
+                        .key("cookie_remember_me_jadenk_292929")
+                        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler(successHandler)

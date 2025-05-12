@@ -33,7 +33,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/register")
-    public String registerForm(Model model) {
+    public String registerForm(Model model, @ModelAttribute User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()
@@ -52,7 +52,15 @@ public class AuthenticationController {
             return "redirect:/dashboard";
         }
 
-        model.addAttribute("user", new User());
+        String username = authentication.getName();
+        model.addAttribute("username", username);
+
+        String role = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("UNKNOWN");
+
+        model.addAttribute("role", role);
         return "register";
     }
 

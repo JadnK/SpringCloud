@@ -1,0 +1,76 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a2e;
+    padding: 15px 30px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid #b259ff;
+}
+
+.navbar .brand {
+    font-size: 2em;
+    font-weight: bold;
+    color: #b259ff;
+    text-transform: uppercase;
+}
+
+.username-box {
+    background-color: #333;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.username-box::before {
+    content: '👤'; /* Benutzer-Icon */
+    margin-right: 10px;
+    font-size: 1.5em; /* Größe des Icons */
+    color: #b259ff; /* Farbe des Icons */
+}
+
+.username-box:hover {
+    background-color: #444; /* Hintergrundfarbe bei Hover */
+}
+
+.logout-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #444;
+    border-radius: 8px;
+    margin-top: 5px;
+    padding: 10px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(-10px);
+    min-width: 180px; /* Mindestbreite für das Dropdown */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.logout-dropdown a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 15px; /* Längere Padding für die Links */
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-dropdown a:hover {
+    background-color: #b259ff; /* Hover-Farbe für Links */
+}
+
+.username-box:hover .logout-dropdown,
+.logout-dropdown.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}

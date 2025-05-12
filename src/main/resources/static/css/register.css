@@ -5,24 +5,24 @@
 }
 
 body {
-    margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: radial-gradient(circle at top left, #4b0082, #1a1a2e);
+    margin: 0;
+    padding: 0;
     color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    overflow-x: hidden;
 }
+
 
 .container {
     background: rgba(30, 30, 60, 0.85);
     padding: 40px;
     border-radius: 16px;
     box-shadow: 0 0 20px rgba(200, 100, 255, 0.4);
-    animation: fadeIn 1s ease-in-out;
     width: 90%;
     max-width: 400px;
+    margin: 100px auto 0;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .register-form h2 {

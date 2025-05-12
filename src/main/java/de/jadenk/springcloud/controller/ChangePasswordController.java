@@ -5,12 +5,15 @@ import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Collection;
 
 @Controller
 public class ChangePasswordController {
@@ -22,7 +25,19 @@ public class ChangePasswordController {
     private SecurityConfig securityConfig;
 
     @GetMapping("/change-password")
-    public String showChangePasswordForm() {
+    public String showChangePasswordForm(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        String username = authentication.getName();
+        model.addAttribute("username", username);
+
+        String role = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("UNKNOWN");
+
+        model.addAttribute("role", role);
         return "change-password";
     }
 

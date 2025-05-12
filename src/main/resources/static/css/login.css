@@ -103,6 +103,56 @@ button:hover {
     text-decoration: underline;
 }
 
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #c79eff;
+    border-radius: 4px;
+    background-color: #2e2e4d;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+    background-color: #a259ff;
+    border-color: #a259ff;
+}
+
+.checkbox-group input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    top: 2px;
+    left: 6px;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.checkbox-group input[type="checkbox"]:checked::after {
+    opacity: 1;
+}
+
+.checkbox-group label {
+    color: #ccc;
+    font-size: 0.95em;
+    user-select: none;
+    cursor: pointer;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
