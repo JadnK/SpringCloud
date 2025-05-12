@@ -45,6 +45,7 @@ To run this project locally, follow these steps:
 - **Java 17** (JDK 17 or newer)
 - **Gradle** (for building the project)
 - **IDE** (like IntelliJ IDEA, Eclipse, etc.)
+- Optional: **MariaDB-Datenbank** (falls du eine eigene Datenbank angeben möchtest)
 
 ### Steps
 
@@ -59,12 +60,33 @@ To run this project locally, follow these steps:
    ./gradlew build
    ```
 
-3. **Run the application**:
+3. **Download the latest release from GitHub**:
+   - Go to the [GitHub Releases page](https://github.com/verpxnter/springcloud/releases) and download the latest **.jar** file.
+   
+   **Important**: You should only download the project from the **Releases** section on GitHub, not from the source code directly, as the releases are pre-compiled and ready to run.
+
+4. **Run the application**:
+
+   Once you have the **.jar** file from the releases, you can start the application with the following command:
+
    ```bash
-   ./gradlew bootRun
+   java -jar springcloud.jar --url="jdbc:mariadb://YOUR IP:3306/YOUR DATABASE" --user="YOUR USERNAME" --pw="YOUR PASSWORD"
    ```
 
-4. The application will run at `http://localhost:8080`. Open this URL in your browser to view the dashboard.
+   This assumes you have an external MariaDB database. Update the database connection details as per your setup.
+
+5. The application will run at `http://localhost:8080`. Open this URL in your browser to view the dashboard.
+
+---
+
+### Default Login Credentials
+
+After starting the application, you can log in with the following **default admin user**:
+
+- **Username**: `admin`
+- **Password**: `jadenk_§!`
+
+⚠️ Make sure to change the password in a production environment!
 
 ---
 
@@ -91,39 +113,38 @@ springcloud-dashboard/
 │   │   │       └── jadenk/
 │   │   │           └── springcloud/
 │   │   │               ├── config/
-|   |   |               |   ├── SecurityConfig.java
+│   │   │               │   ├── SecurityConfig.java
 │   │   │               │   └── WebConfig.java
 │   │   │               ├── controller/
-|   |   |               |   ├── AdminController.java
-|   |   |               |   ├── AuthenticationController.java
-|   |   |               |   ├── BannedController.java
+│   │   │               │   ├── AdminController.java
+│   │   │               │   ├── AuthenticationController.java
+│   │   │               │   ├── BannedController.java
 │   │   │               │   └── DashboardController.java
 │   │   │               ├── exception/
 │   │   │               │   └── ResourceNotFoundException.java
 │   │   │               ├── model/
-|   |   |               |   ├── Ban.java
-|   |   |               |   ├── Log.java
-|   |   |               |   ├── Role.java
-|   |   |               |   ├── UploadedFile.java
+│   │   │               │   ├── Ban.java
+│   │   │               │   ├── Log.java
+│   │   │               │   ├── Role.java
+│   │   │               │   ├── UploadedFile.java
 │   │   │               │   └── User.java
 │   │   │               ├── repository/
-|   |   |               |   ├── LogRepository.java
-|   |   |               |   ├── RoleRepository.java
-|   |   |               |   ├── UploadedFileRepository.java
+│   │   │               │   ├── LogRepository.java
+│   │   │               │   ├── RoleRepository.java
+│   │   │               │   ├── UploadedFileRepository.java
 │   │   │               │   └── UserRepository.java
 │   │   │               ├── security/
-|   |   |               |   ├── BannedUserInterceptor.java
-|   |   |               |   ├── CustomAuthenticationSuccessHandler.java
+│   │   │               │   ├── BannedUserInterceptor.java
+│   │   │               │   ├── CustomAuthenticationSuccessHandler.java
 │   │   │               │   └── CustomUserDetails.java
 │   │   │               └── service/
-|   |   |               │   ├── CustomUserDetailsService.java
-|   |   |               │   ├── FileUploadProgressListener.java
-|   |   |               │   ├── FileUploadService.java
-|   |   |               │   ├── LogService.java
+│   │   │               │   ├── CustomUserDetailsService.java
+│   │   │               │   ├── FileUploadProgressListener.java
+│   │   │               │   ├── FileUploadService.java
+│   │   │               │   ├── LogService.java
 │   │   │               │   └── UserService.java
-|   |   |               ├── DatabaseInitializer.java
-|   |   |               └── SpringcloudApplication.java
-|   |   |
+│   │   │               ├── DatabaseInitializer.java
+│   │   │               └── SpringcloudApplication.java
 │   │   ├── resources/
 │   │   │   ├── static/
 │   │   │   │   ├── css/
@@ -133,10 +154,10 @@ springcloud-dashboard/
 │   │   │   │   │   ├── login.css
 │   │   │   │   │   └── register.css
 │   │   │   ├── templates/
-|   |   |   |   ├── admin.html
-|   |   |   |   ├── banned.html
-|   |   |   |   ├── dashboard.html
-|   |   |   |   ├── login.html
+│   │   │   │   ├── admin.html
+│   │   │   │   ├── banned.html
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── login.html
 │   │   │   │   └── register.html
 │   │   │   ├── application.properties
 ├── build.gradle
@@ -148,5 +169,3 @@ springcloud-dashboard/
 - **`src/main/resources/templates/`**: Contains the Thymeleaf templates (HTML files) that render the UI.
 - **`src/main/resources/application.properties`**: Configuration file for Spring Boot.
 - **`build.gradle`**: Gradle build configuration file.
-
-
