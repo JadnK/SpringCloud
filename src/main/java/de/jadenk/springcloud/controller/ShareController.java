@@ -112,12 +112,14 @@ public class ShareController {
         );
 
         model.addAttribute("fileName", file.getFileName());
+        model.addAttribute("fileType", fileType);
         model.addAttribute("token", token);
         model.addAttribute("expireDate", link.getExpireDate());
         model.addAttribute("isPreviewable", isPreviewable);
 
         return "shared_file";
     }
+
 
 
     @GetMapping("/share/file/download/{token}")
@@ -129,4 +131,5 @@ public class ShareController {
         UploadedFile file = link.getFile();
         return serveFile(file, preview);
     }
+
 }

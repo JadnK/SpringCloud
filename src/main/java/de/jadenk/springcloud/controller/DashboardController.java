@@ -107,11 +107,15 @@ public class DashboardController {
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
 
-        Resource fileResource = new ByteArrayResource(file.getFileData());
+        String fileType = file.getFileType();
+
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(file.getFileType()))
-                .body(fileResource);
+                .contentType(MediaType.parseMediaType(fileType))
+                .body(new ByteArrayResource(file.getFileData()));
     }
+
+
+
 
 
 
