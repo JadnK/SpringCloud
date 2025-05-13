@@ -529,3 +529,81 @@ h1 {
     background-color: #777;
     transform: scale(1.05);
 }
+
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.popup-content {
+    background: #333;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.popup-buttons button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.popup-buttons button:first-child {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.popup-buttons button:last-child {
+    background-color: #888;
+    color: white;
+}
+
+#shareDurationSelect {
+    width: 100%;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 1em;
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+    border-radius: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='14' height='10' viewBox='0 0 14 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23fff' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#shareDurationSelect:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+    outline: none;
+}
+
+.select-container {
+    text-align: left;
+    margin-top: 15px;
+}
+
+.select-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.95em;
+    color: #ccc;
+}
+

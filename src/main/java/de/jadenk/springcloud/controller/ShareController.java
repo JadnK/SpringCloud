@@ -51,7 +51,7 @@ public class ShareController {
 
 
     @GetMapping("/share/{fileId}")
-    public RedirectView shareFile(HttpServletRequest request, @PathVariable Long fileId) {
+    public RedirectView shareFile(HttpServletRequest request, @PathVariable Long fileId, @RequestParam int duration) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -61,7 +61,7 @@ public class ShareController {
         UploadedFile file = fileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found"));
 
-        Duration linkDuration = Duration.ofDays(7);
+        Duration linkDuration = Duration.ofHours(duration);
         String link = sharingService.generateSharedLink(request, user, file, linkDuration);
 
         return new RedirectView(link);

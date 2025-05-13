@@ -34,7 +34,7 @@
                 <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Upload Date</span>
             </div>
             <div class="actions">
-                <a th:href="@{'/share/' + ${file.id}}">Share</a>
+                <a href="#" class="share" th:onclick="confirmShare([[${file.id}]])">Share</a>
                 <a th:href="@{'/download/' + ${file.id}}">Download</a>
                 <a th:onclick='showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])'>Preview</a>
                 <a href="#" class="delete" th:onclick="confirmDelete([[${file.id}]])">Delete</a>
@@ -44,6 +44,28 @@
 </div>
 
 <button class="upload-btn" onclick="showUploadPopup()">+</button>
+
+<div id="confirmSharePopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+        <h2>Share this file?</h2>
+        <p>Select how long the link should be valid:</p>
+        <div class="select-container">
+            <label for="shareDurationSelect">Link expires after:</label>
+            <select id="shareDurationSelect">
+                <option value="1">1 Hour</option>
+                <option value="12">12 Hours</option>
+                <option value="24">1 Day</option>
+                <option value="168">7 Days</option>
+                <option value="720">30 Days</option>
+            </select>
+        </div>
+        <div class="popup-buttons" style="margin-top: 20px;">
+            <button id="confirmShareBtn">Share</button>
+            <button class="close-btn" onclick="closeConfirmSharePopup()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 
 <div id="confirmDeletePopup" class="popup-overlay" style="display: none;">
     <div class="popup-content">
@@ -85,6 +107,26 @@
 <script>
 
     let deleteFileId = null;
+
+    let shareFileId = null;
+
+    function confirmShare(fileId) {
+        shareFileId = fileId;
+        document.getElementById('confirmSharePopup').style.display = 'flex';
+    }
+
+    function closeConfirmSharePopup() {
+        shareFileId = null;
+        document.getElementById('confirmSharePopup').style.display = 'none';
+    }
+
+    document.getElementById('confirmShareBtn').addEventListener('click', function () {
+        if (shareFileId !== null) {
+            const durationHours = document.getElementById('shareDurationSelect').value;
+            window.location.href = `/share/${shareFileId}?duration=${durationHours}`;
+        }
+    });
+
 
     function confirmDelete(fileId) {
         deleteFileId = fileId;
