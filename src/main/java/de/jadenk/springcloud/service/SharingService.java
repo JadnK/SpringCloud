@@ -18,14 +18,14 @@ public class SharingService {
     private SharedLinkRepository sharedLinkRepository;
 
     public String generateSharedLink(User user, UploadedFile file, Duration linkDuration) {
-        String token = UUID.randomUUID().toString(); // Token erstellen
+        String token = UUID.randomUUID().toString();
         System.out.println("Reached the generateSharedLink method!");
         LocalDateTime expireDate = LocalDateTime.now().plus(linkDuration);
         SharedLink sharedLink = new SharedLink(file, user, token, expireDate);
 
-        sharedLinkRepository.save(sharedLink); // Speichern des Links in der DB
+        sharedLinkRepository.save(sharedLink);
 
-        return "http://localhost:8080/share/" + token; // Gebe den Link zurück
+        return "http://localhost:8080/share/file/" + token;
     }
 
 }
