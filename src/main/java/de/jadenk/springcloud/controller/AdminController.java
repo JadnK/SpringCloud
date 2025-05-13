@@ -47,8 +47,8 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping("/admin")
-    public String adminDashboard(Model model) {
-
+    public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
+                                 Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
@@ -62,27 +62,27 @@ public class AdminController {
         }
 
         List<User> users = userRepository.findAll();
-        List<Log> logs = logRepository.findAllLogsSortedByTimestamp();
+        List<Role> roles = roleRepository.findAll();
+
+        int pageSize = 10;
+        long totalLogs = logRepository.count();
+        int totalPages = (int) Math.ceil((double) totalLogs / pageSize);
+
+        int offset = (page - 1) * pageSize;
+        List<Log> logs = logRepository.findLogsPaged(offset, pageSize);
 
         model.addAttribute("users", users);
         model.addAttribute("logs", logs);
-
-        List<Role> roles = roleRepository.findAll();
         model.addAttribute("roles", roles);
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("role", authorities.stream().findFirst().map(GrantedAuthority::getAuthority).orElse("UNKNOWN"));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
 
-        String username = authentication.getName();
-        model.addAttribute("username", username);
-
-        String role = authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElse("UNKNOWN");
-
-        model.addAttribute("role", role);
-
-        logService.log(username, "Access to /admin page");
+        // logService.log(authentication.getName(), "Access to /admin page");
         return "admin";
     }
+
 
     @PostMapping("/admin/user/update")
     public String updateUser(@RequestParam("id") Long id,

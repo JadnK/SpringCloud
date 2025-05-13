@@ -137,3 +137,42 @@ h1, h2 {
     pointer-events: none;
     opacity: 0.5;
 }
+
+
+
+
+
+
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination .button {
+    display: inline-block;
+    margin: 0 5px;
+    background-color: #b259ff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.pagination .button:hover {
+    background-color: #9d4ae2;
+}
+
+.pagination .active {
+    background-color: #6a00ff;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.pagination .ellipsis {
+    display: inline-block;
+    margin: 0 5px;
+    color: #ccc;
+    font-size: 1.2em;
+}
+

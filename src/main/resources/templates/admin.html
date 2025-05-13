@@ -80,6 +80,38 @@
             <p>Durchgeführt von: <span th:text="${log.user.username}">Username</span></p>
         </div>
     </div>
+    <div class="pagination">
+        <!-- Zurück-Button -->
+        <span th:if="${currentPage > 1}">
+        <a class="button" th:href="@{'/admin?page=' + (${currentPage - 1})}">« Zurück</a>
+    </span>
+
+        <!-- Erste Seite -->
+        <span th:if="${currentPage > 3}">
+        <a class="button" th:href="@{'/admin?page=1'}">1</a>
+        <span class="ellipsis">...</span>
+    </span>
+
+        <!-- Mittelbereich mit max. 5 Seiten -->
+        <span th:each="i : ${#numbers.sequence(
+        (currentPage - 2 > 1 ? currentPage - 2 : 1),
+        (currentPage + 2 < totalPages ? currentPage + 2 : totalPages)
+    )}">
+        <a class="button" th:classappend="${i == currentPage} ? 'active'" th:href="@{'/admin?page=' + ${i}}" th:text="${i}"></a>
+    </span>
+
+        <!-- Letzte Seite -->
+        <span th:if="${currentPage < totalPages - 2}">
+        <span class="ellipsis">...</span>
+        <a class="button" th:href="@{'/admin?page=' + ${totalPages}}" th:text="${totalPages}"></a>
+    </span>
+
+        <!-- Weiter-Button -->
+        <span th:if="${currentPage < totalPages}">
+        <a class="button" th:href="@{'/admin?page=' + (${currentPage + 1})}">Weiter »</a>
+    </span>
+    </div>
+
 </div>
 
 <div id="editModal" class="modal">
