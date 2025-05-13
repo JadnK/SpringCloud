@@ -20,9 +20,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -49,7 +51,7 @@ public class ShareController {
 
 
     @GetMapping("/share/{fileId}")
-    public ResponseEntity<String> shareFile(HttpServletRequest request, @PathVariable Long fileId) {
+    public RedirectView shareFile(HttpServletRequest request, @PathVariable Long fileId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -60,25 +62,31 @@ public class ShareController {
                 .orElseThrow(() -> new RuntimeException("File not found"));
 
         Duration linkDuration = Duration.ofDays(7);
-
         String link = sharingService.generateSharedLink(request, user, file, linkDuration);
 
-        return ResponseEntity.ok(link);
+        return new RedirectView(link);
     }
 
 
 
-    private ResponseEntity<Resource> serveFile(UploadedFile file) {
+    private ResponseEntity<Resource> serveFile(UploadedFile file, boolean preview) {
         ByteArrayResource resource = new ByteArrayResource(file.getFileData());
 
+        HttpHeaders headers = new HttpHeaders();
+        if (preview) {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFileName() + "\"");
+        } else {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"");
+        }
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                .headers(headers)
                 .contentType(MediaType.parseMediaType(file.getFileType()))
                 .body(resource);
     }
 
     @GetMapping("/share/file/{token}")
-    public String checkLinkAndRedirect(@PathVariable String token, RedirectAttributes redirectAttributes) {
+    public String checkLinkAndRedirect(@PathVariable String token) {
         SharedLink link = sharedLinkRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -86,21 +94,39 @@ public class ShareController {
             return "link-expired";
         }
 
-        return "redirect:/share/file/download/" + token;
+        return "redirect:/share/file/view/" + token;
     }
 
-
-    @GetMapping("/share/file/download/{token}")
-    public ResponseEntity<Resource> downloadSharedFile(@PathVariable String token) {
-        System.out.println("Requested token: " + token);
+    @GetMapping("/share/file/view/{token}")
+    public String viewSharedFile(@PathVariable String token, Model model) {
         SharedLink link = sharedLinkRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         UploadedFile file = link.getFile();
-        return serveFile(file);
+        String fileType = file.getFileType();
+
+        boolean isPreviewable = fileType != null && (
+                fileType.startsWith("image/") ||
+                        fileType.equals("application/pdf") ||
+                        fileType.startsWith("text/")
+        );
+
+        model.addAttribute("fileName", file.getFileName());
+        model.addAttribute("token", token);
+        model.addAttribute("expireDate", link.getExpireDate());
+        model.addAttribute("isPreviewable", isPreviewable);
+
+        return "shared_file";
     }
 
 
+    @GetMapping("/share/file/download/{token}")
+    public ResponseEntity<Resource> downloadSharedFile(@PathVariable String token,
+                                                       @RequestParam(name = "preview", defaultValue = "false") boolean preview) {
+        SharedLink link = sharedLinkRepository.findByToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-
+        UploadedFile file = link.getFile();
+        return serveFile(file, preview);
+    }
 }

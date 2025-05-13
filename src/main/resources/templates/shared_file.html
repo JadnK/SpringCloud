@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shared File</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/css/sharedfile.css}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Shared File</h1>
+    <p><strong th:text="${fileName}">File Name</strong></p>
+
+    <div class="file-preview" th:if="${isPreviewable}">
+        <iframe th:src="@{'/share/file/download/' + ${token} + '?preview=true'}" allowfullscreen></iframe>
+    </div>
+
+    <div class="file-preview" th:unless="${isPreviewable}">
+        <p style="color: #ccc;">Preview not available for this file type.</p>
+    </div>
+
+    <div class="meta">
+        <p>Valid until: <strong th:text="${expireDate}">date</strong></p>
+    </div>
+
+    <a class="download-btn" th:href="@{'/share/file/download/' + ${token}}">Download File</a>
+</div>
+
+</body>
+</html>
