@@ -457,3 +457,75 @@ h1 {
         transform: translateY(0);
     }
 }
+
+#confirmDeletePopup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#confirmDeletePopup .popup-content {
+    background: #333;
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    animation: fadeInUp 0.3s ease-in-out;
+}
+
+#confirmDeletePopup .popup-content h2 {
+    margin-bottom: 15px;
+    font-size: 1.8em;
+    color: #f44336;
+}
+
+#confirmDeletePopup .popup-content p {
+    font-size: 1em;
+    margin-bottom: 30px;
+    color: #ddd;
+}
+
+#confirmDeletePopup .popup-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+#confirmDeletePopup .popup-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#confirmDeletePopup .popup-buttons button:first-child {
+    background-color: #f44336;
+    color: white;
+}
+
+#confirmDeletePopup .popup-buttons button:first-child:hover {
+    background-color: #da190b;
+    transform: scale(1.05);
+}
+
+#confirmDeletePopup .popup-buttons button:last-child {
+    background-color: #555;
+    color: white;
+}
+
+#confirmDeletePopup .popup-buttons button:last-child:hover {
+    background-color: #777;
+    transform: scale(1.05);
+}

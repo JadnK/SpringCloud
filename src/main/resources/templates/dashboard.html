@@ -37,13 +37,26 @@
                 <a th:href="@{'/share/' + ${file.id}}">Share</a>
                 <a th:href="@{'/download/' + ${file.id}}">Download</a>
                 <a th:onclick='showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])'>Preview</a>
-                <a th:href="@{'/delete/' + ${file.id}}" class="delete">Delete</a>
+                <a href="#" class="delete" th:onclick="confirmDelete([[${file.id}]])">Delete</a>
             </div>
         </li>
     </ul>
 </div>
 
 <button class="upload-btn" onclick="showUploadPopup()">+</button>
+
+<div id="confirmDeletePopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+        <h2>Really delete the file?</h2>
+        <p>
+            This file cannot be recovered.<br>
+            All shared links will also be deleted.</p>
+        <div class="popup-buttons">
+            <button id="confirmDeleteBtn">Delete</button>
+            <button class="close-btn" onclick="closeConfirmDeletePopup()">Cancel</button>
+        </div>
+    </div>
+</div>
 
 <div id="uploadPopup">
     <div class="popup-content">
@@ -71,60 +84,78 @@
 </div>
 <script>
 
+    let deleteFileId = null;
+
+    function confirmDelete(fileId) {
+        deleteFileId = fileId;
+        document.getElementById('confirmDeletePopup').style.display = 'flex';
+    }
+
+    function closeConfirmDeletePopup() {
+        deleteFileId = null;
+        document.getElementById('confirmDeletePopup').style.display = 'none';
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (deleteFileId !== null) {
+            window.location.href = `/delete/${deleteFileId}`;
+        }
+    });
+
     function showLoadingBar() {
         document.getElementById('loadingOverlay').style.display = 'flex';
     }
 
-        function showUploadPopup() {
-            document.getElementById('uploadPopup').style.display = 'flex';
+    function showUploadPopup() {
+        document.getElementById('uploadPopup').style.display = 'flex';
+    }
+
+    function closeUploadPopup() {
+        document.getElementById('uploadPopup').style.display = 'none';
+    }
+
+    function showPreviewPopup(fileId, fileType, fileName) {
+        const previewContainer = document.getElementById('previewContainer');
+        previewContainer.innerHTML = '';
+
+        if (fileType.startsWith('image/')) {
+            previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
         }
 
-        function closeUploadPopup() {
-            document.getElementById('uploadPopup').style.display = 'none';
+        else if (fileType.startsWith('video/')) {
+            previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
         }
 
-        function showPreviewPopup(fileId, fileType, fileName) {
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = '';
+        else if (fileType.startsWith('text/')) {
+            fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
+                if (fileType === 'application/json') {
 
-            if (fileType.startsWith('image/')) {
-                previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
-            }
-
-            else if (fileType.startsWith('video/')) {
-                previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
-            }
-
-            else if (fileType.startsWith('text/')) {
-                fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
-                    if (fileType === 'application/json') {
-
-                        try {
-                            data = JSON.stringify(JSON.parse(data), null, 4);
-                        } catch (e) {
-                            data = "Error parsing JSON.";
-                        }
+                    try {
+                        data = JSON.stringify(JSON.parse(data), null, 4);
+                    } catch (e) {
+                        data = "Error parsing JSON.";
                     }
-                    previewContainer.innerHTML = `<pre>${data}</pre>`;
-                }).catch(error => {
-                    previewContainer.innerHTML = `<p>Error loading text file</p>`;
-                });
-            }
-
-            else if (fileType === 'application/pdf') {
-                previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
-            }
-            else {
-                previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
-            }
-
-            document.getElementById('previewPopup').style.display = 'flex';
+                }
+                previewContainer.innerHTML = `<pre>${data}</pre>`;
+            }).catch(error => {
+                previewContainer.innerHTML = `<p>Error loading text file</p>`;
+            });
         }
 
-
-        function closePreviewPopup() {
-            document.getElementById('previewPopup').style.display = 'none';
+        else if (fileType === 'application/pdf') {
+            previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
         }
+        else {
+            previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
+        }
+
+        document.getElementById('previewPopup').style.display = 'flex';
+    }
+
+
+    function closePreviewPopup() {
+        document.getElementById('previewPopup').style.display = 'none';
+    }
 
 </script>
 </body>

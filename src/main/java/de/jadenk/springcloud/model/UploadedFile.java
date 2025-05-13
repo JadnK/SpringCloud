@@ -3,6 +3,8 @@ package de.jadenk.springcloud.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "uploaded_files")
@@ -19,6 +21,10 @@ public class UploadedFile {
     private byte[] fileData;
 
     private LocalDateTime uploadTime;
+
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SharedLink> sharedLinks = new ArrayList<>();
+
 
     @ManyToOne
     @JoinColumn(name = "file_owner_id", referencedColumnName = "id")

@@ -21,6 +21,7 @@ public class SharedLink {
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "file_id")
     private UploadedFile file;
 
     public SharedLink(UploadedFile file, User user, String token, LocalDateTime expireDate) {
