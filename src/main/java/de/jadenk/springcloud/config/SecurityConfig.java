@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +31,7 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
-                        .deleteCookies("JSESSIONID", "remember-me")
+                        //.deleteCookies("JSESSIONID", "remember-me")
                         .permitAll())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -40,11 +41,10 @@ public class SecurityConfig {
                                 "/link-expired"
                         ).permitAll()
                         .anyRequest().authenticated())
-
-                .rememberMe(remember -> remember
-                        .key("cookie_remember_me_jadenk_292929")
-                        .tokenValiditySeconds(7 * 24 * 60 * 60)
-                )
+                //.rememberMe(remember -> remember
+                //        .key("cookie_remember_me_jadenk_292929")
+                //        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                //)
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler(successHandler)

@@ -8,6 +8,7 @@ import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.service.FileUploadService;
 import de.jadenk.springcloud.service.SharingService;
 import de.jadenk.springcloud.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -48,7 +49,7 @@ public class ShareController {
 
 
     @GetMapping("/share/{fileId}")
-    public ResponseEntity<String> shareFile(@PathVariable Long fileId) {
+    public ResponseEntity<String> shareFile(HttpServletRequest request, @PathVariable Long fileId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -60,7 +61,7 @@ public class ShareController {
 
         Duration linkDuration = Duration.ofDays(7);
 
-        String link = sharingService.generateSharedLink(user, file, linkDuration);
+        String link = sharingService.generateSharedLink(request, user, file, linkDuration);
 
         return ResponseEntity.ok(link);
     }
