@@ -61,6 +61,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             if (!tableExists(statement, "shared_links")) {
                 createSharedLinks(statement);
             }
+
+            if (!tableExists(statement, "calendar_entry")) {
+                createCalendarTable(statement);
+            }
         }
     }
 
@@ -86,6 +90,19 @@ public class DatabaseInitializer implements CommandLineRunner {
         try (var resultSet = statement.executeQuery("SHOW TABLES LIKE '" + tableName + "'")) {
             return resultSet.next();
         }
+    }
+
+    private void createCalendarTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE calendar_entry (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "title VARCHAR(255) NOT NULL," +
+                "description TEXT," +
+                "entry_date DATE NOT NULL," +
+                "entry_time TIME," +
+                "visibility ENUM('PRIVATE', 'PUBLIC') NOT NULL DEFAULT 'PRIVATE'," +
+                "user_id BIGINT NOT NULL," +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "FOREIGN KEY (user_id) REFERENCES users(id));");
     }
 
     private void createUsersTable(Statement statement) throws SQLException {

@@ -25,13 +25,13 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(passwordEnforcementInterceptor);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://127.0.0.1:8080") // Deine Frontend-Domain
-                .allowedMethods("GET", "POST")
-                .allowedHeaders("*")
-                .allowCredentials(true);  // Wichtiger Punkt, um Cookies zu akzeptieren
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://127.0.0.1:8080")
+//                .allowedMethods("GET", "POST")
+//                .allowedHeaders("*")
+//                .allowCredentials(true);
+//    }
 
 }
