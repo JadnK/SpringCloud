@@ -71,24 +71,26 @@
     </div>
 </div>
 
+<!-- Create Entry Modal -->
 <div id="createModal" class="modal hidden">
     <div class="modal-content">
         <h2>Neuer Eintrag</h2>
-        <form id="createEntryForm" method="post" action="/calendar/add">
+        <form id="createEntryForm" method="post" th:action="@{/calendar/add}">
             <input type="hidden" name="date" id="entryDate">
             <input type="text" name="title" placeholder="Titel" required>
             <textarea name="description" placeholder="Beschreibung"></textarea>
-            <input type="time" name="time">
+            <input type="time" name="entry_time" placeholder="Zeit">
             <select name="visibility">
                 <option value="PRIVATE">Privat</option>
                 <option value="PUBLIC">Öffentlich</option>
             </select>
             <button type="submit">Speichern</button>
         </form>
-        <button onclick="closeModal('createModal')">Abbrechen</button>
+        <button onclick="closeModal('createModal')" class="close-btn">Abbrechen</button>
     </div>
 </div>
 
+<!-- View Entry Modal -->
 <div id="viewModal" class="modal hidden">
     <div class="modal-content">
         <h2 id="viewTitle">Eintrag</h2>
@@ -97,18 +99,18 @@
         <p><strong>Datum:</strong> <span id="viewDate"></span></p>
         <p><strong>Sichtbarkeit:</strong> <span id="viewVisibility"></span></p>
 
-        <form id="toggleVisibilityForm" method="post" action="/calendar/toggle-visibility">
+        <form id="toggleVisibilityForm" method="post" th:action="@{/calendar/toggle-visibility}">
             <input type="hidden" name="id" id="entryId">
             <button type="submit">Sichtbarkeit wechseln</button>
         </form>
 
-        <!-- Löschen -->
-        <form method="post" action="/calendar/delete" onsubmit="return confirm('Wirklich löschen?')">
+        <form method="post" th:action="@{/calendar/delete/[[${file.fileName}]]}"
+              onsubmit="return confirm('Wirklich löschen?')">
             <input type="hidden" name="id" id="deleteEntryId">
             <button type="submit">Löschen</button>
         </form>
 
-        <button onclick="closeModal('viewModal')">Schließen</button>
+        <button onclick="closeModal('viewModal')" class="close-btn">Schließen</button>
     </div>
 </div>
 

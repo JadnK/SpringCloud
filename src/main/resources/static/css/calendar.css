@@ -131,55 +131,6 @@ h1, h2 {
     width: auto;
     margin: 0 auto;
     min-width: 700px;
-}
-
-.calendar-table td {
-    width: 140px;
-    height: 140px;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 10px;
-    transition: background 0.2s;
-    vertical-align: top;
-}
-
-.calendar-table td:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.calendar-table .today {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid #b259ff;
-}
-.month-switcher {
-    text-align: center;
-    margin-top: 30px;
-}
-
-.month-buttons button {
-    margin: 3px;
-    padding: 8px 12px;
-    background: #444;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.month-buttons button:hover {
-    background: #666;
-}
-
-.month-buttons button.active {
-    background: #b259ff;
-}
-
-.calendar-table {
-    width: auto;
-    margin: 0 auto;
-    min-width: 700px;
     border-spacing: 2px;
 }
 
@@ -207,44 +158,6 @@ h1, h2 {
     background: rgba(255,255,255,0.07);
 }
 
-.calendar-table .today {
-    background: rgba(178, 89, 255, 0.2);
-    border: 2px solid #b259ff;
-}
-
-.entry {
-    background: #333;
-    padding: 4px 6px;
-    margin: 2px 0;
-    border-radius: 6px;
-    font-size: 0.85em;
-}
-
-.entry-form {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 5px;
-}
-
-.out-of-month {
-    background: #333;
-    color: #999;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.out-of-month .day-number {
-    color: #ccc;
-}
-
-.calendar-table td {
-    transition: background 0.2s;
-}
-
-.calendar-table td:hover {
-    background: rgba(255,255,255,0.1);
-}
-
 .out-of-month {
     background: #f4f4f4;
     color: #b0b0b0;
@@ -255,22 +168,29 @@ h1, h2 {
     color: #999;
 }
 
-.calendar-table td {
-    transition: background 0.2s;
+.month-switcher {
+    text-align: center;
+    margin-top: 30px;
 }
 
-.calendar-table td:hover {
-    background: rgba(255,255,255,0.1);
+.month-buttons button {
+    margin: 3px;
+    padding: 8px 12px;
+    background: #444;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-
-.out-of-month .day-number {
-    color: #999;
+.month-buttons button:hover {
+    background: #666;
 }
 
-.out-of-month {
-    background-color: #f0f0f0;
-    color: #b0b0b0;
+.month-buttons button.active {
+    background: #b259ff;
 }
 
 .today {
@@ -278,20 +198,95 @@ h1, h2 {
     border: 2px solid #b259ff;
 }
 
-.modal.hidden { display: none; }
+.modal.hidden {
+    display: none;
+}
+
 .modal {
-  position: fixed;
-  top: 10%; left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  border: 1px solid #ccc;
-  padding: 1em;
-  z-index: 1000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #333;
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    max-width: 500px;
+    width: 100%;
+    animation: fadeInUp 0.3s ease-in-out;
 }
+
 .modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
 }
 
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #f44336;
+}
 
+.modal-content p {
+    font-size: 1em;
+    color: #ddd;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="time"],
+.modal-content select,
+.modal-content textarea {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #555;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 1.1em;
+    width: 100%;
+}
+
+.modal-content button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.modal-content button[type="submit"]:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.close-btn {
+    background-color: #f44336;
+    color: white;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.close-btn:hover {
+    background-color: #da190b;
+    transform: scale(1.05);
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

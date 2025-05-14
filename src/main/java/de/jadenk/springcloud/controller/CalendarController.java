@@ -106,6 +106,7 @@ public class CalendarController {
     public String addEntry(
             @RequestParam String title,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) LocalTime entry_time,
             @RequestParam CalendarEntry.Visibility visibility
     ) {
         User user = getCurrentUser();
@@ -113,6 +114,7 @@ public class CalendarController {
         entry.setTitle(title);
         entry.setDate(date);
         entry.setVisibility(visibility);
+        entry.setTime(entry_time);
         entry.setUser(user);
 
         if (visibility == CalendarEntry.Visibility.PUBLIC) {
@@ -123,6 +125,19 @@ public class CalendarController {
         return "redirect:/calendar?year=" + date.getYear();
     }
 
+    @GetMapping("/delete/{id}")
+    public String deleteEntry(@PathVariable Long id) {
+        Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
+        if (entryOpt.isPresent()) {
+            CalendarEntry entry = entryOpt.get();
+            if (entry.getUser().equals(getCurrentUser())) {
+                entryRepo.delete(entry);
+            } else {
+                return "redirect:/calendar?error=Unauthorized";
+            }
+        }
+        return "redirect:/calendar";
+    }
 
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

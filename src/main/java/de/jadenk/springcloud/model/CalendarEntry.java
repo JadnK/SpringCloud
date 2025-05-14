@@ -22,7 +22,7 @@ public class CalendarEntry {
     @Column(name = "entry_date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "entry_time", nullable = true)
+    @Column(name = "entry_time", nullable = false)
     private LocalTime time;
 
     @Enumerated(EnumType.STRING)
