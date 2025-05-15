@@ -155,10 +155,10 @@ public class CalendarController {
         Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
         if (entryOpt.isPresent()) {
             CalendarEntry entry = entryOpt.get();
-            if (entry.getUser().equals(getCurrentUser())) {
+            if (entry.getUser().equals(getCurrentUser()) || getCurrentUser().getRole().getName().equals("ADMIN")) {
                 entryRepo.delete(entry);
             } else {
-                return "redirect:/calendar?error=Unauthorized";
+                return "redirect:/calendar";
             }
         }
         return "redirect:/calendar";

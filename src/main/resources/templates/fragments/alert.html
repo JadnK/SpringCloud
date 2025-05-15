@@ -1,0 +1,35 @@
+<!-- fragments/alert.html -->
+<div th:if="${error}" class="error-box" id="errorBox" th:text="${error}">Ein Fehler ist aufgetreten</div>
+
+<style>
+    .error-box {
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #ff4d4d;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        font-weight: bold;
+        z-index: 9999;
+        opacity: 0;
+        transition: all 0.5s ease;
+    }
+
+    .error-box.show {
+        top: 20px;
+        opacity: 1;
+    }
+</style>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const box = document.getElementById('errorBox');
+        if (box) {
+            setTimeout(() => box.classList.add('show'), 100);
+            setTimeout(() => box.classList.remove('show'), 5100);
+        }
+    });
+</script>

@@ -35,9 +35,11 @@ public class SecurityConfig {
                         .permitAll())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/share/**",
+                                "/login",
+                                "/error",
                                 "/css/**",
                                 "/js/**",
+                                "/share/**",
                                 "/link-expired"
                         ).permitAll()
                         .anyRequest().authenticated())

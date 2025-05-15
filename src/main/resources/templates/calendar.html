@@ -9,6 +9,8 @@
 </head>
 <body>
 
+<div th:replace="~{fragments/alert}"></div>
+
 <div class="navbar">
     <div class="brand">SpringCloud</div>
     <div class="username-box">
@@ -84,9 +86,9 @@
         <form id="createEntryForm" method="post" th:action="@{/calendar/add}">
             <input type="hidden" name="date" id="entryDate">
             <input type="text" name="title" placeholder="Titel" required>
-            <textarea name="description" placeholder="Beschreibung"></textarea>
-            <input type="time" name="entry_time" placeholder="Zeit">
-            <select name="visibility">
+            <textarea name="description" placeholder="Beschreibung" required></textarea>
+            <input type="time" name="entry_time" placeholder="Zeit" required>
+            <select name="visibility" required>
                 <option value="PRIVATE">Privat</option>
                 <option value="PUBLIC">Öffentlich</option>
             </select>

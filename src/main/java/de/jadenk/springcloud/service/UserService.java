@@ -47,6 +47,10 @@ public class UserService {
         logService.log(user.getUsername(), "User registered");
     }
 
+    public boolean usernameExists(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));

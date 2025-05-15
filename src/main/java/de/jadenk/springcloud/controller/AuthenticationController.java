@@ -3,6 +3,7 @@ package de.jadenk.springcloud.controller;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
+import de.jadenk.springcloud.util.MessageService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
 
@@ -27,10 +29,18 @@ public class AuthenticationController {
     @Autowired
     private LogService logService;
 
+    @Autowired
+    private MessageService messageService;
+
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        Model model) {
+        if (error != null) {
+            model.addAttribute("error", messageService.get("auth.invalid"));
+        }
         return "login";
     }
+
 
     @GetMapping("/register")
     public String registerForm(Model model, @ModelAttribute User user) {
@@ -66,10 +76,16 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public String registerSubmit(@ModelAttribute User user) {
+    public String registerSubmit(@ModelAttribute User user, Model model) {
+        if (userService.usernameExists(user.getUsername())) {
+            model.addAttribute("error", messageService.get("register.username_exists"));
+            return "register";
+        }
+
         userService.register(user);
         return "redirect:/login";
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) throws ServletException {
