@@ -46,7 +46,6 @@ public class CalendarController {
             boolean hasValidDay = false;
 
             for (int i = 0; i < 7; i++) {
-                // Lade nur Einträge dieses Tages, die öffentlich oder vom Benutzer sind
                 List<CalendarEntry> entries = entryRepo.findVisibleEntriesForDay(cursor, user);
                 boolean isToday = cursor.equals(LocalDate.now());
                 boolean isCurrentMonth = cursor.getMonth() == ym.getMonth();
@@ -88,19 +87,45 @@ public class CalendarController {
         if (entryOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         CalendarEntry entry = entryOpt.get();
+        User currentUser = getCurrentUser();
+
+        boolean isCreator = entry.getUser().equals(currentUser);
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
         Map<String, Object> result = new HashMap<>();
         result.put("id", entry.getId());
         result.put("title", entry.getTitle());
         result.put("description", entry.getDescription());
+        result.put("user", entry.getUser().getUsername());
         result.put("time", entry.getTime());
         result.put("date", entry.getDate());
         result.put("visibility", entry.getVisibility().toString());
+        result.put("canEdit", isCreator || isAdmin);
 
         return ResponseEntity.ok(result);
     }
 
 
+    @GetMapping("/entry/view/{id}")
+    public String getViewModal(@PathVariable Long id, Model model) {
+        Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
+        if (entryOpt.isEmpty()) return "fragments/error"; // oder 404
 
+        CalendarEntry entry = entryOpt.get();
+        User currentUser = getCurrentUser();
+
+        boolean isCreator = entry.getUser().equals(currentUser);
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        model.addAttribute("entry", entry);
+        model.addAttribute("canEdit", isCreator || isAdmin);
+
+        return "fragments/modal :: modal-content";
+    }
 
     @PostMapping("/add")
     public String addEntry(
@@ -138,6 +163,7 @@ public class CalendarController {
         }
         return "redirect:/calendar";
     }
+
 
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

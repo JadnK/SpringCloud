@@ -26,10 +26,17 @@
 <div class="content">
     <h1 th:text="'Kalender - ' + ${monthName} + ' ' + ${year}">Kalender</h1>
 
-    <form class="year-form" method="get" th:action="@{/calendar}">
+<!--    <form class="year-form" method="get" th:action="@{/calendar}">
         <input type="number" name="year" th:value="${year}" min="1900" max="2100" />
         <input type="number" name="month" th:value="${month}" min="1" max="12" />
         <button type="submit">Anzeigen</button>
+    </form> -->
+
+    <form method="get" th:action="@{/calendar}" class="year-form">
+        <input type="hidden" name="month" th:value="${month}" />
+        <button type="submit" name="year" th:value="${year - 1}">&laquo; Vorjahr</button>
+        <span th:text="${year}"></span>
+        <button type="submit" name="year" th:value="${year + 1}">Nächstes Jahr &raquo;</button>
     </form>
 
     <div class="calendar-wrapper">
@@ -71,7 +78,6 @@
     </div>
 </div>
 
-<!-- Create Entry Modal -->
 <div id="createModal" class="modal hidden">
     <div class="modal-content">
         <h2>Neuer Eintrag</h2>
@@ -90,29 +96,7 @@
     </div>
 </div>
 
-<!-- View Entry Modal -->
-<div id="viewModal" class="modal hidden">
-    <div class="modal-content">
-        <h2 id="viewTitle">Eintrag</h2>
-        <p id="viewDescription"></p>
-        <p><strong>Zeit:</strong> <span id="viewTime"></span></p>
-        <p><strong>Datum:</strong> <span id="viewDate"></span></p>
-        <p><strong>Sichtbarkeit:</strong> <span id="viewVisibility"></span></p>
-
-        <form id="toggleVisibilityForm" method="post" th:action="@{/calendar/toggle-visibility}">
-            <input type="hidden" name="id" id="entryId">
-            <button type="submit">Sichtbarkeit wechseln</button>
-        </form>
-
-        <form method="post" th:action="@{/calendar/delete/[[${file.fileName}]]}"
-              onsubmit="return confirm('Wirklich löschen?')">
-            <input type="hidden" name="id" id="deleteEntryId">
-            <button type="submit">Löschen</button>
-        </form>
-
-        <button onclick="closeModal('viewModal')" class="close-btn">Schließen</button>
-    </div>
-</div>
+<div id="viewModal" class="modal hidden"></div>
 
 <script>
     function openCreateModal(cell) {
@@ -124,21 +108,15 @@
     function openViewModal(entryElement) {
         const entryId = entryElement.getAttribute("data-id");
 
-        fetch(`/calendar/entry/${entryId}`)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("viewTitle").textContent = data.title;
-                document.getElementById("viewDescription").textContent = data.description || "–";
-                document.getElementById("viewTime").textContent = data.time || "–";
-                document.getElementById("viewDate").textContent = data.date;
-                document.getElementById("viewVisibility").textContent = data.visibility;
-
-                document.getElementById("entryId").value = data.id;
-                document.getElementById("deleteEntryId").value = data.id;
-
-                document.getElementById("viewModal").classList.remove("hidden");
+        fetch(`/calendar/entry/view/${entryId}`)
+            .then(res => res.text())
+            .then(html => {
+                const container = document.getElementById("viewModal");
+                container.innerHTML = html;
+                container.classList.remove("hidden");
             });
     }
+
 
     function closeModal(id) {
         document.getElementById(id).classList.add("hidden");

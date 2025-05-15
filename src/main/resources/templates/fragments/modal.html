@@ -1,0 +1,20 @@
+<!-- fragments/modal.html -->
+<div class="modal-content" th:fragment="modal-content">
+    <h2 th:text="${entry.title}">Eintrag</h2>
+    <p th:text="${entry.description}"></p>
+    <p><strong>Creator:</strong> <span th:text="${entry.user.username}"></span></p>
+    <p><strong>Zeit:</strong> <span th:text="${entry.time}"></span></p>
+    <p><strong>Datum:</strong> <span th:text="${entry.date}"></span></p>
+    <p><strong>Sichtbarkeit:</strong> <span th:text="${entry.visibility}"></span></p>
+
+    <form th:if="${canEdit}" method="post" th:action="@{/calendar/toggle-visibility}">
+        <input type="hidden" name="id" th:value="${entry.id}">
+        <button type="submit">Sichtbarkeit wechseln</button>
+    </form>
+
+    <form th:if="${canEdit}" method="get" th:action="@{'/calendar/delete/' + ${entry.id}}">
+        <button type="submit">Löschen</button>
+    </form>
+
+    <button onclick="closeModal('viewModal')" class="close-btn">Schließen</button>
+</div>
