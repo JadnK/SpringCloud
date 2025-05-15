@@ -4,6 +4,8 @@ import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.LogRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.service.LogService;
+import de.jadenk.springcloud.util.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +22,13 @@ import java.time.LocalDateTime;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
-    private LogRepository logRepo;
+    private LogService logService;
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -34,14 +39,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String username = ((UserDetails) authentication.getPrincipal()).getUsername();
         User user = userRepo.findByUsername(username).orElse(null);
 
-        System.out.println("Authentication Object: " + authentication);
+        // System.out.println("Authentication Object: " + authentication);
 
         if (user != null) {
-            Log log = new Log();
-            log.setUser(user);
-            log.setAction("Success Login");
-            log.setTimestamp(LocalDateTime.now());
-            logRepo.save(log);
+            logService.log(user.getUsername(), messageService.getLog("login.success"));
         }
 
         response.sendRedirect("/dashboard");

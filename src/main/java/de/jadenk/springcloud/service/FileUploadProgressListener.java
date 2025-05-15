@@ -20,7 +20,7 @@ public class FileUploadProgressListener {
         this.bytesRead = bytesRead;
         this.progress = (double) bytesRead / totalBytes * 100;
 
-        System.out.println("Aktueller Fortschritt: " + (bytesRead * 100 / totalBytes) + "%");
+        // System.out.println("Aktueller Fortschritt: " + (bytesRead * 100 / totalBytes) + "%");
     }
 
     public double getProgress() {

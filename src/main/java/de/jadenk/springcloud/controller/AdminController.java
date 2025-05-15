@@ -10,6 +10,7 @@ import de.jadenk.springcloud.repository.RoleRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
+import de.jadenk.springcloud.util.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,6 +47,10 @@ public class AdminController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private MessageService messageService;
+
+
     @GetMapping("/admin")
     public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
                                  Model model) {
@@ -57,7 +62,7 @@ public class AdminController {
 
         if (!hasAdminRole) {
             String username = authentication.getName();
-            logService.log(username, "Access attempt to /admin denied due to lack of ADMIN role");
+            logService.log(username, messageService.getLog("admin.user.missing.permissions"));
             return "redirect:/dashboard";
         }
 
@@ -79,7 +84,6 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
 
-        // logService.log(authentication.getName(), "Access to /admin page");
         return "admin";
     }
 
@@ -97,12 +101,14 @@ public class AdminController {
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 
         if (!user.getUsername().equals(username)) {
-            logService.log(currentUser.getUsername(), "Username changed for USER: '" + user.getUsername() + "' -> " + username);
+            String message = messageService.getLog("admin.user.username.changed", user.getUsername(), username);
+            logService.log(currentUser.getUsername(), message);
             user.setUsername(username);
         }
 
         if (!user.getEmail().equals(email)) {
-            logService.log(currentUser.getUsername(), "Email changed for USER: '" + user.getUsername() + "' -> " + email);
+            String message = messageService.getLog("admin.user.email.changed", user.getUsername(), email);
+            logService.log(currentUser.getUsername(), message);
             user.setEmail(email);
         }
 
@@ -113,14 +119,16 @@ public class AdminController {
 
         Role currentRole = user.getRole();
         if (!currentRole.equals(foundRole)) {
-            logService.log(currentUser.getUsername(), "Role Change for USER: '" + user.getUsername() + "' Role: " + currentRole.getName() + " -> " + foundRole.getName());
+            String message = messageService.getLog("admin.user.role.changed", user.getUsername(), currentRole.getName(), foundRole.getName());
+            logService.log(currentUser.getUsername(), message);
             user.setRole(foundRole);
         }
 
         if (password != null && !password.trim().isEmpty()) {
             String encodedPassword = securityConfig.passwordEncoder().encode(password);
             user.setPassword(encodedPassword);
-            logService.log(currentUser.getUsername(), "Password changed for USER: '" + user.getUsername() + "'");
+            String message = messageService.getLog("admin.user.password.changed", user.getUsername());
+            logService.log(currentUser.getUsername(), message);
         }
 
         userRepository.save(user);
@@ -135,10 +143,8 @@ public class AdminController {
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (deleted) {
-            logService.log(currentUser.getUsername(), "Deleted User: '" + userToDelete.getUsername() + "'");
-            redirectAttributes.addFlashAttribute("success", "User deleted successfully.");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "User not found or could not be deleted.");
+            String message = messageService.getLog("admin.user.deleted", userToDelete.getUsername());
+            logService.log(currentUser.getUsername(), message);
         }
         return "redirect:/admin";
     }
@@ -150,17 +156,13 @@ public class AdminController {
             userService.banUser(id);
             User user = userService.getUserById(id);
             String status = user.isBanned() ? "banned" : "unbanned";
-            redirectAttributes.addFlashAttribute("success", "User wurde " + status + ".");
-            logService.log(currentUser.getUsername(), "User: " + user.getUsername() + " was " + status);
+            String message = messageService.getLog("admin.user.ban.status", user.getUsername(), status);
+            logService.log(currentUser.getUsername(), message);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "User nicht gefunden.");
+            System.out.println("Error while banning user.");
         }
         return "redirect:/admin";
     }
-
-
-
-
 
     @GetMapping("/users")
     public String getAllUsers(Model model) {

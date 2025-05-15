@@ -4,6 +4,7 @@ import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.util.MessageService;
 import org.apache.tomcat.util.http.fileupload.FileItemFactory;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class FileUploadService {
     @Autowired
     private LogService logService;
 
+    @Autowired
+    private MessageService messageService;
+
 
     public void uploadFile(MultipartFile file) throws IOException {
         FileUploadProgressListener progressListener = new FileUploadProgressListener(file);
@@ -53,7 +57,8 @@ public class FileUploadService {
         );
         uploadedFileRepository.save(uploadedFile);
 
-        logService.log(currentUser.getUsername(), "File Uploaded: " + file.getOriginalFilename());
+        String message = messageService.getLog("dashboard.file.upload", file.getOriginalFilename());
+        logService.log(currentUser.getUsername(), message);
     }
 
 }

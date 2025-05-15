@@ -5,6 +5,7 @@ import de.jadenk.springcloud.model.Role;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.RoleRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.util.MessageService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +31,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MessageService messageService;
+
     public boolean deleteUserById(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
@@ -44,7 +48,7 @@ public class UserService {
         user.setRole(userRole);
         userRepo.save(user);
 
-        logService.log(user.getUsername(), "User registered");
+        logService.log(user.getUsername(), messageService.getLog("register.success"));
     }
 
     public boolean usernameExists(String username) {

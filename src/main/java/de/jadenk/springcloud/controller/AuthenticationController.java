@@ -36,7 +36,7 @@ public class AuthenticationController {
     public String login(@RequestParam(value = "error", required = false) String error,
                         Model model) {
         if (error != null) {
-            model.addAttribute("error", messageService.get("auth.invalid"));
+            model.addAttribute("error", messageService.getError("auth.invalid"));
         }
         return "login";
     }
@@ -58,7 +58,7 @@ public class AuthenticationController {
 
         if (!hasAdminRole) {
             String username = authentication.getName();
-            logService.log(username, "Access attempt to /register denied due to lack of ADMIN role");
+            logService.log(username, messageService.getLog("register.user.missing.permissions"));
             return "redirect:/dashboard";
         }
 
@@ -78,7 +78,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public String registerSubmit(@ModelAttribute User user, Model model) {
         if (userService.usernameExists(user.getUsername())) {
-            model.addAttribute("error", messageService.get("register.username_exists"));
+            model.addAttribute("error", messageService.getError("register.username.exists"));
             return "register";
         }
 

@@ -4,6 +4,7 @@ import de.jadenk.springcloud.model.SharedLink;
 import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.SharedLinkRepository;
+import de.jadenk.springcloud.util.MessageService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -25,9 +26,12 @@ public class SharingService {
     @Autowired
     private LogService logService;
 
+    @Autowired
+    private MessageService messageService;
+
     public String generateSharedLink(HttpServletRequest request, User user, UploadedFile file, Duration linkDuration) {
         String token = UUID.randomUUID().toString();
-        System.out.println("Reached the generateSharedLink method!");
+
         LocalDateTime expireDate = LocalDateTime.now().plus(linkDuration);
         SharedLink sharedLink = new SharedLink(file, user, token, expireDate);
 
@@ -39,10 +43,9 @@ public class SharingService {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String fullUrl = baseUrl + "/share/file/" + token;
 
-        logService.log(username, "Shared File " + file.getFileName() + "(id=" + file.getId() + ") -> " + fullUrl);
+        String message = messageService.getLog("sharing.file", file.getFileName(), file.getId(), fullUrl);
+        logService.log(username, message);
 
         return fullUrl;
     }
-
-
 }

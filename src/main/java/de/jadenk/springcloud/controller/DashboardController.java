@@ -7,6 +7,7 @@ import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.FileUploadService;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
+import de.jadenk.springcloud.util.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -40,6 +41,9 @@ public class DashboardController {
     @Autowired
     private LogService logService;
 
+    @Autowired
+    private MessageService messageService;
+
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
@@ -66,7 +70,7 @@ public class DashboardController {
         if (!file.isEmpty()) {
             try {
                 fileUploadService.uploadFile(file);
-                return "redirect:/dashboard?uploadSuccess";
+                return "redirect:/dashboard";
             } catch (Exception e) {
                 e.printStackTrace();
                 return "redirect:/dashboard?uploadError";
@@ -84,7 +88,8 @@ public class DashboardController {
         String filename = file.getFileName();
 
         uploadedFileRepository.deleteById(id);
-        logService.log(currentUser.getUsername(), "File deleted: " + filename);
+        String message = messageService.getError("dashboard.file.deleted", filename);
+        logService.log(currentUser.getUsername(), message);
         return "redirect:/dashboard";
     }
 
@@ -95,7 +100,8 @@ public class DashboardController {
         UploadedFile file = uploadedFileRepository.findById(id).orElseThrow();
         String filename = file.getFileName();
 
-        logService.log(currentUser.getUsername(), "File downloaded: " + filename);
+        String message = messageService.getError("dashboard.file.downloaded", filename);
+        logService.log(currentUser.getUsername(), message);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, file.getFileType())

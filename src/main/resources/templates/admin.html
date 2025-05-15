@@ -14,8 +14,9 @@
     <div class="username-box">
         <span th:text="${username}">Username</span>
         <div class="logout-dropdown" id="logoutDropdown">
-            <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/register}">Add Users</a>
+            <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/register}" class="admin-element">Add Users</a>
             <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/calendar}">Calendar</a>
             <a th:href="@{/change-password}">Change Password</a>
             <a th:href="@{/logout}">Logout</a>
         </div>

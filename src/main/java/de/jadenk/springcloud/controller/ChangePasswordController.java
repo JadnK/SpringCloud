@@ -3,6 +3,7 @@ package de.jadenk.springcloud.controller;
 import de.jadenk.springcloud.config.SecurityConfig;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.util.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,9 @@ public class ChangePasswordController {
 
     @Autowired
     private SecurityConfig securityConfig;
+
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping("/change-password")
     public String showChangePasswordForm(Model model) {
@@ -53,17 +57,17 @@ public class ChangePasswordController {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (!securityConfig.passwordEncoder().matches(currentPassword, user.getPassword())) {
-            model.addAttribute("error", "Current Password is wrong!");
+            model.addAttribute("error", messageService.getError("changepassword.current.invalid"));
             return "change-password";
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("error", "There are 2 different Passwords!");
+            model.addAttribute("error", messageService.getError("changepassword.different.passwords"));
             return "change-password";
         }
 
         if (securityConfig.passwordEncoder().matches(newPassword, user.getPassword())) {
-            model.addAttribute("error", "You cant Use the same Password as before!");
+            model.addAttribute("error", messageService.getError("changepassword.same.password"));
             return "change-password";
         }
 
