@@ -43,10 +43,10 @@ public class SecurityConfig {
                                 "/link-expired"
                         ).permitAll()
                         .anyRequest().authenticated())
-                //.rememberMe(remember -> remember
-                //        .key("cookie_remember_me_jadenk_292929")
-                //        .tokenValiditySeconds(7 * 24 * 60 * 60)
-                //)
+                .rememberMe(remember -> remember
+                        .key("cookie_remember_me_jadenk_292929")
+                        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler(successHandler)
