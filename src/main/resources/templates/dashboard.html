@@ -6,13 +6,17 @@
     <title>SpringCloud Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <script th:src="@{/js/navbar.js}"></script>
 </head>
 <body>
 
 <div class="navbar">
     <div class="brand">SpringCloud</div>
-    <div class="username-box">
-        <span th:text="${username}">Username</span>
+    <div class="username-box" id="usernameBox">
+        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff" width="24" height="24" aria-hidden="true">
+            <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
+        </svg>
+        <span th:text="${username}">N/A</span>
         <div class="logout-dropdown" id="logoutDropdown">
             <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/admin}" class="admin-element">Admin</a>
             <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/register}" class="admin-element">Add Users</a>

@@ -2,89 +2,121 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #1a1a2e;
-    padding: 15px 30px;
+    background: linear-gradient(90deg, #1a1a2e 0%, #2a2a4a 100%);
+    padding: 14px 35px;
     position: relative;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    border-bottom: 2px solid #b259ff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+    border-bottom: 2.5px solid #b259ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .navbar .brand {
     font-size: 2em;
-    font-weight: bold;
+    font-weight: 900;
     color: #b259ff;
     text-transform: uppercase;
+    letter-spacing: 1.7px;
+    user-select: none;
 }
 
 .username-box {
-    background-color: #333;
-    padding: 10px 20px;
-    border-radius: 30px;
+    background-color: #2c2c3e;
+    padding: 10px 22px; /* dicker */
+    border-radius: 28px;
     cursor: pointer;
     position: relative;
     display: flex;
     align-items: center;
-    transition: background-color 0.3s ease;
-}
-
-.username-box::before {
-    content: '👤'; /* Benutzer-Icon */
-    margin-right: 10px;
-    font-size: 1.5em; /* Größe des Icons */
-    color: #b259ff; /* Farbe des Icons */
+    transition: background-color 0.4s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 8px rgba(178, 89, 255, 0.35);
 }
 
 .username-box:hover {
-    background-color: #444; /* Hintergrundfarbe bei Hover */
+    background-color: #3b3b5a;
+    box-shadow: 0 0 14px rgba(178, 89, 255, 0.6);
+}
+
+.user-icon {
+    margin-right: 12px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 1px rgba(178, 89, 255, 0.7));
 }
 
 .logout-dropdown {
     display: none;
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     right: 0;
-    background-color: #444;
-    border-radius: 8px;
-    margin-top: 5px;
-    padding: 10px;
-    z-index: 10;
+    background-color: #3a3a5a;
+    border-radius: 11px;
+    padding: 14px 0;
+    min-width: 190px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.48);
+    z-index: 20;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    transform: translateY(-10px);
-    min-width: 180px; /* Mindestbreite für das Dropdown */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-14px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
 }
 
-.logout-dropdown a {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px; /* Längere Padding für die Links */
+.logout-dropdown.show,
+.username-box:hover .logout-dropdown {
     display: block;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.logout-dropdown a.admin-element {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    background-color: #f44336;
-    display: block;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.logout-dropdown a:hover {
-    background-color: #b259ff; /* Hover-Farbe für Links */
-}
-
-.logout-dropdown a.admin-element:hover {
-    background-color: #d32f2f; /* Hover-Farbe für Links */
-}
-
-.username-box:hover .logout-dropdown,
 .logout-dropdown.show {
     display: block;
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
+}
+
+.logout-dropdown a {
+    display: block;
+    color: #ddd;
+    padding: 11px 24px;
+    margin: 0 14px;
+    border-left: 3.5px solid transparent;
+    font-weight: 600;
+    font-size: 1em;
+    text-decoration: none;
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease;
+    user-select: none;
+    border-radius: 0 7px 7px 0;
+}
+
+.logout-dropdown a.admin-element {
+    background-color: transparent;
+    color: #b259ff;
+    font-weight: 700;
+    margin: 0 14px 7px 14px;
+    border-left: 3.5px solid #b259ff;
+    border-radius: 0 7px 7px 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logout-dropdown a.admin-element:hover {
+    background-color: #b259ff;
+    color: #1a1a2e;
+    border-left-color: #7d49b7;
+}
+
+.logout-dropdown a:hover {
+    background-color: #7d49b7;
+    color: #fff;
+    border-left-color: #7d49b7;
+}
+
+.logout-dropdown a:hover,
+.username-box:hover {
+    cursor: pointer;
+}
+
+.username-box::before {
+    content: none;
 }
