@@ -6,7 +6,7 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at top left, #4b0082, #1a1a2e);
+    background-color: #1f1f2e;
             color: #fff;
             overflow-x: hidden;
             padding-top: 80px;

@@ -102,6 +102,10 @@ public class ShareController {
         SharedLink link = sharedLinkRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+        if (LocalDateTime.now().isAfter(link.getExpireDate())) {
+            return "link-expired";
+        }
+
         UploadedFile file = link.getFile();
         String fileType = file.getFileType();
 
