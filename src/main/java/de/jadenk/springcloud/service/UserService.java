@@ -1,11 +1,13 @@
 package de.jadenk.springcloud.service;
 
 import de.jadenk.springcloud.model.Ban;
+import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.Role;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.RoleRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.util.MessageService;
+import de.jadenk.springcloud.util.WebhookEvent;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +35,8 @@ public class UserService {
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private WebhookService webhookService;
 
     public boolean deleteUserById(Long id) {
         if (userRepository.existsById(id)) {
@@ -48,7 +52,9 @@ public class UserService {
         user.setRole(userRole);
         userRepo.save(user);
 
-        logService.log(user.getUsername(), messageService.getLog("register.success"));
+        Log log = logService.log(user.getUsername(), messageService.getLog("register.success"));
+
+        webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + user.getUsername() + "registerd someone.", log.getId());
     }
 
     public boolean usernameExists(String username) {

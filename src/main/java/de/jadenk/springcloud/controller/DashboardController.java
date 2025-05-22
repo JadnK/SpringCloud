@@ -1,13 +1,16 @@
 package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.exception.ResourceNotFoundException;
+import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.FileUploadService;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
+import de.jadenk.springcloud.service.WebhookService;
 import de.jadenk.springcloud.util.MessageService;
+import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -80,6 +83,9 @@ public class DashboardController {
         }
     }
 
+    @Autowired
+    private WebhookService webhookService;
+
     @GetMapping("/delete/{id}")
     public String deleteFile(@PathVariable Long id) {
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -89,7 +95,9 @@ public class DashboardController {
 
         uploadedFileRepository.deleteById(id);
         String message = messageService.getError("dashboard.file.deleted", filename);
-        logService.log(currentUser.getUsername(), message);
+        Log log = logService.log(currentUser.getUsername(), message);
+
+        webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + currentUser.getUsername() + " deleted an File.", log.getId());
         return "redirect:/dashboard";
     }
 

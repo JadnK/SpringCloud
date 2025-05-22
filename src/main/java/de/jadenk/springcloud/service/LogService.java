@@ -18,7 +18,7 @@ public class LogService {
     @Autowired
     private LogRepository logRepo;
 
-    public void log(String username, String action) {
+    public Log log(String username, String action) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -28,6 +28,7 @@ public class LogService {
         log.setTimestamp(LocalDateTime.now());
 
         logRepo.save(log);
+        return log;
     }
 
     @Autowired

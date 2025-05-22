@@ -1,16 +1,15 @@
 package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.config.SecurityConfig;
-import de.jadenk.springcloud.model.Log;
-import de.jadenk.springcloud.model.Role;
-import de.jadenk.springcloud.model.UploadedFile;
-import de.jadenk.springcloud.model.User;
+import de.jadenk.springcloud.model.*;
 import de.jadenk.springcloud.repository.LogRepository;
 import de.jadenk.springcloud.repository.RoleRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
+import de.jadenk.springcloud.service.WebhookService;
 import de.jadenk.springcloud.util.MessageService;
+import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,16 +20,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class AdminController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private WebhookService webhookService;
 
     @Autowired
     private UserRepository userRepository;
@@ -76,6 +75,10 @@ public class AdminController {
         int offset = (page - 1) * pageSize;
         List<Log> logs = logRepository.findLogsPaged(offset, pageSize);
 
+
+        Webhook webhook = webhookService.getFirst().orElse(new Webhook());
+        model.addAttribute("webhook", webhook);
+        model.addAttribute("webhooks", webhookService.getAll());
         model.addAttribute("users", users);
         model.addAttribute("logs", logs);
         model.addAttribute("roles", roles);
@@ -100,15 +103,17 @@ public class AdminController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 
+        Log log = null;
+
         if (!user.getUsername().equals(username)) {
             String message = messageService.getLog("admin.user.username.changed", user.getUsername(), username);
-            logService.log(currentUser.getUsername(), message);
+            log = logService.log(currentUser.getUsername(), message);
             user.setUsername(username);
         }
 
         if (!user.getEmail().equals(email)) {
             String message = messageService.getLog("admin.user.email.changed", user.getUsername(), email);
-            logService.log(currentUser.getUsername(), message);
+            log = logService.log(currentUser.getUsername(), message);
             user.setEmail(email);
         }
 
@@ -120,7 +125,7 @@ public class AdminController {
         Role currentRole = user.getRole();
         if (!currentRole.equals(foundRole)) {
             String message = messageService.getLog("admin.user.role.changed", user.getUsername(), currentRole.getName(), foundRole.getName());
-            logService.log(currentUser.getUsername(), message);
+            log = logService.log(currentUser.getUsername(), message);
             user.setRole(foundRole);
         }
 
@@ -128,8 +133,10 @@ public class AdminController {
             String encodedPassword = securityConfig.passwordEncoder().encode(password);
             user.setPassword(encodedPassword);
             String message = messageService.getLog("admin.user.password.changed", user.getUsername());
-            logService.log(currentUser.getUsername(), message);
+            log = logService.log(currentUser.getUsername(), message);
         }
+
+        webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + user.getUsername() + " was updated", log.getId());
 
         userRepository.save(user);
 
@@ -157,7 +164,8 @@ public class AdminController {
             User user = userService.getUserById(id);
             String status = user.isBanned() ? "banned" : "unbanned";
             String message = messageService.getLog("admin.user.ban.status", user.getUsername(), status);
-            logService.log(currentUser.getUsername(), message);
+            Log log = logService.log(currentUser.getUsername(), message);
+            webhookService.triggerWebhookEvent(WebhookEvent.USER_BANNED, "User " + user.getUsername() + " was " + status, log.getId());
         } catch (Exception e) {
             System.out.println("Error while banning user.");
         }

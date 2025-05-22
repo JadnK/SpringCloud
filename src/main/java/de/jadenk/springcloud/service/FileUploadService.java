@@ -1,10 +1,13 @@
 package de.jadenk.springcloud.service;
 
+import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.repository.WebhookRepository;
 import de.jadenk.springcloud.util.MessageService;
+import de.jadenk.springcloud.util.WebhookEvent;
 import org.apache.tomcat.util.http.fileupload.FileItemFactory;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,8 @@ public class FileUploadService {
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private WebhookService webhookService;
 
 
     public void uploadFile(MultipartFile file) throws IOException {
@@ -58,7 +63,9 @@ public class FileUploadService {
         uploadedFileRepository.save(uploadedFile);
 
         String message = messageService.getLog("dashboard.file.upload", file.getOriginalFilename());
-        logService.log(currentUser.getUsername(), message);
+        Log log = logService.log(currentUser.getUsername(), message);
+
+        webhookService.triggerWebhookEvent(WebhookEvent.FILE_UPLOADED, "User " + currentUser.getUsername() + " uploaded an file", log.getId());
     }
 
 }

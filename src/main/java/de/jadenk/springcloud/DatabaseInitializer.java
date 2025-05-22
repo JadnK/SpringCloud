@@ -65,6 +65,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             if (!tableExists(statement, "calendar_entry")) {
                 createCalendarTable(statement);
             }
+
+            if (!tableExists(statement, "webhooks")) {
+                createWebhookTable(statement);
+            }
         }
     }
 
@@ -104,6 +108,23 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "FOREIGN KEY (user_id) REFERENCES users(id));");
     }
+
+    private void createWebhookTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE webhooks (" +
+                "webhook_id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "is_enabled BOOLEAN NOT NULL," +
+                "webhook_url VARCHAR(255) NOT NULL," +
+                "on_user_creation BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_user_ban BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_register BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_error_thrown BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_file_deletion BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_file_upload BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_calendar_notification BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_user_update BOOLEAN NOT NULL DEFAULT FALSE" +
+                ");");
+    }
+
 
     private void createUsersTable(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE users (" +
