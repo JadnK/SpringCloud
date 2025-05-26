@@ -79,4 +79,8 @@ public class User {
     public void setBanned(boolean banned) {
         this.banned = banned;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
