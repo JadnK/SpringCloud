@@ -94,7 +94,7 @@ public class DashboardController {
         String filename = file.getFileName();
 
         uploadedFileRepository.deleteById(id);
-        String message = messageService.getError("dashboard.file.deleted", filename);
+        String message = messageService.getLog("dashboard.file.deleted", filename);
         Log log = logService.log(currentUser.getUsername(), message);
 
         webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + currentUser.getUsername() + " deleted an File.", log.getId());
@@ -108,7 +108,7 @@ public class DashboardController {
         UploadedFile file = uploadedFileRepository.findById(id).orElseThrow();
         String filename = file.getFileName();
 
-        String message = messageService.getError("dashboard.file.downloaded", filename);
+        String message = messageService.getLog("dashboard.file.downloaded", filename);
         logService.log(currentUser.getUsername(), message);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
