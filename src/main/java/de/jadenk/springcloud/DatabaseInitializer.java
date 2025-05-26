@@ -5,9 +5,11 @@ import de.jadenk.springcloud.model.Role;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.RoleRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.service.CalendarWebhookScheduler;
 import de.jadenk.springcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -15,7 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Component
+@Component("databaseInitializer")
 public class DatabaseInitializer implements CommandLineRunner {
 
     @Autowired
@@ -30,28 +32,30 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Autowired
     private SecurityConfig securityConfig;
 
+    @Autowired
+    @Lazy
+    private CalendarWebhookScheduler calendarWebhookScheduler;
+
 
     @Override
     public void run(String... args) throws Exception {
         checkAndCreateTables();
         checkAndCreateDefaultRoles();
         createDefaultAdminUser();
+
+        calendarWebhookScheduler.sendDailyCalendarReminders();
     }
 
     private void checkAndCreateTables() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
 
-            if (!tableExists(statement, "users")) {
-                createUsersTable(statement);
-            }
-
             if (!tableExists(statement, "roles")) {
                 createRolesTable(statement);
             }
 
-            if (!tableExists(statement, "logs")) {
-                createLogsTable(statement);
+            if (!tableExists(statement, "users")) {
+                createUsersTable(statement);
             }
 
             if (!tableExists(statement, "uploaded_files")) {
@@ -60,6 +64,10 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             if (!tableExists(statement, "shared_links")) {
                 createSharedLinks(statement);
+            }
+
+            if (!tableExists(statement, "logs")) {
+                createLogsTable(statement);
             }
 
             if (!tableExists(statement, "calendar_entry")) {
@@ -156,7 +164,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "file_type VARCHAR(50) NOT NULL," +
                 "file_data LONGBLOB NOT NULL," +
                 "upload_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                "file_owner_id INT NOT NULL, " +
+                "file_owner_id BIGINT NOT NULL, " +
                 "FOREIGN KEY (`file_owner_id`) REFERENCES `users`(`id`));");
     }
 

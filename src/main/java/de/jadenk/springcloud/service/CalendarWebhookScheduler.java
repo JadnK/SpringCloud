@@ -7,6 +7,7 @@ import de.jadenk.springcloud.repository.WebhookRepository;
 import de.jadenk.springcloud.util.WebhookEvent;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@DependsOn("databaseInitializer")
 public class CalendarWebhookScheduler {
 
     @Autowired
@@ -58,10 +60,5 @@ public class CalendarWebhookScheduler {
 
 
         webhookService.triggerWebhookEvent(WebhookEvent.CALENDAR_NOTIFICATION, message.toString(), (long)0);
-    }
-
-    @PostConstruct
-    public void init() {
-        sendDailyCalendarReminders();
     }
 }
