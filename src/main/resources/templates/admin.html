@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div class="navbar">
+<div class="navbar no-select">
     <div class="brand">SpringCloud</div>
     <div class="username-box" id="usernameBox">
         <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff" width="24" height="24" aria-hidden="true">
@@ -28,16 +28,16 @@
 </div>
 
 <div class="content">
-    <h1>Admin Dashboard</h1>
+    <h1 class="no-select">Admin Dashboard</h1>
 
-    <h2>Users</h2>
+    <h2 class="no-select">Users</h2>
     <table class="user-table">
         <thead>
         <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Action</th>
+            <th class="no-select">Username</th>
+            <th class="no-select">Email</th>
+            <th class="no-select">Role</th>
+            <th class="no-select">Action</th>
         </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
                 <span th:each="role : ${user.role}" th:text="${role.name}">Role</span>
             </td>
             <td>
-                <button class="button"
+                <button class="button no-select"
                         th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                         th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role.name}"
                         onclick="showEditPopupFromButton(this)">
@@ -56,7 +56,7 @@
                 </button>
                 <form th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                       th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" style="display:inline;">
-                    <button class="button" type="submit"
+                    <button class="button no-select" type="submit"
                             th:text="${user.banned} ? 'Unban' : 'Ban'" >
 <!--                            th:attr="style=${user.banned}
             ? 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'
@@ -71,7 +71,7 @@
         </tbody>
     </table>
 
-    <h2>Logs</h2>
+    <h2 class="no-select">Logs</h2>
 
     <div class="log-filter">
         <div>
@@ -85,17 +85,20 @@
     <div th:each="log : ${logs}" class="log-entry" th:id="'log-' + ${log.id}">
         <div class="log-info">
             <span th:text="${log.action}">Action</span> –
-            <span class="log-timestamp" th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}">Time</span>
+            <span class="log-timestamp"
+                  th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}"
+                  th:attr="data-date=${#temporals.format(log.timestamp, 'yyyy-MM-dd')}">
+</span>
             <p>Executed by: <span th:text="${log.user.username}">Username</span></p>
         </div>
     </div>
     <div class="pagination">
         <span th:if="${currentPage > 1}">
-        <a class="button" th:href="@{'/admin?page=' + (${currentPage - 1})}">« Back</a>
+        <a class="button no-select" th:href="@{'/admin?page=' + (${currentPage - 1})}">« Back</a>
     </span>
 
         <span th:if="${currentPage > 3}">
-        <a class="button" th:href="@{'/admin?page=1'}">1</a>
+        <a class="button no-select" th:href="@{'/admin?page=1'}">1</a>
         <span class="ellipsis">...</span>
     </span>
 
@@ -103,30 +106,30 @@
         (currentPage - 2 > 1 ? currentPage - 2 : 1),
         (currentPage + 2 < totalPages ? currentPage + 2 : totalPages)
     )}">
-        <a class="button" th:classappend="${i == currentPage} ? 'active'" th:href="@{'/admin?page=' + ${i}}" th:text="${i}"></a>
+        <a class="button no-select" th:classappend="${i == currentPage} ? 'active'" th:href="@{'/admin?page=' + ${i}}" th:text="${i}"></a>
     </span>
 
         <span th:if="${currentPage < totalPages - 2}">
         <span class="ellipsis">...</span>
-        <a class="button" th:href="@{'/admin?page=' + ${totalPages}}" th:text="${totalPages}"></a>
+        <a class="button no-select" th:href="@{'/admin?page=' + ${totalPages}}" th:text="${totalPages}"></a>
     </span>
 
         <span th:if="${currentPage < totalPages}">
-        <a class="button" th:href="@{'/admin?page=' + (${currentPage + 1})}">Next »</a>
+        <a class="button no-select" th:href="@{'/admin?page=' + (${currentPage + 1})}">Next »</a>
     </span>
     </div>
 
 
-    <h2>Webhook Settings</h2>
+    <h2 class="no-select">Webhook Settings</h2>
     <form action="/webhooks/add" method="post" class="webhook-settings">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="webhook-url-group">
-            <label for="webhookUrl">Webhook URL:</label>
+            <label for="webhookUrl" class="no-select">Webhook URL:</label>
             <input type="text" id="webhookUrl" name="url" placeholder="https://example.com/webhook" required>
         </div>
 
         <div class="webhook-events">
-            <label>Webhook Events:</label>
+            <label class="no-select">Webhook Events:</label>
             <div class="checkbox-group">
                 <label><input type="checkbox" name="onUserCreation"> User created</label>
                 <label><input type="checkbox" name="onUserBan"> User banned</label>
@@ -140,7 +143,7 @@
         </div>
 
         <div class="webhook-actions">
-            <button type="submit" class="button">Add Webhook</button>
+            <button type="submit" class="button no-select">Add Webhook</button>
         </div>
     </form>
 
@@ -171,12 +174,12 @@
 
                 <form th:action="@{/webhooks/test/{id}(id=${webhook.id})}" method="post" style="display: inline;">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button class="button" type="submit">Test</button>
+                    <button class="button no-select" type="submit">Test</button>
                 </form>
 
                 <form th:action="@{/webhooks/delete/{id}(id=${webhook.id})}" method="post" style="display: inline;">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button class="button danger" type="submit">Delete</button>
+                    <button class="button no-select danger" type="submit">Delete</button>
                 </form>
             </div>
         </div>
@@ -189,13 +192,13 @@
     <div class="modal-content">
         <form id="editForm" th:action="@{/admin/user/update}" method="post">
             <input type="hidden" name="id" id="editUserId">
-            <label>Benutzername:</label>
+            <label class="no-select">Username:</label>
             <input type="text" name="username" id="editUsername">
 
-            <label>Email:</label>
+            <label class="no-select">Email:</label>
             <input type="email" name="email" id="editEmail">
 
-            <label>Rolle:</label>
+            <label class="no-select">Role:</label>
             <select name="role" id="editRole">
                 <option th:each="role : ${roles}"
                         th:if="${role.name != 'SYSADMIN'}"
@@ -204,13 +207,13 @@
                 </option>
             </select>
 
-            <label>Neues Passwort:</label>
+            <label class="no-select">New Password:</label>
             <input type="password" name="password" id="editPassword">
 
 
             <div class="form-actions">
-                <button type="submit" class="button">Speichern</button>
-                <button type="button" class="button" onclick="closeEditPopup()">Abbrechen</button>
+                <button type="submit" class="button no-select">Save</button>
+                <button type="button" class="button no-select" onclick="closeEditPopup()">Abbrechen</button>
             </div>
         </form>
     </div>
@@ -234,26 +237,24 @@
         document.getElementById('editModal').style.display = 'none';
     }
 
-    function filterLogs() {
-        const usernameFilter = document.getElementById('logUserSearch').value.toLowerCase();
-        const dateFilter = document.getElementById('logDateSearch').value;
+function filterLogs() {
+    const usernameFilter = document.getElementById('logUserSearch').value.toLowerCase();
+    const dateFilter = document.getElementById('logDateSearch').value;
 
-        const logEntries = document.querySelectorAll('.log-entry');
+    const logEntries = document.querySelectorAll('.log-entry');
 
-        logEntries.forEach(function (logEntry) {
-            const username = logEntry.querySelector('.log-info span:last-child').innerText.toLowerCase();
-            const timestamp = logEntry.querySelector('.log-timestamp').innerText;
+    logEntries.forEach(function (logEntry) {
+        const username = logEntry.querySelector('.log-info span:last-child').innerText.toLowerCase();
+        const timestampElement = logEntry.querySelector('.log-timestamp');
+        const timestampDate = timestampElement.getAttribute('data-date');
 
-            const matchesUsername = username.includes(usernameFilter);
-            const matchesDate = dateFilter ? timestamp.includes(dateFilter) : true;
+        const matchesUsername = username.includes(usernameFilter);
+        const matchesDate = dateFilter ? timestampDate === dateFilter : true;
 
-            if (matchesUsername && matchesDate) {
-                logEntry.style.display = '';
-            } else {
-                logEntry.style.display = 'none';
-            }
-        });
-    }
+        logEntry.style.display = (matchesUsername && matchesDate) ? '' : 'none';
+    });
+}
+
 </script>
 
 </body>
