@@ -55,17 +55,22 @@ class UserServiceTest {
         Role role = new Role();
         role.setId(1L);
 
+        Log log = new Log();
+        log.setId(0L);
+
         when(roleRepo.findById(1L)).thenReturn(Optional.of(role));
         when(passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
-        when(logService.log(eq("testuser"), anyString())).thenReturn(new Log());
+        when(logService.log(eq("testuser"), anyString())).thenReturn(log);
 
         userService.register(user);
 
         assertEquals("hashedPassword", user.getPassword());
         assertEquals(role, user.getRole());
+
         verify(userRepo).save(user);
-        verify(webhookService).triggerWebhookEvent(eq(WebhookEvent.USER_UPDATED), contains("testuser"), anyLong());
+        verify(webhookService).triggerWebhookEvent(eq(WebhookEvent.USER_UPDATED), contains("testuser"), eq(log.getId()));
     }
+
 
     @Test
     void testUsernameExistsReturnsTrueIfFound() {

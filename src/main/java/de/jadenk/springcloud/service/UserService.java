@@ -19,9 +19,6 @@ import java.util.Set;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
     private RoleRepository roleRepo;
 
     @Autowired
@@ -50,9 +47,15 @@ public class UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         Role userRole = roleRepo.findById(1L).orElseThrow(() -> new RuntimeException("Role not found"));
         user.setRole(userRole);
-        userRepo.save(user);
+        userRepository.save(user);
 
         Log log = logService.log(user.getUsername(), messageService.getLog("register.success"));
+
+        if (log == null) {
+//            throw new RuntimeException("Log entry konnte nicht erstellt werden");
+            log = new Log();
+            log.setId(0L);
+        }
 
         webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + user.getUsername() + "registerd someone.", log.getId());
     }
@@ -72,8 +75,8 @@ public class UserService {
     }
 
     public void banUser(Long userId) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         user.setBanned(!user.isBanned());
-        userRepo.save(user);
+        userRepository.save(user);
     }
 }
