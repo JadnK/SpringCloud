@@ -60,11 +60,9 @@ public class WebhookController {
     @PostMapping("/test/{id}")
     public String testWebhook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         webhookRepository.findById(id).ifPresent(webhook -> {
-            if (webhook.isEnabled()) {
-                webhookService.sendTestPayload(webhook);
-            }
+            webhookService.sendTestPayload(webhook);
         });
-        redirectAttributes.addFlashAttribute("message", "Webhook-Test ausgeführt");
+        redirectAttributes.addFlashAttribute("message", "Webhook-Test started");
         return "redirect:/admin";
     }
 

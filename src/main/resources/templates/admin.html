@@ -30,14 +30,14 @@
 <div class="content">
     <h1>Admin Dashboard</h1>
 
-    <h2>Benutzer</h2>
+    <h2>Users</h2>
     <table class="user-table">
         <thead>
         <tr>
             <th>Username</th>
             <th>Email</th>
-            <th>Rolle</th>
-            <th>Aktionen</th>
+            <th>Role</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -52,12 +52,12 @@
                         th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                         th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role.name}"
                         onclick="showEditPopupFromButton(this)">
-                    Bearbeiten
+                    Edit
                 </button>
                 <form th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                       th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" style="display:inline;">
                     <button class="button" type="submit"
-                            th:text="${user.banned} ? 'Entbannen' : 'Bannen'" >
+                            th:text="${user.banned} ? 'Unban' : 'Ban'" >
 <!--                            th:attr="style=${user.banned}
             ? 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'
             : 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'"-->
@@ -75,7 +75,7 @@
 
     <div class="log-filter">
         <div>
-            <input type="text" id="logUserSearch" placeholder="Nach Benutzer suchen" oninput="filterLogs()">
+            <input type="text" id="logUserSearch" placeholder="Search for Users" oninput="filterLogs()">
         </div>
         <div>
             <input type="date" id="logDateSearch" oninput="filterLogs()">
@@ -84,14 +84,14 @@
 
     <div th:each="log : ${logs}" class="log-entry" th:id="'log-' + ${log.id}">
         <div class="log-info">
-            <span th:text="${log.action}">Aktion</span> –
-            <span class="log-timestamp" th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}">Zeit</span>
-            <p>Durchgeführt von: <span th:text="${log.user.username}">Username</span></p>
+            <span th:text="${log.action}">Action</span> –
+            <span class="log-timestamp" th:text="${#temporals.format(log.timestamp, 'dd.MM.yyyy HH:mm')}">Time</span>
+            <p>Executed by: <span th:text="${log.user.username}">Username</span></p>
         </div>
     </div>
     <div class="pagination">
         <span th:if="${currentPage > 1}">
-        <a class="button" th:href="@{'/admin?page=' + (${currentPage - 1})}">« Zurück</a>
+        <a class="button" th:href="@{'/admin?page=' + (${currentPage - 1})}">« Back</a>
     </span>
 
         <span th:if="${currentPage > 3}">
@@ -112,12 +112,12 @@
     </span>
 
         <span th:if="${currentPage < totalPages}">
-        <a class="button" th:href="@{'/admin?page=' + (${currentPage + 1})}">Weiter »</a>
+        <a class="button" th:href="@{'/admin?page=' + (${currentPage + 1})}">Next »</a>
     </span>
     </div>
 
 
-    <h2>Webhook Einstellungen</h2>
+    <h2>Webhook Settings</h2>
     <form action="/webhooks/add" method="post" class="webhook-settings">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="webhook-url-group">
@@ -128,19 +128,19 @@
         <div class="webhook-events">
             <label>Webhook Events:</label>
             <div class="checkbox-group">
-                <label><input type="checkbox" name="onUserCreation"> Benutzer erstellt</label>
-                <label><input type="checkbox" name="onUserBan"> Benutzer gebannt</label>
-                <label><input type="checkbox" name="onUserUpdate"> Benutzer geupdated</label>
-                <label><input type="checkbox" name="onRegister"> Benutzer registriert</label>
-                <label><input type="checkbox" name="onErrorThrown"> Fehlermeldung</label>
-                <label><input type="checkbox" name="onFileDeletion"> Datei gelöscht</label>
-                <label><input type="checkbox" name="onFileUpload"> Datei hochgeladen</label>
-                <label><input type="checkbox" name="onCalendarNotification"> Kalendar Benachrichtigung</label>
+                <label><input type="checkbox" name="onUserCreation"> User created</label>
+                <label><input type="checkbox" name="onUserBan"> User banned</label>
+                <label><input type="checkbox" name="onUserUpdate"> User updated</label>
+                <label><input type="checkbox" name="onRegister"> User registered</label>
+                <label><input type="checkbox" name="onErrorThrown"> Error</label>
+                <label><input type="checkbox" name="onFileDeletion"> File deleted</label>
+                <label><input type="checkbox" name="onFileUpload"> File uploaded</label>
+                <label><input type="checkbox" name="onCalendarNotification"> Calendar Notify</label>
             </div>
         </div>
 
         <div class="webhook-actions">
-            <button type="submit" class="button">Webhook hinzufügen</button>
+            <button type="submit" class="button">Add Webhook</button>
         </div>
     </form>
 
@@ -149,14 +149,14 @@
             <div class="webhook-info">
                 <p><strong>URL:</strong> <span th:text="${webhook.url}">https://...</span></p>
                 <p><strong>Events:</strong>
-                    <span th:if="${webhook.onUserCreation}">Benutzer erstellt, </span>
-                    <span th:if="${webhook.onUserBan}">Benutzer gebannt, </span>
-                    <span th:if="${webhook.onUserUpdate}">Benutzer geupdated, </span>
-                    <span th:if="${webhook.onRegister}">Benutzer registriert, </span>
-                    <span th:if="${webhook.onErrorThrown}">Fehlermeldung, </span>
-                    <span th:if="${webhook.onFileDeletion}">Datei gelöscht, </span>
-                    <span th:if="${webhook.onFileUpload}">Datei hochgeladen, </span>
-                    <span th:if="${webhook.onCalendarNotification}">Kalender Benachrichtigung</span>
+                    <span th:if="${webhook.onUserCreation}">User created, </span>
+                    <span th:if="${webhook.onUserBan}">User banned, </span>
+                    <span th:if="${webhook.onUserUpdate}">User updated, </span>
+                    <span th:if="${webhook.onRegister}">User registered, </span>
+                    <span th:if="${webhook.onErrorThrown}">Error, </span>
+                    <span th:if="${webhook.onFileDeletion}">File deleted, </span>
+                    <span th:if="${webhook.onFileUpload}">File uploaded, </span>
+                    <span th:if="${webhook.onCalendarNotification}">Calendar Notify</span>
                 </p>
 
             </div>
@@ -171,12 +171,12 @@
 
                 <form th:action="@{/webhooks/test/{id}(id=${webhook.id})}" method="post" style="display: inline;">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button class="button" type="submit">Testen</button>
+                    <button class="button" type="submit">Test</button>
                 </form>
 
                 <form th:action="@{/webhooks/delete/{id}(id=${webhook.id})}" method="post" style="display: inline;">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button class="button danger" type="submit">Löschen</button>
+                    <button class="button danger" type="submit">Delete</button>
                 </form>
             </div>
         </div>

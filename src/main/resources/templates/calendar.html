@@ -31,7 +31,7 @@
 
 
 <div class="content">
-    <h1 th:text="'Kalender - ' + ${monthName} + ' ' + ${year}">Kalender</h1>
+    <h1 th:text="'Kalender - ' + ${monthName} + ' ' + ${year}">Calendar</h1>
 
 <!--    <form class="year-form" method="get" th:action="@{/calendar}">
         <input type="number" name="year" th:value="${year}" min="1900" max="2100" />
@@ -41,16 +41,16 @@
 
     <form method="get" th:action="@{/calendar}" class="year-form">
         <input type="hidden" name="month" th:value="${month}" />
-        <button type="submit" name="year" th:value="${year - 1}">&laquo; Vorjahr</button>
+        <button type="submit" name="year" th:value="${year - 1}">&laquo; Previous year</button>
         <span th:text="${year}"></span>
-        <button type="submit" name="year" th:value="${year + 1}">Nächstes Jahr &raquo;</button>
+        <button type="submit" name="year" th:value="${year + 1}">Next year &raquo;</button>
     </form>
 
     <div class="calendar-wrapper">
         <table class="calendar-table">
             <thead>
             <tr>
-                <th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th>
+                <th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th><th>Su</th>
             </tr>
             </thead>
             <tbody>
@@ -90,16 +90,16 @@
         <h2>Neuer Eintrag</h2>
         <form id="createEntryForm" method="post" th:action="@{/calendar/add}">
             <input type="hidden" name="date" id="entryDate">
-            <input type="text" name="title" placeholder="Titel" required>
-            <textarea name="description" placeholder="Beschreibung" required></textarea>
-            <input type="time" name="entry_time" placeholder="Zeit" required>
+            <input type="text" name="title" placeholder="Title" required>
+            <textarea name="description" placeholder="Description" required></textarea>
+            <input type="time" name="entry_time" placeholder="Time" required>
             <select name="visibility" required>
-                <option value="PRIVATE">Privat</option>
-                <option value="PUBLIC">Öffentlich</option>
+                <option value="PRIVATE">Private</option>
+                <option value="PUBLIC">Public</option>
             </select>
-            <button type="submit">Speichern</button>
+            <button type="submit">Save</button>
         </form>
-        <button onclick="closeModal('createModal')" class="close-btn">Abbrechen</button>
+        <button onclick="closeModal('createModal')" class="close-btn">Cancel</button>
     </div>
 </div>
 

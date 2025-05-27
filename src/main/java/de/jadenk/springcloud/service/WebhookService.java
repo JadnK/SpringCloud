@@ -92,7 +92,7 @@ public class WebhookService {
     public void sendTestPayload(Webhook webhook) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> payload = new HashMap<>();
-        payload.put("content", "✅ Testnachricht vom SpringCloud-System.");
+        payload.put("content", "✅ Testmessage from SpringCloud-System.");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -39,7 +39,7 @@ public class CalendarWebhookScheduler {
         if (entries.isEmpty()) return;
 
         StringBuilder message = new StringBuilder();
-        message.append("📅 **Kalendereinträge für heute:**\n\n");
+        message.append("📅 **Calendar Entrys for today:**\n\n");
 
         for (int i = 0; i < entries.size(); i++) {
             CalendarEntry entry = entries.get(i);
@@ -48,10 +48,10 @@ public class CalendarWebhookScheduler {
                     .append(entry.getTitle()).append("**");
 
             if (entry.getTime() != null) {
-                message.append(" um `").append(entry.getTime().format(TIME_FORMATTER)).append("`");
+                message.append(" at `").append(entry.getTime().format(TIME_FORMATTER)).append("`");
             }
 
-            message.append(" _(von ").append(entry.getUser().getUsername()).append(")_");
+            message.append(" _(by ").append(entry.getUser().getUsername()).append(")_");
 
             if (i < entries.size() - 1) {
                 message.append("\n");
