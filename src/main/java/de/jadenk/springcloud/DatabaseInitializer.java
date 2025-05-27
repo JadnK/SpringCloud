@@ -13,9 +13,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 
 @Component("databaseInitializer")
 public class DatabaseInitializer implements CommandLineRunner {
@@ -80,22 +82,52 @@ public class DatabaseInitializer implements CommandLineRunner {
         }
     }
 
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!§$%&/()=?@#";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
+    }
+
+
     private void createDefaultAdminUser() {
-        if (userRepository.findByUsername("admin").isEmpty()) {
+        String newPassword = generateRandomPassword(12);
+        String encodedPassword = securityConfig.passwordEncoder().encode(newPassword);
+
+        Optional<User> existingUserOpt = userRepository.findByUsername("sysadmin");
+
+        Role adminRole = roleRepository.findByName("SYSADMIN")
+                .orElseThrow(() -> new RuntimeException("SYSADMIN role not found"));
+
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            existingUser.setPassword(encodedPassword);
+            userRepository.save(existingUser);
+            System.out.println(" ");
+            System.out.println("==============SYSADMIN-USER==============");
+            System.out.println("Username: sysadmin");
+            System.out.println("Password: " + newPassword);
+            System.out.println("==============SYSADMIN-USER==============");
+            System.out.println(" ");
+        } else {
             User admin = new User();
-            admin.setUsername("admin");
-            admin.setEmail("admin@jadenk.de");
-            admin.setPassword(securityConfig.passwordEncoder().encode("jadenk_§!"));
-
-            Role adminRole = roleRepository.findByName("ADMIN")
-                    .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
-
+            admin.setUsername("sysadmin");
+            admin.setEmail("sysadmin@jadenk.de");
+            admin.setPassword(encodedPassword);
             admin.setRole(adminRole);
-
             userRepository.save(admin);
-            System.out.println("Default admin user created.");
+            System.out.println(" ");
+            System.out.println("==============SYSADMIN-USER==============");
+            System.out.println("Username: sysadmin");
+            System.out.println("Password: " + newPassword);
+            System.out.println("==============SYSADMIN-USER==============");
+            System.out.println(" ");
         }
     }
+
 
 
     private boolean tableExists(Statement statement, String tableName) throws SQLException {
@@ -197,6 +229,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             Role adminRole = new Role();
             adminRole.setName("ADMIN");
             roleRepository.save(adminRole);
+
+            Role sysadminRole = new Role();
+            sysadminRole.setName("SYSADMIN");
+            roleRepository.save(sysadminRole);
         }
     }
 }

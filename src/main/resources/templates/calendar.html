@@ -20,8 +20,8 @@
         </svg>
         <span th:text="${username}">N/A</span>
         <div class="logout-dropdown" id="logoutDropdown">
-            <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/admin}" class="admin-element">Admin</a>
-            <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/register}" class="admin-element">Add Users</a>
+            <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
+            <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
             <a th:href="@{/dashboard}">Dashboard</a>
             <a th:href="@{/change-password}">Change Password</a>
             <a th:href="@{/logout}">Logout</a>

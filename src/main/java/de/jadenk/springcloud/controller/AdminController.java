@@ -57,7 +57,7 @@ public class AdminController {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         boolean hasAdminRole = authorities.stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(authority -> authority.getAuthority().endsWith("ADMIN"));
 
         if (!hasAdminRole) {
             String username = authentication.getName();

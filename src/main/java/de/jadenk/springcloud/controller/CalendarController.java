@@ -92,7 +92,7 @@ public class CalendarController {
         boolean isCreator = entry.getUser().equals(currentUser);
         boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().endsWith("ADMIN"));
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", entry.getId());
@@ -119,7 +119,7 @@ public class CalendarController {
         boolean isCreator = entry.getUser().equals(currentUser);
         boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().endsWith("ADMIN"));
 
         model.addAttribute("entry", entry);
         model.addAttribute("canEdit", isCreator || isAdmin);

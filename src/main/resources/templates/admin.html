@@ -18,7 +18,7 @@
         </svg>
         <span th:text="${username}">N/A</span>
         <div class="logout-dropdown" id="logoutDropdown">
-            <a th:if="${role == 'ROLE_ADMIN'}" th:href="@{/register}" class="admin-element">Add Users</a>
+            <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
             <a th:href="@{/dashboard}">Dashboard</a>
             <a th:href="@{/calendar}">Calendar</a>
             <a th:href="@{/change-password}">Change Password</a>
@@ -49,16 +49,19 @@
             </td>
             <td>
                 <button class="button"
+                        th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                         th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role.name}"
                         onclick="showEditPopupFromButton(this)">
                     Bearbeiten
                 </button>
-                <form th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" style="display:inline;">
+                <form th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
+                      th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" style="display:inline;">
                     <button class="button" type="submit"
-                            th:text="${user.banned} ? 'Entbannen' : 'Bannen'"
-                            th:attr="style=${user.banned}
-                ? 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'
-                : 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'">
+                            th:text="${user.banned} ? 'Entbannen' : 'Bannen'" >
+<!--                            th:attr="style=${user.banned}
+            ? 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'
+            : 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'"-->
+
                     </button>
                 </form>
 
@@ -194,7 +197,11 @@
 
             <label>Rolle:</label>
             <select name="role" id="editRole">
-                <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
+                <option th:each="role : ${roles}"
+                        th:if="${role.name != 'SYSADMIN'}"
+                        th:value="${role.name}"
+                        th:text="${role.name}">
+                </option>
             </select>
 
             <label>Neues Passwort:</label>
