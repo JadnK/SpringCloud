@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "uploaded_files")
@@ -24,6 +25,12 @@ public class UploadedFile {
 
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedLink> sharedLinks = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "file_authorizations",
+            joinColumns = @JoinColumn(name = "file_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> authorizedUsers = new ArrayList<>();
 
 
     @ManyToOne
@@ -89,4 +96,11 @@ public class UploadedFile {
         this.fileOwner = fileOwner;
     }
 
+    public List<User> getAuthorizedUsers() {
+        return authorizedUsers;
+    }
+
+    public void setAuthorizedUsers(List<User> authorizedUsers) {
+        this.authorizedUsers = authorizedUsers;
+    }
 }

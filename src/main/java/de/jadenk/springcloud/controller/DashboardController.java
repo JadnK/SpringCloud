@@ -1,14 +1,16 @@
 package de.jadenk.springcloud.controller;
 
+import de.jadenk.springcloud.dto.UserDTO;
+import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.exception.ResourceNotFoundException;
+import de.jadenk.springcloud.model.FileAuthorization;
 import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.UploadedFile;
+import de.jadenk.springcloud.model.User;
+import de.jadenk.springcloud.repository.FileAuthorizationRepository;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
-import de.jadenk.springcloud.service.FileUploadService;
-import de.jadenk.springcloud.service.LogService;
-import de.jadenk.springcloud.service.UserService;
-import de.jadenk.springcloud.service.WebhookService;
+import de.jadenk.springcloud.service.*;
 import de.jadenk.springcloud.util.MessageService;
 import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class DashboardController {
@@ -47,6 +49,9 @@ public class DashboardController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private FileAuthorizationRepository fileAuthorizationRepository;
+
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
@@ -60,10 +65,31 @@ public class DashboardController {
                     .orElse("UNKNOWN");
 
             model.addAttribute("role", role);
-        }
 
-        List<UploadedFile> files = uploadedFileRepository.findAll();
-        model.addAttribute("files", files);
+            List<UploadedFile> accessibleFiles = new ArrayList<>();
+            Long userId = userRepository.findByUsername(username).get().getId();
+
+            for (UploadedFile file : uploadedFileRepository.findAll()) {
+                if (file.getFileOwner().getId().equals(userId) || fileAuthorizationService.isUserAuthorized(file.getId(), userId)) {
+                    List<User> allowedUsers = fileAuthorizationRepository.findByFileId(file.getId())
+                            .stream()
+                            .map(FileAuthorization::getUser)
+                            .collect(Collectors.toList());
+                    file.setAuthorizedUsers(allowedUsers);
+
+                    accessibleFiles.add(file);
+                }
+            }
+
+            model.addAttribute("files", accessibleFiles);
+
+
+            List<User> allUsers = userRepository.findAll();
+            List<UserDTO> userDTOs = allUsers.stream()
+                    .map(UserDTO::new)
+                    .collect(Collectors.toList());
+            model.addAttribute("allUsers", userDTOs);
+        }
 
         return "dashboard";
     }
@@ -127,5 +153,35 @@ public class DashboardController {
                 .contentType(MediaType.parseMediaType(fileType))
                 .body(new ByteArrayResource(file.getFileData()));
     }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FileAuthorizationService fileAuthorizationService;
+
+    @PostMapping("/edit/file")
+    public String editFile(
+            @RequestParam Long fileId,
+            @RequestParam(name = "authorizedUsers", required = false) List<Long> authorizedUserIds) {
+
+//        System.out.println("USERS: " + authorizedUserIds);
+        fileAuthorizationService.setAuthorizedUsers(fileId, authorizedUserIds);
+
+        return "redirect:/dashboard";
+    }
+
+
+    @GetMapping("/api/file/{fileId}/authorizedUsers")
+    @ResponseBody
+    public List<Long> getAuthorizedUserIds(@PathVariable Long fileId) {
+        UploadedFile file = uploadedFileRepository.findById(fileId).orElseThrow();
+        return file.getAuthorizedUsers().stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+    }
+
+
+
 
 }

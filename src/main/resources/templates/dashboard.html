@@ -33,7 +33,7 @@
         <input type="text" id="fileSearch" placeholder="Search for Files" oninput="filterFiles()">
     </div>
     <ul class="file-list" id="fileList">
-        <li th:each="file : ${files}">
+        <li th:each="file : ${files}" >
             <div class="file-info">
                 <span th:text="${file.fileName}">File Name</span>
                 <span th:text="${file.fileType}">File Type</span>
@@ -41,10 +41,10 @@
                 <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Upload Date</span>
             </div>
             <div class="actions">
-                <a href="#" class="share" th:onclick="confirmShare([[${file.id}]])">Share</a>
+                <a th:if="${file.fileOwner.username == username}" href="#" class="share" th:onclick="confirmShare([[${file.id}]])">Share</a>
                 <a th:href="@{'/download/' + ${file.id}}">Download</a>
                 <a th:onclick='showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])'>Preview</a>
-                <a href="#" class="delete" th:onclick="confirmDelete([[${file.id}]])">Delete</a>
+                <a th:if="${file.fileOwner.username == username}" href="#" class="edit" th:onclick="openEditPopup([[${file.id}]])">Edit</a>
             </div>
         </li>
     </ul>
@@ -52,8 +52,62 @@
 
 <button class="upload-btn" onclick="showUploadPopup()">Upload file</button>
 
-<div id="confirmSharePopup" class="popup-overlay" style="display: none;">
-    <div class="popup-content">
+
+<div id="editModal" class="modal">
+    <div class="modal-content" style="max-height: 70vh; overflow-y: auto;">
+        <h2>Edit File Access</h2>
+        <p>Add or remove users who are allowed to view this file:</p>
+        <form id="editAccessForm" method="post" th:action="@{/edit/file}">
+            <input type="hidden" name="fileId" id="editFileId">
+            <input
+                    type="text"
+                    id="userSearchInput"
+                    placeholder="Search users..."
+                    autocomplete="off"
+                    style="
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    background-color: #26263a;
+    color: #eee;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+  "
+                    onkeyup="filterUsers()"
+            />
+
+            <div class="user-list" style="max-height: 210px; min-height: 210px; overflow-y: auto; border: 1px solid #444; padding: 15px; border-radius: 12px;">
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li th:each="user : ${allUsers}" th:if="${user.username} != ${username}"
+                        th:classappend="${file != null and file.authorizedUsers.contains(user)} ? 'selected-user'">
+                        <label class="user-label">
+                            <img th:src="'data:image/png;base64,' + ${user.profileImageBase64}" alt="Profilbild" class="profile-img"/>
+                            <span th:text="${user.username}">Username</span>
+                            <input type="checkbox" name="authorizedUsers" th:value="${user.id}"
+                                   th:checked="${file != null and file.authorizedUsers.contains(user)}" style="display:none;">
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="form-actions" style="margin-top: 20px;">
+                <button type="submit" class="button no-select">Save</button>
+                <button type="button" class="button no-select" onclick="closeEditPopup()">Cancel</button>
+            </div>
+        </form>
+
+        <hr style="margin: 20px 0; border-color: #555;">
+
+        <button class="delete-btn" style="background-color: #e74c3c; width: 100%;" onclick="confirmDeleteFromEdit()">Delete File</button>
+    </div>
+</div>
+
+
+
+<div id="confirmSharePopup" class="modal" style="display: none;">
+    <div class="modal-content">
         <h2>Share this file?</h2>
         <p>Select how long the link should be valid:</p>
         <div class="select-container">
@@ -74,8 +128,8 @@
 </div>
 
 
-<div id="confirmDeletePopup" class="popup-overlay" style="display: none;">
-    <div class="popup-content">
+<div id="confirmDeletePopup" class="modal" style="display: none;">
+    <div class="modal-content">
         <h2>Really delete the file?</h2>
         <p>
             This file cannot be recovered.<br>
@@ -87,8 +141,8 @@
     </div>
 </div>
 
-<div id="uploadPopup">
-    <div class="popup-content">
+<div id="uploadPopup" class="modal">
+    <div class="modal-content">
         <h2>Upload Your File</h2>
         <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" onsubmit="showLoadingBar()">
             <input type="file" name="file" id="fileInput">
@@ -112,120 +166,196 @@
     <div class="loading-content">Uploading...</div>
 </div>
 <script>
+    function filterUsers() {
+      const input = document.getElementById('userSearchInput');
+      const filter = input.value.toLowerCase();
+      const ul = document.querySelector('#editModal .user-list ul');
+      const li = ul.getElementsByTagName('li');
 
-    let deleteFileId = null;
-
-    let shareFileId = null;
-
-    function confirmShare(fileId) {
-        shareFileId = fileId;
-        document.getElementById('confirmSharePopup').style.display = 'flex';
-    }
-
-    function closeConfirmSharePopup() {
-        shareFileId = null;
-        document.getElementById('confirmSharePopup').style.display = 'none';
-    }
-
-    document.getElementById('confirmShareBtn').addEventListener('click', function () {
-        if (shareFileId !== null) {
-            const durationHours = document.getElementById('shareDurationSelect').value;
-            window.location.href = `/share/${shareFileId}?duration=${durationHours}`;
+      for (let i = 0; i < li.length; i++) {
+        const label = li[i].querySelector('.user-label span');
+        if (label) {
+          const txtValue = label.textContent || label.innerText;
+          if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+          } else {
+            li[i].style.display = "none";
+          }
         }
-    });
-
-
-    function confirmDelete(fileId) {
-        deleteFileId = fileId;
-        document.getElementById('confirmDeletePopup').style.display = 'flex';
-    }
-
-    function closeConfirmDeletePopup() {
-        deleteFileId = null;
-        document.getElementById('confirmDeletePopup').style.display = 'none';
-    }
-
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
-        if (deleteFileId !== null) {
-            window.location.href = `/delete/${deleteFileId}`;
-        }
-    });
-
-    function showLoadingBar() {
-        document.getElementById('loadingOverlay').style.display = 'flex';
-    }
-
-    function showUploadPopup() {
-        document.getElementById('uploadPopup').style.display = 'flex';
-    }
-
-    function closeUploadPopup() {
-        document.getElementById('uploadPopup').style.display = 'none';
-    }
-
-    function showPreviewPopup(fileId, fileType, fileName) {
-        const previewContainer = document.getElementById('previewContainer');
-        previewContainer.innerHTML = '';
-
-        if (fileType.startsWith('image/')) {
-            previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
-        }
-
-        else if (fileType.startsWith('video/')) {
-            previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
-        }
-
-        else if (fileType.startsWith('text/')) {
-            fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
-                if (fileType === 'application/json') {
-
-                    try {
-                        data = JSON.stringify(JSON.parse(data), null, 4);
-                    } catch (e) {
-                        data = "Error parsing JSON.";
-                    }
-                }
-                previewContainer.innerHTML = `<pre>${data}</pre>`;
-            }).catch(error => {
-                previewContainer.innerHTML = `<p>Error loading text file</p>`;
-            });
-        }
-
-        else if (fileType === 'application/pdf') {
-            previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
-        }
-        else {
-            previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
-        }
-
-        document.getElementById('previewPopup').style.display = 'flex';
+      }
     }
 
 
-    function closePreviewPopup() {
-        document.getElementById('previewPopup').style.display = 'none';
-    }
-
-    function filterFiles() {
-    const input = document.getElementById('fileSearch');
-    const filter = input.value.toLowerCase();
-    const fileList = document.getElementById('fileList');
-    const files = fileList.getElementsByTagName('li');
-
-    for (let i = 0; i < files.length; i++) {
-        const fileInfo = files[i].querySelector('.file-info');
-        if (fileInfo) {
-            const fileNameSpan = fileInfo.querySelector('span:first-child');
-            const textValue = fileNameSpan ? fileNameSpan.textContent || fileNameSpan.innerText : '';
-
-            if (textValue.toLowerCase().indexOf(filter) > -1) {
-                files[i].style.display = '';
+    document.querySelectorAll('.user-label').forEach(label => {
+        label.addEventListener('click', e => {
+            const checkbox = label.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+                label.parentElement.classList.add('selected-user');
             } else {
-                files[i].style.display = 'none';
+                label.parentElement.classList.remove('selected-user');
+            }
+        });
+    });
+
+function openEditPopup(fileId) {
+    document.getElementById('editFileId').value = fileId;
+    const userListItems = document.querySelectorAll('#editModal .user-list li');
+
+    userListItems.forEach(li => {
+        const checkbox = li.querySelector('input[type="checkbox"]');
+        checkbox.checked = false;
+        li.classList.remove('selected-user');
+    });
+
+    fetch(`/api/file/${fileId}/authorizedUsers`)
+        .then(response => response.json())
+        .then(authorizedUserIds => {
+            userListItems.forEach(li => {
+                const checkbox = li.querySelector('input[type="checkbox"]');
+                const userId = parseInt(checkbox.value);
+                if (authorizedUserIds.includes(userId)) {
+                    checkbox.checked = true;
+                    li.classList.add('selected-user');
+                }
+            });
+            document.getElementById('editModal').style.display = 'flex';
+        })
+        .catch(error => {
+            console.error('Error loading authorized users:', error);
+            document.getElementById('editModal').style.display = 'flex';
+        });
+}
+
+
+    function closeEditPopup() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+
+        function confirmDeleteFromEdit() {
+            const fileId = document.getElementById('editFileId').value;
+            if (fileId) {
+                if (confirm("Are you sure you want to delete this file? This cannot be undone.")) {
+                    window.location.href = `/delete/${fileId}`;
+                }
             }
         }
-    }
-}
+
+
+            let deleteFileId = null;
+
+            let shareFileId = null;
+
+            function confirmShare(fileId) {
+                shareFileId = fileId;
+                document.getElementById('confirmSharePopup').style.display = 'flex';
+            }
+
+            function closeConfirmSharePopup() {
+                shareFileId = null;
+                document.getElementById('confirmSharePopup').style.display = 'none';
+            }
+
+            document.getElementById('confirmShareBtn').addEventListener('click', function () {
+                if (shareFileId !== null) {
+                    const durationHours = document.getElementById('shareDurationSelect').value;
+                    window.location.href = `/share/${shareFileId}?duration=${durationHours}`;
+                }
+            });
+
+
+            function confirmDelete(fileId) {
+                deleteFileId = fileId;
+                document.getElementById('confirmDeletePopup').style.display = 'flex';
+            }
+
+            function closeConfirmDeletePopup() {
+                deleteFileId = null;
+                document.getElementById('confirmDeletePopup').style.display = 'none';
+            }
+
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+                if (deleteFileId !== null) {
+                    window.location.href = `/delete/${deleteFileId}`;
+                }
+            });
+
+            function showLoadingBar() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            }
+
+            function showUploadPopup() {
+                document.getElementById('uploadPopup').style.display = 'flex';
+            }
+
+            function closeUploadPopup() {
+                document.getElementById('uploadPopup').style.display = 'none';
+            }
+
+            function showPreviewPopup(fileId, fileType, fileName) {
+                const previewContainer = document.getElementById('previewContainer');
+                previewContainer.innerHTML = '';
+
+                if (fileType.startsWith('image/')) {
+                    previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
+                }
+
+                else if (fileType.startsWith('video/')) {
+                    previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
+                }
+
+                else if (fileType.startsWith('text/')) {
+                    fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
+                        if (fileType === 'application/json') {
+
+                            try {
+                                data = JSON.stringify(JSON.parse(data), null, 4);
+                            } catch (e) {
+                                data = "Error parsing JSON.";
+                            }
+                        }
+                        previewContainer.innerHTML = `<pre>${data}</pre>`;
+                    }).catch(error => {
+                        previewContainer.innerHTML = `<p>Error loading text file</p>`;
+                    });
+                }
+
+                else if (fileType === 'application/pdf') {
+                    previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
+                }
+                else {
+                    previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
+                }
+
+                document.getElementById('previewPopup').style.display = 'flex';
+            }
+
+
+            function closePreviewPopup() {
+                document.getElementById('previewPopup').style.display = 'none';
+            }
+
+            function filterFiles() {
+            const input = document.getElementById('fileSearch');
+            const filter = input.value.toLowerCase();
+            const fileList = document.getElementById('fileList');
+            const files = fileList.getElementsByTagName('li');
+
+            for (let i = 0; i < files.length; i++) {
+                const fileInfo = files[i].querySelector('.file-info');
+                if (fileInfo) {
+                    const fileNameSpan = fileInfo.querySelector('span:first-child');
+                    const textValue = fileNameSpan ? fileNameSpan.textContent || fileNameSpan.innerText : '';
+
+                    if (textValue.toLowerCase().indexOf(filter) > -1) {
+                        files[i].style.display = '';
+                    } else {
+                        files[i].style.display = 'none';
+                    }
+                }
+            }
+        }
 
 
 </script>

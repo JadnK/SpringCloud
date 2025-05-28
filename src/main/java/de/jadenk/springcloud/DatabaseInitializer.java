@@ -80,6 +80,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             if (!tableExists(statement, "webhooks")) {
                 createWebhookTable(statement);
             }
+
+            if (!tableExists(statement, "file_authorizations")) {
+                createFileAuthorizationsTable(statement);
+            }
         }
     }
 
@@ -166,6 +170,17 @@ public class DatabaseInitializer implements CommandLineRunner {
                 ");");
     }
 
+    private void createFileAuthorizationsTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE file_authorizations (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                "file_id BIGINT NOT NULL, " +
+                "user_id BIGINT NOT NULL, " +
+                "FOREIGN KEY (file_id) REFERENCES uploaded_files(id) ON DELETE CASCADE, " +
+                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+                ");");
+    }
+
+
 
     private void createUsersTable(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE users (" +
@@ -184,7 +199,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         statement.executeUpdate("CREATE TABLE shared_links (" +
                 "    id BIGINT AUTO_INCREMENT PRIMARY KEY," +
                 "    user_id BIGINT NOT NULL," +
-                "    file_id INT NOT NULL," +
+                "    file_id BIGINT NOT NULL," +
                 "    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "    expire_date TIMESTAMP NOT NULL," +
                 "    token VARCHAR(255) UNIQUE NOT NULL," +
@@ -194,7 +209,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     private void createFilesTable(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE uploaded_files (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
                 "file_name VARCHAR(255) NOT NULL," +
                 "file_type VARCHAR(50) NOT NULL," +
                 "file_data LONGBLOB NOT NULL," +
