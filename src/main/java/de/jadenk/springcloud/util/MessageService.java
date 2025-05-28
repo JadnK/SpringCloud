@@ -13,6 +13,7 @@ public class MessageService {
             "changepassword.different.passwords", "There are 2 different Passwords!",
             "changepassword.same.password", "You cant Use the same Password as before!",
             "auth.invalid", "Username or password is incorrect.",
+            "settings.upload.error", "Error while uploading Profile Picture, try again later.",
             "register.username.exists", "Username already exists."
     );
 

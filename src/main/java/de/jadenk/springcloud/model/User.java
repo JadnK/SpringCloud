@@ -27,6 +27,30 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Log> logs;
 
+    @Lob
+    @Column(name = "profile_image_data")
+    private byte[] profileImageData;
+
+    @Column(name = "notifications_enabled")
+    private boolean notificationsEnabled;
+
+    public byte[] getProfileImageData() {
+        return profileImageData;
+    }
+
+    public void setProfileImageData(byte[] profileImageData) {
+        this.profileImageData = profileImageData;
+    }
+
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
+    }
+
+
     public Long getId() {
         return id;
     }

@@ -13,6 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 @Service
@@ -43,10 +49,37 @@ public class UserService {
         return false;
     }
 
+    private byte[] getDefaultProfileImage() {
+        try (InputStream is = getClass().getResourceAsStream("/static/images/template.png")) {
+            if (is == null) {
+                throw new RuntimeException("Default profile image not found.");
+            }
+
+            BufferedImage originalImage = ImageIO.read(is);
+
+            int targetWidth = 64;
+            int targetHeight = 64;
+
+            BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = resizedImage.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+            g.dispose();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "png", baos);
+            return baos.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load default profile image.", e);
+        }
+    }
+
     public void register(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
         Role userRole = roleRepo.findById(1L).orElseThrow(() -> new RuntimeException("Role not found"));
         user.setRole(userRole);
+        user.setProfileImageData(getDefaultProfileImage());
         userRepository.save(user);
 
         Log log = logService.log(user.getUsername(), messageService.getLog("register.success"));
@@ -57,7 +90,7 @@ public class UserService {
             log.setId(0L);
         }
 
-        webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + user.getUsername() + "registerd someone.", log.getId());
+        webhookService.triggerWebhookEvent(WebhookEvent.USER_REGISTERED, "User " + user.getUsername() + "registerd someone.", log.getId());
     }
 
     public boolean usernameExists(String username) {

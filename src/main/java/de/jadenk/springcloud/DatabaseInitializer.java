@@ -174,6 +174,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "email VARCHAR(255) NOT NULL UNIQUE, " +
                 "password VARCHAR(255) NOT NULL," +
                 "is_banned BOOLEAN DEFAULT FALSE,"+
+                "profile_image_data LONGBLOB, " +
+                "notifications_enabled BOOLEAN DEFAULT FALSE, " +
                 "FOREIGN KEY (role_id) REFERENCES roles(id));");
     }
 

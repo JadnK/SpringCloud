@@ -21,7 +21,7 @@
             <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
             <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
             <a th:href="@{/calendar}">Calendar</a>
-            <a th:href="@{/change-password}">Change Password</a>
+            <a th:href="@{/settings}">Settings</a>
             <a th:href="@{/logout}">Logout</a>
         </div>
     </div>
