@@ -29,7 +29,9 @@
 
 <div class="content">
     <h1>Welcome to your Cloud Dashboard!</h1>
-
+    <div class="searching">
+        <input type="text" id="fileSearch" placeholder="Search for Files" oninput="filterFiles()">
+    </div>
     <ul class="file-list" id="fileList">
         <li th:each="file : ${files}">
             <div class="file-info">
@@ -203,6 +205,28 @@
     function closePreviewPopup() {
         document.getElementById('previewPopup').style.display = 'none';
     }
+
+    function filterFiles() {
+    const input = document.getElementById('fileSearch');
+    const filter = input.value.toLowerCase();
+    const fileList = document.getElementById('fileList');
+    const files = fileList.getElementsByTagName('li');
+
+    for (let i = 0; i < files.length; i++) {
+        const fileInfo = files[i].querySelector('.file-info');
+        if (fileInfo) {
+            const fileNameSpan = fileInfo.querySelector('span:first-child');
+            const textValue = fileNameSpan ? fileNameSpan.textContent || fileNameSpan.innerText : '';
+
+            if (textValue.toLowerCase().indexOf(filter) > -1) {
+                files[i].style.display = '';
+            } else {
+                files[i].style.display = 'none';
+            }
+        }
+    }
+}
+
 
 </script>
 </body>
