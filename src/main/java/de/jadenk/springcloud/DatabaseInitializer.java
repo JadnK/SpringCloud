@@ -1,6 +1,7 @@
 package de.jadenk.springcloud;
 
 import de.jadenk.springcloud.config.SecurityConfig;
+import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.model.Role;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.RoleRepository;
@@ -100,7 +101,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         Optional<User> existingUserOpt = userRepository.findByUsername("sysadmin");
 
         Role adminRole = roleRepository.findByName("SYSADMIN")
-                .orElseThrow(() -> new RuntimeException("SYSADMIN role not found"));
+                .orElseThrow(() -> new CustomRuntimeException("[Database Initializer] SYSADMIN role not found."));
 
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();

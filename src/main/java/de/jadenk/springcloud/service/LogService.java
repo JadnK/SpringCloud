@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.service;
 
+import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.LogRepository;
@@ -20,7 +21,7 @@ public class LogService {
 
     public Log log(String username, String action) {
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomRuntimeException("[Log Service] User not found with name " + username));
 
         Log log = new Log();
         log.setUser(user);

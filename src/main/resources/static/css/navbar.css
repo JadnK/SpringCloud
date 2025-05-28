@@ -45,7 +45,7 @@
 .logout-dropdown {
     display: none;
     position: absolute;
-    top: calc(100% + 8px);
+    top: 100%;
     right: 0;
     background-color: #3a3a5a;
     border-radius: 11px;
@@ -60,11 +60,14 @@
 }
 
 .logout-dropdown.show,
-.username-box:hover .logout-dropdown {
+.username-box:hover .logout-dropdown,
+.logout-dropdown:hover {
     display: block;
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
 }
+
 
 .logout-dropdown.show {
     display: block;

@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.service;
 
+import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.model.Ban;
 import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.Role;
@@ -52,7 +53,7 @@ public class UserService {
     private byte[] getDefaultProfileImage() {
         try (InputStream is = getClass().getResourceAsStream("/static/images/template.png")) {
             if (is == null) {
-                throw new RuntimeException("Default profile image not found.");
+                throw new CustomRuntimeException("[User Service] Default profile image not found.");
             }
 
             BufferedImage originalImage = ImageIO.read(is);
@@ -71,7 +72,7 @@ public class UserService {
             return baos.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load default profile image.", e);
+            throw new CustomRuntimeException("[User Service] Failed to load default profile image.");
         }
     }
 
@@ -90,7 +91,7 @@ public class UserService {
             log.setId(0L);
         }
 
-        webhookService.triggerWebhookEvent(WebhookEvent.USER_REGISTERED, "User " + user.getUsername() + "registerd someone.", log.getId());
+        webhookService.triggerWebhookEvent(WebhookEvent.USER_REGISTERED, "User " + user.getUsername() + " registerd someone.", log.getId());
     }
 
     public boolean usernameExists(String username) {
@@ -108,7 +109,7 @@ public class UserService {
     }
 
     public void banUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomRuntimeException("[User Service] User not found with id " + userId));
         user.setBanned(!user.isBanned());
         userRepository.save(user);
     }

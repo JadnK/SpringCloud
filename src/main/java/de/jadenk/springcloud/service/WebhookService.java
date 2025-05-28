@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.service;
 
+import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.model.Webhook;
 import de.jadenk.springcloud.repository.WebhookRepository;
 import de.jadenk.springcloud.util.WebhookEvent;
@@ -101,9 +102,8 @@ public class WebhookService {
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(webhook.getUrl(), request, String.class);
-            System.out.println("Discord Webhook Response: " + response.getStatusCode() + " - " + response.getBody());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new CustomRuntimeException("[Webhook Service] Error: " + e);
         }
     }
 
