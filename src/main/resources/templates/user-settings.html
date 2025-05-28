@@ -18,8 +18,8 @@
         </svg>
         <span th:text="${userAttributes.username}">admin</span>
         <div class="logout-dropdown">
-            <a th:if="${userAttributes.role != null and #strings.endsWith(userAttributes.role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-            <a th:if="${userAttributes.role != null and #strings.endsWith(userAttributes.role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
+            <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
+            <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
             <a th:href="@{/dashboard}">Dashboard</a>
             <a th:href="@{/calendar}">Kalender</a>
             <a th:href="@{/logout}">Logout</a>
