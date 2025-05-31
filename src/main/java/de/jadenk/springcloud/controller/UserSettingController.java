@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class UserSettingController {
@@ -92,10 +88,22 @@ public class UserSettingController {
         User user = userService.getUserByName(currentUsername);
 
         if (username != null && !user.getUsername().equals(username)) {
+            Optional<User> existingByUsername = userRepository.findByUsername(username);
+            if (existingByUsername.isPresent()) {
+                model.addAttribute("error", messageService.getError("settings.username.exists"));
+                model.addAttribute("userAttributes", getUserAttributes(user));
+                return "user-settings";
+            }
             user.setUsername(username);
         }
 
         if (email != null && !user.getEmail().equals(email)) {
+            Optional<User> existingByEmail = userRepository.findByEmail(email);
+            if (existingByEmail.isPresent()) {
+                model.addAttribute("error", messageService.getError("settings.email.exists"));
+                model.addAttribute("userAttributes", getUserAttributes(user));
+                return "user-settings";
+            }
             user.setEmail(email);
         }
 
