@@ -23,6 +23,7 @@ import static de.jadenk.springcloud.util.WebhookEvent.USER_CREATION;
 
 @Service
 public class WebhookService {
+
     @Autowired
     private WebhookRepository webhookRepository;
 
@@ -54,6 +55,7 @@ public class WebhookService {
                 case ERROR_THROWN -> webhook.isOnErrorThrown();
                 case FILE_DELETED -> webhook.isOnFileDeletion();
                 case FILE_UPLOADED -> webhook.isOnFileUpload();
+                case SYSTEM_EVENT -> webhook.isOnSystemEvent();
                 case CALENDAR_NOTIFICATION -> webhook.isOnCalendarNotification();
             };
 

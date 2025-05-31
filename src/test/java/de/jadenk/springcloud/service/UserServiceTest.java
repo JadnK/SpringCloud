@@ -68,7 +68,7 @@ class UserServiceTest {
         assertEquals(role, user.getRole());
 
         verify(userRepo).save(user);
-        verify(webhookService).triggerWebhookEvent(eq(WebhookEvent.USER_UPDATED), contains("testuser"), eq(log.getId()));
+        verify(webhookService).triggerWebhookEvent(eq(WebhookEvent.USER_REGISTERED), contains("testuser"), eq(log.getId()));
     }
 
 

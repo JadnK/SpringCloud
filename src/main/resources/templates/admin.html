@@ -138,6 +138,7 @@
                 <label><input type="checkbox" name="onErrorThrown"> Error</label>
                 <label><input type="checkbox" name="onFileDeletion"> File deleted</label>
                 <label><input type="checkbox" name="onFileUpload"> File uploaded</label>
+                <label><input type="checkbox" name="onSystemEvent"> System Events</label>
                 <label><input type="checkbox" name="onCalendarNotification"> Calendar Notify</label>
             </div>
         </div>
@@ -159,6 +160,7 @@
                     <span th:if="${webhook.onErrorThrown}">Error, </span>
                     <span th:if="${webhook.onFileDeletion}">File deleted, </span>
                     <span th:if="${webhook.onFileUpload}">File uploaded, </span>
+                    <span th:if="${webhook.onSystemEvent}">System Events, </span>
                     <span th:if="${webhook.onCalendarNotification}">Calendar Notify</span>
                 </p>
 

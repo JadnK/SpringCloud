@@ -348,8 +348,10 @@ input:checked + .slider:before {
 
 .webhook-events {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
     gap: 0.4rem;
     font-size: 0.9rem;
     color: #444;
@@ -383,10 +385,10 @@ input:checked + .slider:before {
 
 .webhook-actions {
     display: flex;
-    justify-content: flex-start; /* oder 'center' oder 'space-between', je nach Wunsch */
+    justify-content: flex-start;
     gap: 15px;
-    flex-wrap: nowrap; /* WICHTIG: verhindert Umbruch */
-    margin-top: 10px; /* Optional: um Abstand zur Checkboxgruppe zu behalten */
+    flex-wrap: nowrap;
+    margin-top: 10px;
 }
 
 

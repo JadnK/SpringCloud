@@ -40,6 +40,9 @@ public class Webhook {
     @Column(name = "on_user_update", nullable = false)
     private boolean onUserUpdate = false;
 
+    @Column(name = "on_system_event", nullable = false)
+    private boolean onSystemEvent = false;
+
     // Getter und Setter
 
     public Long getId() {
@@ -128,5 +131,13 @@ public class Webhook {
 
     public void setOnUserUpdate(boolean onUserUpdate) {
         this.onUserUpdate = onUserUpdate;
+    }
+
+    public boolean isOnSystemEvent() {
+        return onSystemEvent;
+    }
+
+    public void setOnSystemEvent(boolean onSystemEvent) {
+        this.onSystemEvent = onSystemEvent;
     }
 }

@@ -8,5 +8,6 @@ public enum WebhookEvent {
     ERROR_THROWN,
     FILE_DELETED,
     FILE_UPLOADED,
+    SYSTEM_EVENT,
     CALENDAR_NOTIFICATION
 }

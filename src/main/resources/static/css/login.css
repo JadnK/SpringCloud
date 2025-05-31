@@ -131,16 +131,17 @@ button:hover {
 .checkbox-group input[type="checkbox"]::after {
     content: "";
     position: absolute;
-    width: 6px;
-    height: 12px;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 10px;
     border: solid #e4e4e4;
     border-width: 0 2px 2px 0;
-    top: 2px;
-    left: 6px;
-    transform: rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
     opacity: 0;
     transition: opacity 0.2s ease;
 }
+
 
 .checkbox-group input[type="checkbox"]:checked::after {
     opacity: 1;

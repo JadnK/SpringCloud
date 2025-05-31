@@ -166,6 +166,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "on_file_deletion BOOLEAN NOT NULL DEFAULT FALSE," +
                 "on_file_upload BOOLEAN NOT NULL DEFAULT FALSE," +
                 "on_calendar_notification BOOLEAN NOT NULL DEFAULT FALSE," +
+                "on_system_event BOOLEAN NOT NULL DEFAULT FALSE," +
                 "on_user_update BOOLEAN NOT NULL DEFAULT FALSE" +
                 ");");
     }

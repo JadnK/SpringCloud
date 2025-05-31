@@ -31,6 +31,7 @@ public class WebhookController {
             @RequestParam(required = false) boolean onErrorThrown,
             @RequestParam(required = false) boolean onFileDeletion,
             @RequestParam(required = false) boolean onFileUpload,
+            @RequestParam(required = false) boolean onSystemEvent,
             @RequestParam(required = false) boolean onCalendarNotification
     ) {
         Webhook webhook = new Webhook();
@@ -43,6 +44,7 @@ public class WebhookController {
         webhook.setOnErrorThrown(onErrorThrown);
         webhook.setOnFileDeletion(onFileDeletion);
         webhook.setOnFileUpload(onFileUpload);
+        webhook.setOnSystemEvent(onSystemEvent);
         webhook.setOnCalendarNotification(onCalendarNotification);
 
         webhookRepository.save(webhook);

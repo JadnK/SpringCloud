@@ -66,10 +66,6 @@ public class FileAuthorizationService {
     public void setAuthorizedUsers(Long fileId, List<Long> userIds) {
         fileAuthorizationRepository.deleteByFileId(fileId);
 
-//        System.out.println("CALLED");
-//        System.out.println("File_ID: " + fileId);
-//        System.out.println("userIds: " + userIds);
-
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("Datei nicht gefunden"));
 

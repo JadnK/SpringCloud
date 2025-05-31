@@ -83,7 +83,6 @@ public class DashboardController {
 
             model.addAttribute("files", accessibleFiles);
 
-
             List<User> allUsers = userRepository.findAll();
             List<UserDTO> userDTOs = allUsers.stream()
                     .map(UserDTO::new)
