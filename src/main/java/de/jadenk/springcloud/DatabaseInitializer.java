@@ -159,6 +159,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "webhook_id BIGINT AUTO_INCREMENT PRIMARY KEY," +
                 "is_enabled BOOLEAN NOT NULL," +
                 "webhook_url VARCHAR(255) NOT NULL," +
+                "webhook_pic VARCHAR(255) NOT NULL," +
+                "webhook_name VARCHAR(255) NOT NULL," +
                 "on_user_creation BOOLEAN NOT NULL DEFAULT FALSE," +
                 "on_user_ban BOOLEAN NOT NULL DEFAULT FALSE," +
                 "on_register BOOLEAN NOT NULL DEFAULT FALSE," +

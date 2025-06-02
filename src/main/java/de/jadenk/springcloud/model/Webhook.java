@@ -13,6 +13,13 @@ public class Webhook {
     @Column(name = "webhook_url", nullable = false)
     private String url;
 
+    @Column(name = "webhook_name", nullable = false)
+    private String name;
+
+    @Lob
+    @Column(name = "webhook_pic")
+    private String webhook_profile_url;
+
     @Column(name = "is_enabled", nullable = false)
     private boolean enabled;
 
@@ -139,5 +146,21 @@ public class Webhook {
 
     public void setOnSystemEvent(boolean onSystemEvent) {
         this.onSystemEvent = onSystemEvent;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getWebhook_profile_url() {
+        return webhook_profile_url;
+    }
+
+    public void setWebhook_image_data(String webhook_image_data) {
+        this.webhook_profile_url = webhook_image_data;
     }
 }

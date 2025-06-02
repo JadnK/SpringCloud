@@ -11,12 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static de.jadenk.springcloud.util.WebhookEvent.USER_CREATION;
 
@@ -60,13 +59,13 @@ public class WebhookService {
             };
 
             if (shouldSend) {
-                sendPayload(webhook.getUrl(), message, log_id);
+                sendPayload(webhook.getUrl(), webhook.getWebhook_profile_url(), webhook.getName(), message, log_id);
             }
         }
     }
 
 
-    public void sendPayload(String url, String message, Long log_id) {
+    public void sendPayload(String url, String pic, String name, String message, Long log_id) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> payload = new HashMap<>();
 
@@ -79,6 +78,8 @@ public class WebhookService {
         contentBuilder.append("> ").append(message.replace("\n", "\n> "));
 
         payload.put("content", contentBuilder.toString());
+        payload.put("username", name);
+        payload.put("avatar_url", pic);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -108,6 +109,5 @@ public class WebhookService {
             throw new CustomRuntimeException("[Webhook Service] Error: " + e);
         }
     }
-
 
 }
