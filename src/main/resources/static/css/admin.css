@@ -246,6 +246,14 @@ h1, h2 {
     box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
 }
 
+.extended-settings {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-direction: row;
+}
+
 .checkbox-group {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
