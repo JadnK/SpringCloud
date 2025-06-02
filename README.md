@@ -123,7 +123,7 @@ If you're using or building upon this project, I’d appreciate it if you could 
 
 - **In your `README.md`**:
    ```markdown
-   Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud-dashboard) by [@verpxnter](https://github.com/verpxnter).
+   Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud) by [@verpxnter](https://github.com/verpxnter).
    ```
 
 ## Reporting Issues
