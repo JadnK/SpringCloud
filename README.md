@@ -10,8 +10,7 @@ A simple and modern web-based dashboard application built using **Spring Boot** 
 2. [Technologies Used](#technologies-used)
 3. [Installation](#installation)
 4. [Usage](#usage)
-5. [File Structure](#file-structure)
-6. [Contributing](#contributing)
+5. [Contributing](#contributing)
 
 ---
 
@@ -101,76 +100,6 @@ After starting the application, you can log in with the following **default admi
 
 ---
 
-## File Structure
-
-The project follows a typical Spring Boot application structure.
-
-```
-springcloud-dashboard/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── de/
-│   │   │       └── jadenk/
-│   │   │           └── springcloud/
-│   │   │               ├── config/
-│   │   │               │   ├── SecurityConfig.java
-│   │   │               │   └── WebConfig.java
-│   │   │               ├── controller/
-│   │   │               │   ├── AdminController.java
-│   │   │               │   ├── AuthenticationController.java
-│   │   │               │   ├── BannedController.java
-│   │   │               │   └── DashboardController.java
-│   │   │               ├── exception/
-│   │   │               │   └── ResourceNotFoundException.java
-│   │   │               ├── model/
-│   │   │               │   ├── Ban.java
-│   │   │               │   ├── Log.java
-│   │   │               │   ├── Role.java
-│   │   │               │   ├── UploadedFile.java
-│   │   │               │   └── User.java
-│   │   │               ├── repository/
-│   │   │               │   ├── LogRepository.java
-│   │   │               │   ├── RoleRepository.java
-│   │   │               │   ├── UploadedFileRepository.java
-│   │   │               │   └── UserRepository.java
-│   │   │               ├── security/
-│   │   │               │   ├── BannedUserInterceptor.java
-│   │   │               │   ├── CustomAuthenticationSuccessHandler.java
-│   │   │               │   └── CustomUserDetails.java
-│   │   │               └── service/
-│   │   │               │   ├── CustomUserDetailsService.java
-│   │   │               │   ├── FileUploadProgressListener.java
-│   │   │               │   ├── FileUploadService.java
-│   │   │               │   ├── LogService.java
-│   │   │               │   └── UserService.java
-│   │   │               ├── DatabaseInitializer.java
-│   │   │               └── SpringcloudApplication.java
-│   │   ├── resources/
-│   │   │   ├── static/
-│   │   │   │   ├── css/
-│   │   │   │   │   ├── admin.css
-│   │   │   │   │   ├── banned.css
-│   │   │   │   │   ├── dashboard.css
-│   │   │   │   │   ├── login.css
-│   │   │   │   │   └── register.css
-│   │   │   ├── templates/
-│   │   │   │   ├── admin.html
-│   │   │   │   ├── banned.html
-│   │   │   │   ├── dashboard.html
-│   │   │   │   ├── login.html
-│   │   │   │   └── register.html
-│   │   │   ├── application.properties
-├── build.gradle
-└── README.md
-```
-
-- **`src/main/java/de/jadenk/springcloud/controller/`**: Contains the Spring MVC controllers that handle requests and responses.
-- **`src/main/resources/static/css/`**: Contains the CSS files used for styling.
-- **`src/main/resources/templates/`**: Contains the Thymeleaf templates (HTML files) that render the UI.
-- **`src/main/resources/application.properties`**: Configuration file for Spring Boot.
-- **`build.gradle`**: Gradle build configuration file.
-
 ## Contributing
 
 We welcome contributions to the SpringCloud Dashboard project! If you'd like to contribute, please follow the guidelines below.
@@ -194,7 +123,7 @@ If you're using or building upon this project, I’d appreciate it if you could 
 
 - **In your `README.md`**:
    ```markdown
-   Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud-dashboard) by [@verpxnter](https://github.com/verpxnter).
+   Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud) by [@verpxnter](https://github.com/verpxnter).
    ```
 
 ## Reporting Issues
