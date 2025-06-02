@@ -142,6 +142,22 @@ margin-bottom: 10px;}
     background-color: #5b5b5b;
 }
 
+#previewFileList {
+    list-style: none;
+    padding-left: 0;
+    color: #ccc;
+    margin-top: 10px;
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#previewFileList li::before {
+    content: "📄 ";
+    margin-right: 5px;
+}
+
+
 #uploadPopup .modal-content button {
     background-color: #b259ff;
     color: white;

@@ -94,19 +94,20 @@ public class DashboardController {
     }
 
     @PostMapping("/upload")
-    public String handleUpload(@RequestParam("file") MultipartFile file) {
-        if (!file.isEmpty()) {
-            try {
-                fileUploadService.uploadFile(file);
-                return "redirect:/dashboard";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "redirect:/dashboard?uploadError";
+    public String handleUpload(@RequestParam("file") MultipartFile[] files) {
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                try {
+                    fileUploadService.uploadFile(file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "redirect:/dashboard?uploadError";
+                }
             }
-        } else {
-            return "redirect:/dashboard?fileEmpty";
         }
+        return "redirect:/dashboard";
     }
+
 
     @Autowired
     private WebhookService webhookService;

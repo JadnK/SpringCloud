@@ -143,18 +143,26 @@
 
 <div id="uploadPopup" class="modal">
     <div class="modal-content">
-        <h2>Upload Your File</h2>
+        <h2>Upload Your Files</h2>
         <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" onsubmit="showLoadingBar()">
-            <div id="dropArea" onclick="triggerFileInput()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                <p id="dropText">Drag & drop your file here<br>or click to browse</p>
-                <input type="file" name="file" id="fileInput" hidden onchange="updateFileName()">
+            <div id="dropArea"
+                 onclick="triggerFileInput()"
+                 ondrop="handleDrop(event)"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)">
+                <p id="dropText">Drag & drop your files here<br>or click to browse</p>
+                <input type="file" name="file" id="fileInput" multiple hidden onchange="updateFileList()">
             </div>
+
+            <ul id="previewFileList"></ul>
+
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit">Upload</button>
             <button class="close-btn" onclick="closeUploadPopup()">Close</button>
         </form>
     </div>
 </div>
+
 
 
 <div id="previewPopup" class="modal">
@@ -393,6 +401,48 @@ function handleDrop(e) {
     if (files.length > 0) {
         fileInput.files = files;
         dropText.textContent = files[0].name;
+    }
+}
+
+    function triggerFileInput() {
+    document.getElementById('fileInput').click();
+}
+
+function updateFileList() {
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('previewFileList');
+    fileList.innerHTML = "";
+
+    Array.from(fileInput.files).forEach(file => {
+        const li = document.createElement("li");
+        li.textContent = file.name;
+        fileList.appendChild(li);
+    });
+
+    document.getElementById('dropText').textContent = "Files ready to upload!";
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('dropArea').classList.add('hover');
+}
+
+function handleDragLeave(e) {
+    document.getElementById('dropArea').classList.remove('hover');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('fileInput');
+    const dropArea = document.getElementById('dropArea');
+    dropArea.classList.remove('hover');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        const dataTransfer = new DataTransfer();
+        Array.from(files).forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
+        updateFileList();
     }
 }
 </script>
