@@ -1,30 +1,36 @@
 package de.jadenk.springcloud.controller;
 
+import de.jadenk.springcloud.exception.CustomRuntimeException;
+import de.jadenk.springcloud.model.CloudSetting;
 import de.jadenk.springcloud.model.Webhook;
 import de.jadenk.springcloud.repository.WebhookRepository;
+import de.jadenk.springcloud.service.CloudSettingService;
 import de.jadenk.springcloud.service.WebhookService;
+import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/webhooks")
 public class WebhookController {
 
-    private static final String IMGUR_CLIENT_ID = "SECRET";
+    @Autowired
+    private CloudSettingService cloudSettingService;
 
     @Autowired
     private WebhookRepository webhookRepository;
@@ -36,7 +42,7 @@ public class WebhookController {
     public String addWebhook(
             @RequestParam String url,
             @RequestParam String webhookName,
-            @RequestParam byte[] webhookPicture,
+            @RequestParam(required = false) MultipartFile webhookPicture,
             @RequestParam(required = false) boolean onUserCreation,
             @RequestParam(required = false) boolean onUserBan,
             @RequestParam(required = false) boolean onUserUpdate,
@@ -46,11 +52,19 @@ public class WebhookController {
             @RequestParam(required = false) boolean onFileUpload,
             @RequestParam(required = false) boolean onSystemEvent,
             @RequestParam(required = false) boolean onCalendarNotification
-    ) {
+    ) throws IOException {
         Webhook webhook = new Webhook();
         webhook.setUrl(url);
         webhook.setName(webhookName);
-        webhook.setWebhook_image_data(uploadToImgur(webhookPicture));
+
+        try {
+            byte[] imageBytes = webhookPicture.getBytes();
+            webhook.setWebhook_image_data(uploadToImgur(imageBytes));
+        } catch (CustomRuntimeException e) {
+            webhook.setWebhook_image_data(null);
+            webhookService.triggerWebhookEvent(WebhookEvent.ERROR_THROWN, e.getMessage(), 0L);
+        }
+
         webhook.setEnabled(true);
         webhook.setOnUserCreation(onUserCreation);
         webhook.setOnUserBan(onUserBan);
@@ -68,31 +82,43 @@ public class WebhookController {
     }
 
 
-    private String uploadToImgur(byte[] imageBytes) {
-        RestTemplate restTemplate = new RestTemplate();
+    public String uploadToImgur(byte[] imageData) {
+        Optional<CloudSetting> clientIdSetting = cloudSettingService.getSetting("IMGUR_CLIENT_ID");
+
+        if (clientIdSetting.isEmpty() || clientIdSetting.get().getValue() == null || clientIdSetting.get().getValue().isEmpty()) {
+            throw new CustomRuntimeException("[Webhook Controller] Imgur Client ID not configured.");
+        }
+
+        String clientId = "Client-ID " + clientIdSetting.get().getValue();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.set("Authorization", "Client-ID " + IMGUR_CLIENT_ID);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", clientId);
 
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        String base64Image = Base64.getEncoder().encodeToString(imageData);
         body.add("image", base64Image);
         body.add("type", "base64");
 
-        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        try {
-            ResponseEntity<Map> response = restTemplate.postForEntity("https://api.imgur.com/3/image", request, Map.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
-                return (String) data.get("link");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        RestTemplate restTemplate = new RestTemplate();
+
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                "https://api.imgur.com/3/image",
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+        );
+
+        Map<String, Object> responseBody = response.getBody();
+        if (responseBody != null && Boolean.TRUE.equals(responseBody.get("success"))) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
+            return (String) data.get("link");
         }
 
-        return null;
+        throw new RuntimeException("Imgur upload failed");
     }
 
     @PostMapping("/delete/{id}")
@@ -106,7 +132,6 @@ public class WebhookController {
         webhookRepository.findById(id).ifPresent(webhook -> {
             webhookService.sendTestPayload(webhook);
         });
-        redirectAttributes.addFlashAttribute("message", "Webhook-Test started");
         return "redirect:/admin";
     }
 
@@ -117,7 +142,6 @@ public class WebhookController {
             webhook.setEnabled(enabled != null && enabled);
             webhookRepository.save(webhook);
         });
-        redirectAttributes.addFlashAttribute("message", "Webhook aktiviert/deaktiviert");
         return "redirect:/admin";
     }
 }

@@ -121,7 +121,7 @@
 
 
     <h2 class="no-select">Webhook Settings</h2>
-    <form action="/webhooks/add" method="post" class="webhook-settings">
+    <form action="/webhooks/add" method="post" enctype="multipart/form-data" class="webhook-settings">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="webhook-url-group">
             <label for="webhookUrl" class="no-select">Webhook URL:</label>
@@ -195,8 +195,53 @@
                 </form>
             </div>
         </div>
-        </div>
     </div>
+
+
+    <h2 class="no-select">Site Settings</h2>
+
+    <section class="site-settings">
+        <div th:each="setting : ${settings}" class="settings-box">
+            <form th:action="@{/admin/settings/update}" method="post" class="settings-form">
+                <input type="hidden" name="key" th:value="${setting.key}" />
+                <input type="hidden" name="type" th:value="${setting.type}" />
+
+                <label th:for="${setting.key}" class="no-select" th:text="${setting.key}">Setting Name</label>
+
+                <input th:if="${setting.type == 'TEXT'}"
+                       type="text"
+                       th:id="${setting.key}"
+                       name="value"
+                       th:value="${setting.value}"
+                       placeholder="Enter value" />
+
+                <div th:if="${setting.type == 'CHECKBOX'}" class="toggle-switch-wrapper">
+                    <span th:if="${setting.type == 'CHECKBOX'}" class="toggle-switch-off">On</span>
+                    <input th:if="${setting.type == 'CHECKBOX'}"
+                           type="checkbox"
+                           th:id="${setting.key}"
+                           name="value"
+                           value="true"
+                           th:checked="${setting.value == 'true'}"
+                           class="toggle-switch" />
+                    <span th:if="${setting.type == 'CHECKBOX'}" class="toggle-switch-on">Off</span>
+                </div>
+
+
+                <input th:if="${setting.type == 'NUMBER'}"
+                       type="number"
+                       th:id="${setting.key}"
+                       name="value"
+                       th:value="${setting.value}"
+                       min="1" max="100" />
+
+                <button type="submit" class="button no-select">Save</button>
+            </form>
+        </div>
+    </section>
+
+    </div>
+
 
 </div>
 

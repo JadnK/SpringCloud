@@ -79,7 +79,10 @@ public class WebhookService {
 
         payload.put("content", contentBuilder.toString());
         payload.put("username", name);
-        payload.put("avatar_url", pic);
+
+        if (pic != null) {
+            payload.put("avatar_url", pic);
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -94,20 +97,7 @@ public class WebhookService {
     }
 
     public void sendTestPayload(Webhook webhook) {
-        RestTemplate restTemplate = new RestTemplate();
-        Map<String, String> payload = new HashMap<>();
-        payload.put("content", "✅ Testmessage from SpringCloud-System.");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
-
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(webhook.getUrl(), request, String.class);
-        } catch (Exception e) {
-            throw new CustomRuntimeException("[Webhook Service] Error: " + e);
-        }
+        sendPayload(webhook.getUrl(), webhook.getWebhook_profile_url(), webhook.getName(), "✅ Testmessage from SpringCloud-System.", null);
     }
 
 }

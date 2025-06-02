@@ -2,6 +2,7 @@ package de.jadenk.springcloud.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +20,11 @@ public class User {
 
     @Column(unique = true)
     private String email;
+
+    @Transient
+    private int failedLoginAttempts = 0;
+    @Transient
+    private LocalDateTime lockoutTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
@@ -106,5 +112,21 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(int attempts) {
+        failedLoginAttempts=attempts;
+    }
+
+    public LocalDateTime getLockoutTime() {
+        return lockoutTime;
+    }
+
+    public void setLockoutTime(LocalDateTime lockoutTime) {
+        this.lockoutTime = lockoutTime;
     }
 }

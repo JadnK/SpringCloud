@@ -5,6 +5,7 @@ import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.SharedLinkRepository;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
+import de.jadenk.springcloud.service.CloudSettingService;
 import de.jadenk.springcloud.service.FileUploadService;
 import de.jadenk.springcloud.service.SharingService;
 import de.jadenk.springcloud.service.UserService;
@@ -49,9 +50,19 @@ public class ShareController {
     @Autowired
     private FileUploadService fileUploadService;
 
+    @Autowired
+    private CloudSettingService cloudSettingService;
+
 
     @GetMapping("/share/{fileId}")
     public RedirectView shareFile(HttpServletRequest request, @PathVariable Long fileId, @RequestParam int duration) {
+
+        if (!cloudSettingService.getBooleanSetting("ALLOW_SHARING", true)) {
+            RedirectView redirectView = new RedirectView("/admin");
+            redirectView.setExposeModelAttributes(false);
+            redirectView.setUrl("/dashboard");
+            return redirectView;
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.config;
 
+import de.jadenk.springcloud.security.CustomAuthenticationFailureHandler;
 import de.jadenk.springcloud.security.CustomAuthenticationSuccessHandler;
 import de.jadenk.springcloud.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class SecurityConfig {
 
     @Autowired
     private CustomAuthenticationSuccessHandler successHandler;
+
+    @Autowired
+    private CustomAuthenticationFailureHandler failureHandler;
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -52,10 +56,11 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .failureHandler(failureHandler)
                         .successHandler(successHandler)
                         .permitAll())
                 .sessionManagement(session -> session
-                        .invalidSessionUrl("/login?error=Deine+Session+ist+abgelaufen")
+                        .invalidSessionUrl("/login")
                         .maximumSessions(10)
                         .sessionRegistry(sessionRegistry())
                 );

@@ -17,9 +17,17 @@ public class LogService {
     private UserRepository userRepo;
 
     @Autowired
+    private CloudSettingService cloudSettingService;
+
+    @Autowired
     private LogRepository logRepo;
 
     public Log log(String username, String action) {
+
+        if (!cloudSettingService.getBooleanSetting("ENABLE_LOGGING", true)) {
+            return null;
+        }
+
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new CustomRuntimeException("[Log Service] User not found with name " + username));
 

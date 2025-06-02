@@ -84,6 +84,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             if (!tableExists(statement, "file_authorizations")) {
                 createFileAuthorizationsTable(statement);
             }
+
+            if (!tableExists(statement, "cloud_settings")) {
+                createSiteSettingsTable(statement);
+            }
         }
     }
 
@@ -154,12 +158,26 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "FOREIGN KEY (user_id) REFERENCES users(id));");
     }
 
+    private void createSiteSettingsTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE cloud_settings (" +
+                        "setting_key VARCHAR(255) PRIMARY KEY," +
+                        "type VARCHAR(255)," +
+                        "value TEXT);");
+        statement.executeUpdate("INSERT INTO cloud_settings (setting_key, type, value) VALUES " +
+                        "('IMGUR_CLIENT_ID', 'TEXT', NULL)," +
+                        "('MAX_LOGIN_ATTEMPTS', 'NUMBER', 3)," +
+                        "('API_RATE_LIMIT_PER_MINUTE', 'NUMBER', 40)," +
+                        "('ALLOW_SHARING', 'CHECKBOX', 'true')," +
+                        "('ENABLE_LOGGING', 'CHECKBOX', 'true');");
+    }
+
+
     private void createWebhookTable(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE webhooks (" +
                 "webhook_id BIGINT AUTO_INCREMENT PRIMARY KEY," +
                 "is_enabled BOOLEAN NOT NULL," +
                 "webhook_url VARCHAR(255) NOT NULL," +
-                "webhook_pic VARCHAR(255) NOT NULL," +
+                "webhook_pic VARCHAR(255) NULL," +
                 "webhook_name VARCHAR(255) NOT NULL," +
                 "on_user_creation BOOLEAN NOT NULL DEFAULT FALSE," +
                 "on_user_ban BOOLEAN NOT NULL DEFAULT FALSE," +

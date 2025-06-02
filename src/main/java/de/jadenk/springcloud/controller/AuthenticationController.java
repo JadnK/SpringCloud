@@ -35,11 +35,14 @@ public class AuthenticationController {
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
                         Model model) {
-        if (error != null) {
-            model.addAttribute("error", messageService.getError("auth.invalid"));
+        if ("locked".equals(error)) {
+            model.addAttribute("error", "Dein Account ist gesperrt. Bitte versuche es später erneut.");
+        } else if (error != null) {
+            model.addAttribute("error", "Ungültiger Benutzername oder Passwort.");
         }
         return "login";
     }
+
 
 
     @GetMapping("/register")

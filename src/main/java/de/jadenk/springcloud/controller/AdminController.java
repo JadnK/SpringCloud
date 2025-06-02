@@ -2,9 +2,11 @@ package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.config.SecurityConfig;
 import de.jadenk.springcloud.model.*;
+import de.jadenk.springcloud.repository.CloudSettingRepository;
 import de.jadenk.springcloud.repository.LogRepository;
 import de.jadenk.springcloud.repository.RoleRepository;
 import de.jadenk.springcloud.repository.UserRepository;
+import de.jadenk.springcloud.service.CloudSettingService;
 import de.jadenk.springcloud.service.LogService;
 import de.jadenk.springcloud.service.UserService;
 import de.jadenk.springcloud.service.WebhookService;
@@ -55,6 +57,12 @@ public class AdminController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private CloudSettingRepository cloudSettingRepository;
+
+    @Autowired
+    private CloudSettingService cloudSettingService;
+
 
     @GetMapping("/admin")
     public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -83,6 +91,8 @@ public class AdminController {
 
 
         Webhook webhook = webhookService.getFirst().orElse(new Webhook());
+        List<CloudSetting> settings = cloudSettingRepository.getAllSettings();
+        model.addAttribute("settings", settings);
         model.addAttribute("webhook", webhook);
         model.addAttribute("webhooks", webhookService.getAll());
         model.addAttribute("users", users);
@@ -95,6 +105,20 @@ public class AdminController {
 
         return "admin";
     }
+
+    @PostMapping("/admin/settings/update")
+    public String updateSetting(@RequestParam String key,
+                                @RequestParam(required = false) String value,
+                                @RequestParam String type) {
+        if ("CHECKBOX".equals(type) && value == null) {
+            value = "false";
+        } else {
+
+        }
+        cloudSettingService.updateSetting(key, value, type);
+        return "redirect:/admin";
+    }
+
 
 
     @PostMapping("/admin/user/update")

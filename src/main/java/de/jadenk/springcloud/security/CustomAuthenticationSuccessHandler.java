@@ -42,6 +42,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // System.out.println("Authentication Object: " + authentication);
 
         if (user != null) {
+            user.setFailedLoginAttempts(0);
+            user.setLockoutTime(null);
+            userRepo.save(user);
+
             logService.log(user.getUsername(), messageService.getLog("login.success"));
         }
 
