@@ -83,7 +83,7 @@ public class AuthenticationController {
         }
 
         userService.register(user);
-        return "redirect:/login";
+        return "redirect:/register";
     }
 
 

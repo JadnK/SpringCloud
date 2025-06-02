@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +29,10 @@ public class AdminController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
 
     @Autowired
     private WebhookService webhookService;
@@ -103,6 +109,8 @@ public class AdminController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 
+        expireUserSessions(user.getUsername());
+
         Log log = null;
 
         if (!user.getUsername().equals(username)) {
@@ -162,6 +170,7 @@ public class AdminController {
         try {
             userService.banUser(id);
             User user = userService.getUserById(id);
+            expireUserSessions(user.getUsername());
             String status = user.isBanned() ? "banned" : "unbanned";
             String message = messageService.getLog("admin.user.ban.status", user.getUsername(), status);
             Log log = logService.log(currentUser.getUsername(), message);
@@ -178,5 +187,19 @@ public class AdminController {
         model.addAttribute("users", users);
         return "user-list";
     }
+
+    private void expireUserSessions(String username) {
+        List<Object> principals = sessionRegistry.getAllPrincipals();
+        for (Object principal : principals) {
+            if (principal instanceof UserDetails userDetails &&
+                    userDetails.getUsername().equals(username)) {
+                List<SessionInformation> sessions = sessionRegistry.getAllSessions(userDetails, false);
+                for (SessionInformation session : sessions) {
+                    session.expireNow();
+                }
+            }
+        }
+    }
+
 
 }
