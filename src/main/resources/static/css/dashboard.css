@@ -90,9 +90,43 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+#uploadPopup .modal-content {
+    background: #333;
+    color: white;
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    width: 450px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#dropArea {
+    border: 2px dashed #b259ff;
+    padding: 40px;
+    border-radius: 10px;
+    background-color: #444;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#dropArea.hover {
+    background-color: #5b5b5b;
+    border-color: #9d4ae2;
+}
+
+#dropText {
+    color: #ccc;
+    font-size: 16px;
+}
+
+
 #uploadPopup .popup-content h2 {
     margin-bottom: 20px;
 }
+
+#uploadPopup .modal-content h2 {
+margin-bottom: 10px;}
 
 #uploadPopup .popup-content input[type="file"] {
     padding: 10px;
@@ -108,7 +142,7 @@ h1 {
     background-color: #5b5b5b;
 }
 
-#uploadPopup .popup-content button {
+#uploadPopup .modal-content button {
     background-color: #b259ff;
     color: white;
     padding: 12px 24px;
@@ -119,7 +153,7 @@ h1 {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-#uploadPopup .popup-content button:hover {
+#uploadPopup .modal-content button:hover {
     background-color: #9d4ae2;
     transform: scale(1.05);
 }
