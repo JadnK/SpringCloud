@@ -1,11 +1,14 @@
 package de.jadenk.springcloud.controller;
 
+import de.jadenk.springcloud.dto.LogDTO;
 import de.jadenk.springcloud.dto.UserDTO;
 import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.model.ApiToken;
+import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.model.Webhook;
 import de.jadenk.springcloud.repository.ApiTokenRepository;
+import de.jadenk.springcloud.repository.LogRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.ApiTokenService;
 import de.jadenk.springcloud.util.WebhookEvent;
@@ -26,6 +29,8 @@ public class ApiController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LogRepository logRepository;
 
     @GetMapping("/users")
     public List<UserDTO> getAllUsers() {
@@ -34,11 +39,25 @@ public class ApiController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/logs")
+    public List<LogDTO> getAllLogs() {
+        return logRepository.findAll().stream()
+                .map(LogDTO::new)
+                .collect(Collectors.toList());
+    }
 
-    @GetMapping("/users/{id}")
+
+    @GetMapping("/user/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(user -> ResponseEntity.ok(new UserDTO(user)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/log/{id}")
+    public ResponseEntity<LogDTO> getLogById(@PathVariable Long id) {
+        return logRepository.findById(id)
+                .map(log -> ResponseEntity.ok(new LogDTO(log)))
                 .orElse(ResponseEntity.notFound().build());
     }
 

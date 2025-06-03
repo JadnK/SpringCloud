@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.Role;
 import de.jadenk.springcloud.model.User;
@@ -10,10 +11,12 @@ import java.util.Set;
 public class UserDTO {
     private Long id;
     private String username;
+
+    @JsonIgnore
     private String profileImageBase64;
+
     private String mail;
     private Role role;
-    private Set<Log> logs;
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -26,7 +29,7 @@ public class UserDTO {
         }
         this.mail=user.getEmail();
         this.role=user.getRole();
-        this.logs=user.getLogs();
+        //this.logs=user.getLogs();
     }
 
     public Long getId() { return id; }
@@ -49,11 +52,11 @@ public class UserDTO {
         this.role = role;
     }
 
-    public Set<Log> getLogs() {
-        return logs;
-    }
+    //public Set<Log> getLogs() {
+    //    return logs;
+    //}
 
-    public void setLogs(Set<Log> logs) {
-        this.logs = logs;
-    }
+    //public void setLogs(Set<Log> logs) {
+    //    this.logs = logs;
+    //}
 }
