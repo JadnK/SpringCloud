@@ -1,25 +1,24 @@
 package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.dto.LogDTO;
+import de.jadenk.springcloud.dto.UploadedFileDTO;
 import de.jadenk.springcloud.dto.UserDTO;
-import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.model.ApiToken;
-import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.User;
-import de.jadenk.springcloud.model.Webhook;
 import de.jadenk.springcloud.repository.ApiTokenRepository;
 import de.jadenk.springcloud.repository.LogRepository;
+import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.ApiTokenService;
-import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,13 +30,24 @@ public class ApiController {
     private UserRepository userRepository;
     @Autowired
     private LogRepository logRepository;
+    @Autowired
+    private UploadedFileRepository uploadedFileRepository;
 
     @GetMapping("/users")
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(UserDTO::new)
+    public List<Map<String,? extends Serializable>> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        List<Map<String, ? extends Serializable>> collect = users.stream()
+                .map(user -> Map.of(
+                        "id", user.getId(),
+                        "username", user.getUsername(),
+                        "role", user.getRole() != null ? user.getRole().getName() : "NO_ROLE"
+                ))
                 .collect(Collectors.toList());
+        return collect;
     }
+
+
 
     @GetMapping("/logs")
     public List<LogDTO> getAllLogs() {
@@ -45,6 +55,19 @@ public class ApiController {
                 .map(LogDTO::new)
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/files")
+    public List<Map<String,? extends Serializable>> getAllFiles() {
+        List<Map<String, ? extends Serializable>> collect = uploadedFileRepository.findAll().stream()
+                .map(file -> Map.of(
+                        "id", file.getId(),
+                        "fileName", file.getFileName(),
+                        "fileType", file.getFileType()
+                ))
+                .collect(Collectors.toList());
+        return collect;
+    }
+
 
 
     @GetMapping("/user/{id}")
@@ -60,6 +83,14 @@ public class ApiController {
                 .map(log -> ResponseEntity.ok(new LogDTO(log)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/file/{id}")
+    public ResponseEntity<UploadedFileDTO> getFileById(@PathVariable Long id) {
+        return uploadedFileRepository.findById(id)
+                .map(file -> ResponseEntity.ok(new UploadedFileDTO(file)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 
 
 

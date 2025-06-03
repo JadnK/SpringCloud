@@ -12,6 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class SpringcloudApplication {
 
+	// curl -k -X GET https://localhost:8080/api/log/2 -H "X-API-TOKEN: feb58cac1cbf427ea9efe12d114cb467" -H "Accept: application/json"
+
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(SpringcloudApplication.class, args);
 		WebhookService webhookService = context.getBean(WebhookService.class);
