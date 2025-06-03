@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
@@ -31,6 +32,9 @@ public class SecurityConfig {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private ApiTokenFilter apiTokenFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,6 +53,7 @@ public class SecurityConfig {
                                 "/share/**",
                                 "/link-expired"
                         ).permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated())
                 .rememberMe(remember -> remember
                         .key("cookie_remember_me_jadenk_292929")
@@ -64,7 +69,7 @@ public class SecurityConfig {
                         .maximumSessions(10)
                         .sessionRegistry(sessionRegistry())
                 );
-
+        http.addFilterBefore(apiTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

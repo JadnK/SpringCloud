@@ -85,6 +85,10 @@ public class DatabaseInitializer implements CommandLineRunner {
                 createFileAuthorizationsTable(statement);
             }
 
+            if (!tableExists(statement, "api_token")) {
+                createApiTokenTable(statement);
+            }
+
             if (!tableExists(statement, "cloud_settings")) {
                 createSiteSettingsTable(statement);
             }
@@ -144,6 +148,16 @@ public class DatabaseInitializer implements CommandLineRunner {
             return resultSet.next();
         }
     }
+
+    private void createApiTokenTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE api_token (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "name VARCHAR(255)," +
+                "token VARCHAR(255) UNIQUE," +
+                "active BOOLEAN" +
+                ");");
+    }
+
 
     private void createCalendarTable(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE calendar_entry (" +

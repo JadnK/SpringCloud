@@ -240,6 +240,44 @@
         </div>
     </section>
 
+    <h2 class="no-select">Api Settings</h2>
+    <form action="/api/s/add" method="post" enctype="multipart/form-data" class="api-settings">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="api-url-group">
+            <label for="apiName" class="no-select">Api Name:</label>
+            <input type="text" id="apiName" name="apiName" placeholder="Your Name" required>
+        </div>
+
+        <div class="api-actions">
+            <button type="submit" class="button no-select">Add Api</button>
+        </div>
+    </form>
+
+    <div class="api-list">
+        <div class="api-card" th:each="apii : ${apis}">
+            <div class="api-info">
+                <p><strong>Name:</strong> <span th:text="${apii.name}">Name</span></p>
+                <p><strong>Token:</strong> <span th:text="${apii.token}">token</span>
+                </p>
+
+            </div>
+            <div class="api-actions">
+                <form th:action="@{/api/s/toggle/{id}(id=${apii.id})}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <label class="switch">
+                        <input type="checkbox" name="active" th:checked="${apii.active} ? 'checked' : null" onchange="this.form.submit()">
+                        <span class="slider round"></span>
+                    </label>
+                </form>
+
+                <form th:action="@{/api/s/delete/{id}(id=${apii.id})}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="button no-select danger" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     </div>
 
 

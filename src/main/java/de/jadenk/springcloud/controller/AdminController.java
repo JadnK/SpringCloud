@@ -2,14 +2,8 @@ package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.config.SecurityConfig;
 import de.jadenk.springcloud.model.*;
-import de.jadenk.springcloud.repository.CloudSettingRepository;
-import de.jadenk.springcloud.repository.LogRepository;
-import de.jadenk.springcloud.repository.RoleRepository;
-import de.jadenk.springcloud.repository.UserRepository;
-import de.jadenk.springcloud.service.CloudSettingService;
-import de.jadenk.springcloud.service.LogService;
-import de.jadenk.springcloud.service.UserService;
-import de.jadenk.springcloud.service.WebhookService;
+import de.jadenk.springcloud.repository.*;
+import de.jadenk.springcloud.service.*;
 import de.jadenk.springcloud.util.MessageService;
 import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +57,11 @@ public class AdminController {
     @Autowired
     private CloudSettingService cloudSettingService;
 
+    @Autowired
+    private ApiTokenRepository apiTokenRepository;
+
+    @Autowired
+    private ApiTokenService apiTokenService;
 
     @GetMapping("/admin")
     public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -92,7 +91,11 @@ public class AdminController {
 
         Webhook webhook = webhookService.getFirst().orElse(new Webhook());
         List<CloudSetting> settings = cloudSettingRepository.getAllSettings();
+
+        ApiToken apiToken = apiTokenService.getFirst().orElse(new ApiToken());
         model.addAttribute("settings", settings);
+        model.addAttribute("api", apiToken);
+        model.addAttribute("apis", apiTokenService.getAll());
         model.addAttribute("webhook", webhook);
         model.addAttribute("webhooks", webhookService.getAll());
         model.addAttribute("users", users);
