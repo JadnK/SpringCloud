@@ -6,14 +6,18 @@
     <p><strong>Date:</strong> <span th:text="${entry.date}"></span></p>
     <p><strong>Visibility:</strong> <span th:text="${entry.visibility}"></span></p>
 
-    <form th:if="${canEdit}" method="post" th:action="@{/calendar/toggle-visibility}">
-        <input type="hidden" name="id" th:value="${entry.id}">
-        <button type="submit">Change Visibility</button>
-    </form>
+    <div class="button-row" th:if="${canEdit}">
+        <form method="post" th:action="@{/calendar/toggle-visibility}">
+            <input type="hidden" name="id" th:value="${entry.id}">
+            <button type="submit">Change Visibility</button>
+        </form>
 
-    <form th:if="${canEdit}" method="get" th:action="@{'/calendar/delete/' + ${entry.id}}">
-        <button type="submit">Delete</button>
-    </form>
+        <form method="get" th:action="@{'/calendar/delete/' + ${entry.id}}">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
 
-    <button onclick="closeModal('viewModal')" class="close-btn">Close</button>
+    <div class="button-row">
+        <button onclick="closeModal('viewModal')" class="close-btn">Close</button>
+    </div>
 </div>

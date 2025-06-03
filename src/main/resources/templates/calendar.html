@@ -33,12 +33,6 @@
 <div class="content">
     <h1 th:text="'Kalender - ' + ${monthName} + ' ' + ${year}">Calendar</h1>
 
-<!--    <form class="year-form" method="get" th:action="@{/calendar}">
-        <input type="number" name="year" th:value="${year}" min="1900" max="2100" />
-        <input type="number" name="month" th:value="${month}" min="1" max="12" />
-        <button type="submit">Anzeigen</button>
-    </form> -->
-
     <form method="get" th:action="@{/calendar}" class="year-form">
         <input type="hidden" name="month" th:value="${month}" />
         <button type="submit" name="year" th:value="${year - 1}">&laquo; Previous year</button>
@@ -87,21 +81,24 @@
 
 <div id="createModal" class="modal hidden">
     <div class="modal-content">
-        <h2>Neuer Eintrag</h2>
+        <h2>New Entry</h2>
         <form id="createEntryForm" method="post" th:action="@{/calendar/add}">
             <input type="hidden" name="date" id="entryDate">
             <input type="text" name="title" placeholder="Title" required>
-            <textarea name="description" placeholder="Description" required></textarea>
-            <input type="time" name="entry_time" placeholder="Time" required>
+            <textarea name="description" placeholder="Description" rows="4" required></textarea>
+            <input type="time" name="entry_time" required>
             <select name="visibility" required>
                 <option value="PRIVATE">Private</option>
                 <option value="PUBLIC">Public</option>
             </select>
-            <button type="submit">Save</button>
+            <div class="form-actions">
+                <button type="submit">Save</button>
+                <button type="button" class="close-btn" onclick="closeModal('createModal')">Close</button>
+            </div>
         </form>
-        <button onclick="closeModal('createModal')" class="close-btn">Cancel</button>
     </div>
 </div>
+
 
 <div id="viewModal" class="modal hidden"></div>
 
