@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>DB Health Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: #eee;
+            margin: 2rem;
+        }
+        h1, h2 {
+            color: #4caf50;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .stats, .charts {
+            margin-top: 2rem;
+            background: #222;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 0 8px #4caf50aa;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background: #333;
+        }
+        canvas {
+            margin-top: 1rem;
+            background: #000;
+            border-radius: 8px;
+            box-shadow: 0 0 6px #4caf50bb;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Database Health Dashboard</h1>
+    <div class="stats">
+        <h2>Connection Info</h2>
+        <p><strong>Database:</strong> <span id="dbName">loading...</span></p>
+        <p><strong>Status:</strong></p>
+        <ul id="statusList"></ul>
+        <p><strong>Variables:</strong></p>
+        <ul id="variablesList"></ul>
+    </div>
+
+    <div class="charts">
+        <h2>Table Sizes (MB)</h2>
+        <canvas id="tableSizeChart" width="800" height="400"></canvas>
+
+        <h2>Table Row Counts</h2>
+        <canvas id="tableRowsChart" width="800" height="400"></canvas>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // JSON-Daten vom Server direkt in JS parsen
+    const dbData = JSON.parse([[${dbHealthJson}]]);
+
+    document.getElementById('dbName').innerText = dbData.dbName || 'unknown';
+
+    // Status anzeigen
+    const statusList = document.getElementById('statusList');
+    statusList.innerHTML = '';
+    for (const [key, value] of Object.entries(dbData.status || {})) {
+        const li = document.createElement('li');
+        li.textContent = `${key}: ${value}`;
+        statusList.appendChild(li);
+    }
+
+    // Variables anzeigen
+    const variablesList = document.getElementById('variablesList');
+    variablesList.innerHTML = '';
+    for (const [key, value] of Object.entries(dbData.variables || {})) {
+        const li = document.createElement('li');
+        li.textContent = `${key}: ${value}`;
+        variablesList.appendChild(li);
+    }
+
+    // Charts vorbereiten
+    const tableStats = dbData.tableStats || [];
+    const tableNames = tableStats.map(t => t.table_name);
+    const sizes = tableStats.map(t => t.size_mb);
+    const rows = tableStats.map(t => t.table_rows);
+
+    // Table Size Chart
+    new Chart(document.getElementById('tableSizeChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: tableNames,
+            datasets: [{
+                label: 'Size (MB)',
+                data: sizes,
+                backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                borderColor: 'rgba(76, 175, 80, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true }},
+            responsive: true,
+            plugins: { legend: { labels: {color: '#eee'} } }
+        }
+    });
+
+    // Table Row Count Chart
+    new Chart(document.getElementById('tableRowsChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: tableNames,
+            datasets: [{
+                label: 'Row Count',
+                data: rows,
+                backgroundColor: 'rgba(33, 150, 243, 0.7)',
+                borderColor: 'rgba(33, 150, 243, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true }},
+            responsive: true,
+            plugins: { legend: { labels: {color: '#eee'} } }
+        }
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
