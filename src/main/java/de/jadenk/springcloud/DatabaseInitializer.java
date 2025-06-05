@@ -223,12 +223,16 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "role_id BIGINT, " +
                 "username VARCHAR(255) NOT NULL UNIQUE, " +
                 "email VARCHAR(255) NOT NULL UNIQUE, " +
-                "password VARCHAR(255) NOT NULL," +
-                "is_banned BOOLEAN DEFAULT FALSE,"+
+                "password VARCHAR(255) NOT NULL, " +
+                "is_banned BOOLEAN DEFAULT FALSE, " +
                 "profile_image_data LONGBLOB, " +
                 "notifications_enabled BOOLEAN DEFAULT FALSE, " +
-                "FOREIGN KEY (role_id) REFERENCES roles(id));");
+                "failed_login_attempts INT DEFAULT 0, " +
+                "lockout_time DATETIME DEFAULT NULL, " +
+                "FOREIGN KEY (role_id) REFERENCES roles(id)" +
+                ");");
     }
+
 
     private void createSharedLinks(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE shared_links (" +

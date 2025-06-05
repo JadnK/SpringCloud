@@ -21,10 +21,12 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Transient
-    private int failedLoginAttempts = 0;
-    @Transient
+    @Column(name = "failed_login_attempts")
+    private int failedLoginAttempts;
+
+    @Column(name = "lockout_time")
     private LocalDateTime lockoutTime;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")

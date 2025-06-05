@@ -36,9 +36,9 @@ public class AuthenticationController {
     public String login(@RequestParam(value = "error", required = false) String error,
                         Model model) {
         if ("locked".equals(error)) {
-            model.addAttribute("error", "Dein Account ist gesperrt. Bitte versuche es später erneut.");
+            model.addAttribute("error", "Account temporarily locked after multiple failed logins.");
         } else if (error != null) {
-            model.addAttribute("error", "Ungültiger Benutzername oder Passwort.");
+            model.addAttribute("error", "Invalid Username or Password.");
         }
         return "login";
     }

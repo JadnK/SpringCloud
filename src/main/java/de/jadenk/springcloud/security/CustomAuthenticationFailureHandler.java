@@ -10,11 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
@@ -40,20 +40,41 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             throws IOException, ServletException {
 
         String username = request.getParameter("username");
+        AtomicBoolean locked = new AtomicBoolean(false);
+
         if (username != null) {
             userRepo.findByUsername(username).ifPresent(user -> {
 
-                int attempts = user.getFailedLoginAttempts() + 1;
-                user.setFailedLoginAttempts(attempts);
+                int maxAttempts = cloudSettingService.getNumberSetting("MAX_LOGIN_ATTEMPTS", 3);
+                LocalDateTime now = LocalDateTime.now();
 
-                if (attempts >= cloudSettingService.getNumberSetting("MAX_LOGIN_ATTEMPTS", 3)) {
-                    user.setLockoutTime(LocalDateTime.now().plusMinutes(LOCK_TIME_DURATION));
+                if (user.getLockoutTime() != null && user.getLockoutTime().isAfter(now)) {
+                    locked.set(true);
+                } else {
+                    int attempts = user.getFailedLoginAttempts();
+                    attempts++;
+
+                    if (attempts >= maxAttempts) {
+                        user.setLockoutTime(now.plusMinutes(LOCK_TIME_DURATION));
+                        user.setFailedLoginAttempts(0);
+                        locked.set(true);
+                    } else {
+                        user.setFailedLoginAttempts(attempts);
+                    }
+
+                    userRepo.save(user);
                 }
-                userRepo.save(user);
             });
         }
 
-        response.sendRedirect("/login?error");
+        if (locked.get()) {
+            response.sendRedirect("/login?error=locked");
+        } else {
+            response.sendRedirect("/login?error");
+        }
     }
+
+
+
 
 }

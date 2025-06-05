@@ -24,9 +24,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (user.getLockoutTime() != null && user.getLockoutTime().isAfter(LocalDateTime.now())) {
-            throw new LockedException("Account gesperrt bis " + user.getLockoutTime());
-        }
+//        if (user.getLockoutTime() != null && user.getLockoutTime().isAfter(LocalDateTime.now())) {
+//            throw new LockedException("Account gesperrt bis " + user.getLockoutTime());
+//        }
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
