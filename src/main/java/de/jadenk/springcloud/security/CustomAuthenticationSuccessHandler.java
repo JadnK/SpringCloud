@@ -49,6 +49,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             logService.log(user.getUsername(), messageService.getLog("login.success"));
         }
 
+
         response.sendRedirect("/dashboard");
 
     }

@@ -53,7 +53,7 @@ public class DashboardController {
     private FileAuthorizationRepository fileAuthorizationRepository;
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model, Authentication authentication) {
+    public String dashboard(@RequestParam(value = "error", required = false) String error, Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             model.addAttribute("username", username);
@@ -89,6 +89,11 @@ public class DashboardController {
                     .collect(Collectors.toList());
             model.addAttribute("allUsers", userDTOs);
         }
+        if ("uploadError".equals(error)) {
+            model.addAttribute("error", "There was an Error while Uploading. Try again later.");
+        } else if (error != null) {
+            model.addAttribute("error", "An Error occurred.");
+        }
 
         return "dashboard";
     }
@@ -101,7 +106,7 @@ public class DashboardController {
                     fileUploadService.uploadFile(file);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return "redirect:/dashboard?uploadError";
+                    return "redirect:/dashboard?error=uploadError";
                 }
             }
         }
