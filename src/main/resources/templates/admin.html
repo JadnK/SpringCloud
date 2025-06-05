@@ -74,10 +74,6 @@
                       th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" style="display:inline;">
                     <button class="button no-select" type="submit"
                             th:text="${user.banned} ? 'Unban' : 'Ban'" >
-<!--                            th:attr="style=${user.banned}
-            ? 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'
-            : 'background-color: #dc3545; color: white; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;'"-->
-
                     </button>
                 </form>
 

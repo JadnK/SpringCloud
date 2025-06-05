@@ -11,17 +11,17 @@ body {
 }
 
 .content {
-    max-width: 37.5rem;       /* 600px */
-    margin: 3.75rem auto;     /* 60px */
-    padding: 1.875rem;        /* 30px */
+    max-width: 37.5rem;
+    margin: 3.75rem auto;
+    padding: 1.875rem;
     background-color: #2b2b40;
-    border-radius: 0.75rem;   /* 12px */
-    box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.3); /* 4px 20px */
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.3);
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 1.875rem;  /* 30px */
+    margin-bottom: 1.875rem;
     color: #ffffff;
     font-weight: 400;
 }
@@ -29,16 +29,16 @@ h1 {
 .settings-form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;             /* 20px */
+    gap: 1.25rem;
 }
 
 .settings-box {
     background-color: #373752;
-    border-radius: 0.625rem;  /* 10px */
-    padding: 1.25rem;         /* 20px */
+    border-radius: 0.625rem;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.9375rem;           /* 15px */
+    gap: 0.9375rem;
 }
 
 .settings-box h2 {
@@ -47,7 +47,7 @@ h1 {
     color: #ffffff;
     font-weight: 500;
     border-bottom: 1px solid #555;
-    padding-bottom: 0.5rem;   /* 8px */
+    padding-bottom: 0.5rem;
 }
 
 label {
@@ -59,28 +59,28 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 select {
-    padding: 0.625rem 0.75rem; /* 10px 12px */
+    padding: 0.625rem 0.75rem;
     font-size: 1rem;
     border: none;
-    border-radius: 0.5rem;    /* 8px */
+    border-radius: 0.5rem;
     background-color: #3a3a50;
     color: #ffffff;
-    box-shadow: inset 0 0 0.3125rem rgba(0,0,0,0.2); /* 5px */
+    box-shadow: inset 0 0 0.3125rem rgba(0,0,0,0.2);
     width: 100%;
 }
 
 input[type="checkbox"] {
-    margin-right: 0.5rem;     /* 8px */
+    margin-right: 0.5rem;
     transform: scale(1.2);
 }
 
 .button {
     background-color: #8a5dff;
     color: white;
-    padding: 0.75rem;         /* 12px */
+    padding: 0.75rem;
     font-size: 1rem;
     border: none;
-    border-radius: 0.5rem;   /* 8px */
+    border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -92,24 +92,24 @@ input[type="checkbox"] {
 .profile-picture-upload {
     display: flex;
     align-items: center;
-    gap: 0.9375rem;           /* 15px */
+    gap: 0.9375rem;
 }
 
 .profile-preview {
-    width: 3.75rem;           /* 60px */
-    height: 3.75rem;          /* 60px */
+    width: 3.75rem;
+    height: 3.75rem;
     border-radius: 50%;
     object-fit: cover;
-    border: 0.125rem solid #8a5dff; /* 2px */
+    border: 0.125rem solid #8a5dff;
 }
 
 .toggle-checkbox {
   position: relative;
   display: inline-block;
-  width: 3.125rem;           /* 50px */
-  height: 1.625rem;          /* 26px */
+  width: 3.125rem;
+  height: 1.625rem;
   vertical-align: middle;
-  margin-right: 0.625rem;    /* 10px */
+  margin-right: 0.625rem;
 }
 
 .toggle-checkbox input[type="checkbox"] {
@@ -130,10 +130,10 @@ input[type="checkbox"] {
 .toggle-slider::before {
   position: absolute;
   content: "";
-  height: 1.375rem;          /* 22px */
-  width: 1.375rem;           /* 22px */
-  left: 0.125rem;            /* 2px */
-  bottom: 0.125rem;          /* 2px */
+  height: 1.375rem;
+  width: 1.375rem;
+  left: 0.125rem;
+  bottom: 0.125rem;
   background-color: white;
   border-radius: 50%;
   transition: 0.4s;
@@ -144,7 +144,7 @@ input[type="checkbox"] {
 }
 
 .toggle-checkbox input:checked + .toggle-slider::before {
-  transform: translateX(1.5rem); /* 24px */
+  transform: translateX(1.5rem);
 }
 
 .toggle-label {
@@ -155,9 +155,6 @@ input[type="checkbox"] {
   user-select: none;
 }
 
-/* Responsive */
-
-/* Tablets und kleine Laptops */
 @media (max-width: 900px) {
     .content {
         max-width: 90%;
@@ -175,12 +172,11 @@ input[type="checkbox"] {
     }
 
     .profile-preview {
-        width: 3rem;   /* 48px */
-        height: 3rem;  /* 48px */
+        width: 3rem;
+        height: 3rem;
     }
 }
 
-/* Smartphones */
 @media (max-width: 600px) {
     .content {
         margin: 1.5rem auto;
@@ -210,7 +206,7 @@ input[type="checkbox"] {
     input[type="password"],
     select {
         font-size: 0.9rem;
-        padding: 0.5rem 0.625rem; /* 8px 10px */
+        padding: 0.5rem 0.625rem;
     }
 
     .button {
@@ -221,9 +217,10 @@ input[type="checkbox"] {
     .profile-picture-upload {
         gap: 0.75rem;
     }
+    }
 
     .profile-preview {
-        width: 2.5rem; /* 40px */
-        height: 2.5rem; /* 40px */
+        width: 2.5rem;
+        height: 2.5rem;
     }
 }

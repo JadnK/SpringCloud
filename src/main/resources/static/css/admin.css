@@ -5,7 +5,7 @@
 }
 
 html {
-    font-size: 100%; /* 1rem = 16px (Standard-Basis) */
+    font-size: 100%;
 }
 
 body {
@@ -204,7 +204,6 @@ h1, h2 {
     font-size: 1.2rem;
 }
 
-/* === Webhook Settings === */
 .webhook-settings {
     background-color: #29293d;
     box-shadow: 0 0.25rem 1.25rem rgba(0,0,0,0.4);
@@ -246,7 +245,6 @@ h1, h2 {
     box-shadow: inset 0 0 0.3125rem rgba(0,0,0,0.3);
 }
 
-/* === File Input === */
 input[type="file"] {
     display: inline-block;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -284,7 +282,6 @@ input[type="file"]::file-selector-button:hover {
     background-color: #7b4de8;
 }
 
-/* === Checkbox & Layout === */
 .extended-settings {
     display: flex;
     align-items: center;
@@ -321,12 +318,11 @@ input[type="file"]::file-selector-button:hover {
     background-color: #3a3a5a;
 }
 
-/* === Toggle Switch === */
 .switch {
     position: relative;
     display: inline-block;
-    width: 3.125rem;  /* 50px */
-    height: 1.625rem; /* 26px */
+    width: 3.125rem;
+    height: 1.625rem;
 }
 
 .switch input {
@@ -362,7 +358,6 @@ input:checked + .slider:before {
     transform: translateX(1.5rem);
 }
 
-/* === Webhook List === */
 .webhook-list {
     display: flex;
     flex-direction: column;
@@ -416,7 +411,6 @@ input:checked + .slider:before {
     font-weight: 500;
 }
 
-/* === Actions === */
 .webhook-actions {
     display: flex;
     justify-content: flex-start;
@@ -441,7 +435,6 @@ input:checked + .slider:before {
     background-color: #5a32a3;
 }
 
-/* === Webhook Card === */
 .webhook-card {
     background: #1e1e22;
     border: 1px solid #2f2f35;
@@ -474,7 +467,6 @@ input:checked + .slider:before {
     color: #b259ff;
 }
 
-/* === Site Settings === */
 .site-settings {
     display: flex;
     flex-wrap: wrap;
@@ -494,20 +486,6 @@ input:checked + .slider:before {
     flex-direction: column;
     justify-content: space-between;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -576,8 +554,8 @@ input:checked + .slider:before {
 
 .toggle-switch {
   position: relative;
-  width: 70px;       /* Breiter für bessere Bedienbarkeit */
-  height: 36px;      /* Größer */
+  width: 70px;
+  height: 36px;
   -webkit-appearance: none;
   background: #444559;
   outline: none;
@@ -588,11 +566,10 @@ input:checked + .slider:before {
   vertical-align: middle;
 }
 
-/* Rundes Knopf-Element */
 .toggle-switch::before {
   content: "";
   position: absolute;
-  width: 32px;       /* größerer Knopf */
+  width: 32px;
   height: 32px;
   border-radius: 50%;
   top: 2px;
@@ -602,22 +579,18 @@ input:checked + .slider:before {
   transition: left 0.3s ease;
 }
 
-/* Hintergrundfarbe, wenn aktiviert */
 .toggle-switch:checked {
   background: #6e4bff;
 }
 
-/* Knopf nach rechts schieben */
 .toggle-switch:checked::before {
-  left: calc(100% - 34px); /* 2px padding + 32px Knopf */
+  left: calc(100% - 34px);
 }
 
-/* Fokus-Schatten */
 .toggle-switch:focus {
   box-shadow: 0 0 0 3px rgba(178, 89, 255, 0.7);
 }
 
-/* Textlabels "Off" links, "On" rechts */
 .toggle-switch-label {
   display: inline-flex;
   align-items: center;
@@ -628,14 +601,12 @@ input:checked + .slider:before {
   user-select: none;
 }
 
-/* Container für Switch + Text */
 .toggle-switch-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* Text "Off" links */
 .toggle-switch-off {
   color: #8888aa;
   user-select: none;
@@ -643,7 +614,6 @@ input:checked + .slider:before {
   text-align: center;
 }
 
-/* Text "On" rechts */
 .toggle-switch-on {
   color: #b259ff;
   user-select: none;
@@ -722,7 +692,6 @@ input:checked + .slider:before {
     background-color: #5a32a3;
 }
 
-/* === API Card === */
 .api-card {
     background: #1e1e22;
     border: 1px solid #2f2f35;
@@ -755,7 +724,6 @@ input:checked + .slider:before {
     color: #b259ff;
 }
 
-/* === API Settings === */
 .api-settings {
     background-color: #29293d;
     box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.4);
@@ -778,7 +746,6 @@ input:checked + .slider:before {
     font-weight: 500;
 }
 
-/* === Form Styles === */
 .api-url-group label,
 .api-events label {
     font-size: 1rem;
@@ -805,12 +772,10 @@ input:checked + .slider:before {
 
 
 @media (max-width: 64em) {
-    /* Allgemeines Layout */
     .content {
         padding: 2rem;
     }
 
-    /* API / Webhook Hauptinformationen */
     .api-main-info,
     .webhook-main-info {
         max-width: 100%;
@@ -829,14 +794,12 @@ input:checked + .slider:before {
         justify-content: flex-start;
     }
 
-    /* Tabellen */
     .user-table th,
     .user-table td {
         padding: 1rem;
         font-size: 0.875rem;
     }
 
-    /* Modal */
     .modal-content {
         padding: 2rem;
     }
@@ -845,7 +808,6 @@ input:checked + .slider:before {
         width: 100%;
     }
 
-    /* Filter & Formulare */
     .log-filter {
         flex-direction: column;
         align-items: stretch;
@@ -911,7 +873,6 @@ input:checked + .slider:before {
         margin-bottom: 1.5rem;
     }
 
-    /* API / Webhook Karten & Zeilen */
     .api-row,
     .api-card,
     .webhook-row,
@@ -958,20 +919,17 @@ input:checked + .slider:before {
 
     }
 
-    /* Buttons */
     .button {
         width: 100%;
         padding: 0.55rem;
         font-size: 0.7rem;
     }
 
-    /* Modal */
     .modal-content {
         padding: 1.5rem;
         max-width: 90%;
     }
 
-    /* Logeinträge */
     .log-entry {
         padding: 1rem;
     }
@@ -980,7 +938,6 @@ input:checked + .slider:before {
         gap: 0.75rem;
     }
 
-    /* Einstellungen */
     .site-settings {
         padding: 1rem;
         gap: 1rem;

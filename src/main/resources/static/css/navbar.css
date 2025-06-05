@@ -50,7 +50,6 @@
     filter: drop-shadow(0 0 0.0625rem rgba(178, 89, 255, 0.7));
 }
 
-/* Dropdown */
 .logout-dropdown {
     display: none;
     position: absolute;
@@ -110,7 +109,6 @@
     content: none;
 }
 
-/* Burger Icon */
 .burger {
     display: none;
     flex-direction: column;
@@ -128,7 +126,6 @@
     transition: 0.3s ease;
 }
 
-/* Mobile menu */
 .mobile-menu {
     display: none;
     flex-direction: column;
@@ -155,7 +152,6 @@
     background-color: #7d49b7;
 }
 
-/* Responsive behavior */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: row;
