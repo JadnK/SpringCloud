@@ -1,3 +1,4 @@
+/* Global Reset */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -9,90 +10,142 @@ body {
     background-color: #1f1f2e;
     color: #fff;
     min-height: 100vh;
+    font-size: 16px; /* Basis für rem */
+    line-height: 1.5;
 }
 
 .content {
-    padding: 30px;
-    max-width: 1200px;
+    padding: 1.875rem;           /* 30px -> 1.875rem */
+    max-width: 75rem;            /* 1200px -> 75rem */
     margin: 0 auto;
 }
 
+/* Headings */
 h1, h2 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;      /* 20px */
     color: #fff;
 }
 
+/* Form */
 .year-form {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;     /* 30px */
 }
 
 .year-form input {
-    padding: 10px;
-    font-size: 1em;
-    border-radius: 5px;
+    padding: 0.625rem;           /* 10px */
+    font-size: 1rem;
+    border-radius: 0.3125rem;    /* 5px */
     border: none;
-    margin-right: 10px;
+    margin-right: 0.625rem;      /* 10px */
+    max-width: 12rem;            /* 192px */
+    width: 100%;
+    max-width: 12rem;
 }
 
 .year-form button {
-    padding: 10px 20px;
+    padding: 0.625rem 1.25rem;   /* 10px 20px */
     background: #b259ff;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 0.5rem;       /* 8px */
     cursor: pointer;
-    transition: 0.3s;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    white-space: nowrap;
 }
 
 .year-form button:hover {
     background: #9d4ae2;
 }
 
+/* Month block */
 .month-block {
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;     /* 50px */
 }
 
+/* Calendar table wrapper */
+.calendar-wrapper {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+}
+
+/* Calendar table */
 .calendar-table {
     width: 100%;
-    border-collapse: collapse;
+    min-width: 43.75rem;         /* 700px */
+    border-collapse: separate;
+    border-spacing: 0.125rem;    /* 2px */
     background: rgba(255,255,255,0.05);
-    border-radius: 12px;
+    border-radius: 0.75rem;      /* 12px */
     overflow: hidden;
 }
 
-.calendar-table th,
+/* Table header */
+.calendar-table th {
+    font-weight: 400;
+    font-size: 0.9rem;
+    padding: 0.3125rem;          /* 5px */
+    height: 1.875rem;            /* 30px */
+    background: rgba(255,255,255,0.1);
+    color: #ddd;
+}
+
+/* Table cells */
 .calendar-table td {
-    border: 1px solid rgba(255,255,255,0.1);
-    text-align: center;
+    width: 8.125rem;             /* 130px */
+    height: 8.125rem;            /* 130px */
+    padding: 0.375rem;           /* 6px */
+    background: rgba(255,255,255,0.04);
+    border-radius: 0.625rem;     /* 10px */
+    transition: background 0.2s ease;
     vertical-align: top;
-    padding: 10px;
-    height: 120px;
     position: relative;
+    word-wrap: break-word;
 }
 
-.calendar-table .today {
-    background: rgba(178, 89, 255, 0.3);
-    border: 2px solid #b259ff;
+.calendar-table td:hover {
+    background: rgba(255,255,255,0.07);
 }
 
+/* Out-of-month days */
+.out-of-month {
+    background: #f4f4f4;
+    color: #b0b0b0;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.out-of-month .day-number {
+    color: #999;
+}
+
+/* Highlight today */
+.today {
+    background-color: rgba(178, 89, 255, 0.3);
+    border: 0.125rem solid #b259ff;  /* 2px */
+}
+
+/* Day number inside cells */
 .day-number {
-    font-weight: bold;
-    font-size: 1.2em;
-    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.3125rem;    /* 5px */
 }
 
+/* Entries */
 .entry {
     background: linear-gradient(145deg, #3a3a4d, #4d4d60);
-    padding: 8px 12px;
-    margin: 6px 0;
-    border-radius: 10px;
-    font-size: 0.9em;
+    padding: 0.5rem 0.75rem;     /* 8px 12px */
+    margin: 0.375rem 0;          /* 6px */
+    border-radius: 0.625rem;     /* 10px */
+    font-size: 0.9rem;
     color: #f1f1f1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3); /* 2px 4px */
     transition: background 0.3s ease, transform 0.2s ease;
     word-wrap: break-word;
+    cursor: default;
 }
 
 .entry:hover {
@@ -100,97 +153,55 @@ h1, h2 {
     transform: scale(1.02);
 }
 
+/* Entry form */
 .entry-form {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    margin-top: 5px;
+    gap: 0.3125rem;              /* 5px */
+    margin-top: 0.3125rem;       /* 5px */
 }
 
 .entry-form input[type="text"],
 .entry-form select {
-    padding: 6px;
-    font-size: 0.85em;
-    border-radius: 5px;
+    padding: 0.375rem;           /* 6px */
+    font-size: 0.85rem;
+    border-radius: 0.3125rem;    /* 5px */
     border: none;
 }
 
+/* Entry form button */
 .entry-form button {
-    padding: 6px;
-    font-size: 0.85em;
+    padding: 0.375rem;
+    font-size: 0.85rem;
     background: #b259ff;
     border: none;
     color: white;
-    border-radius: 5px;
+    border-radius: 0.3125rem;    /* 5px */
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
 }
 
 .entry-form button:hover {
     background: #9d4ae2;
 }
 
-.calendar-wrapper {
-    display: flex;
-    justify-content: center;
-}
-
-.calendar-table {
-    width: auto;
-    margin: 0 auto;
-    min-width: 700px;
-    border-spacing: 2px;
-}
-
-.calendar-table th {
-    font-weight: normal;
-    font-size: 0.9em;
-    padding: 5px;
-    height: 30px;
-    background: rgba(255,255,255,0.1);
-    color: #ddd;
-}
-
-.calendar-table td {
-    width: 130px;
-    height: 130px;
-    padding: 6px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 10px;
-    transition: background 0.2s;
-    vertical-align: top;
-    position: relative;
-}
-
-.calendar-table td:hover {
-    background: rgba(255,255,255,0.07);
-}
-
-.out-of-month {
-    background: #f4f4f4;
-    color: #b0b0b0;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.out-of-month .day-number {
-    color: #999;
-}
-
+/* Month switcher */
 .month-switcher {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 1.875rem;        /* 30px */
 }
 
 .month-buttons button {
-    margin: 3px;
-    padding: 8px 12px;
+    margin: 0.1875rem;           /* 3px */
+    padding: 0.5rem 0.75rem;     /* 8px 12px */
     background: #444;
     border: none;
-    border-radius: 6px;
+    border-radius: 0.375rem;     /* 6px */
     color: white;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
+    font-size: 1rem;
 }
 
 .month-buttons button:hover {
@@ -201,19 +212,15 @@ h1, h2 {
     background: #b259ff;
 }
 
-.today {
-    background-color: rgba(178, 89, 255, 0.3);
-    border: 2px solid #b259ff;
-}
-
+/* Modal */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     z-index: 9999;
-    width: 100%;
-    height: 100%;
-    display: none; /* controlled via .hidden class */
+    width: 100vw;
+    height: 100vh;
+    display: none; /* controlled via .hidden */
     justify-content: center;
     align-items: center;
     background-color: rgba(15, 15, 30, 0.9);
@@ -225,15 +232,15 @@ h1, h2 {
 
 .modal-content {
     background-color: #2f2f47;
-    padding: 40px;
-    border-radius: 14px;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    padding: 2.5rem;             /* 40px */
+    border-radius: 0.875rem;     /* 14px */
+    max-width: 31.25rem;         /* 500px */
+    width: 90vw;
+    box-shadow: 0 0.25rem 1.25rem rgba(0,0,0,0.5); /* 4px 20px */
     color: #ffffff;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
     animation: fadeInUp 0.3s ease-in-out;
 }
 
@@ -241,19 +248,19 @@ h1, h2 {
 .modal-content select,
 .modal-content textarea {
     width: 100%;
-    padding: 14px;
+    padding: 0.875rem;           /* 14px */
     border: none;
-    border-radius: 8px;
+    border-radius: 0.5rem;       /* 8px */
     background-color: #26263a;
     color: #ffffff;
     font-size: 1rem;
-    margin: 12px 0;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+    margin: 0.75rem 0;           /* 12px 0 */
+    box-shadow: inset 0 0 0.3125rem rgba(0,0,0,0.3); /* 5px */
     resize: vertical;
 }
 
 .modal-content h2 {
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;     /* 10px */
     font-size: 1.8rem;
     color: #b259ff;
     text-align: center;
@@ -266,10 +273,10 @@ h1, h2 {
 }
 
 .modal-content button {
-    padding: 12px;
+    padding: 0.75rem;            /* 12px */
     font-size: 1rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 0.625rem;     /* 10px */
     background-color: #6c47ff;
     color: white;
     cursor: pointer;
@@ -281,61 +288,32 @@ h1, h2 {
     transform: scale(1.03);
 }
 
+/* Form actions */
 .form-actions {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 0.625rem;              /* 10px */
+    flex-wrap: wrap;
 }
 
-.close-btn {
-    background-color: #444;
-    margin-top: 20px;
-    width: 100%;
-    border-radius: 10px;
-    padding: 12px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+.form-actions button {
+    flex: 1 1 48%;
+    min-width: 140px;
+    margin-top: 0.5rem;
+    padding: 0.75rem 0;
 }
 
-.close-btn:hover {
-    background-color: #666;
-    transform: scale(1.03);
-}
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.hidden {
-    display: none !important;
-}
-
-
-.modal-content button[type="submit"] {
-    margin-top: 10px;
-    background-color: #4CAF50;
-    color: white;
-}
-
-.modal-content button[type="submit"]:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-}
-
+/* Close button */
 .close-btn {
     background-color: #f44336;
     color: white;
-    margin-top: 10px;
+    margin-top: 0.625rem;       /* 10px */
     width: 100%;
+    border-radius: 0.625rem;    /* 10px */
+    padding: 0.75rem;           /* 12px */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .close-btn:hover {
@@ -343,22 +321,12 @@ h1, h2 {
     transform: scale(1.05);
 }
 
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* Button row */
 .button-row {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 0.625rem;              /* 10px */
+    margin-top: 1.25rem;        /* 20px */
 }
 
 .button-row form {
@@ -366,24 +334,109 @@ h1, h2 {
 }
 
 .button-row button {
-    padding: 10px 16px;
-    border-radius: 8px;
+    padding: 0.625rem 1rem;     /* 10px 16px */
+    border-radius: 0.5rem;      /* 8px */
     border: none;
     background-color: #6c47ff;
     color: white;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    font-size: 1em;
+    font-size: 1rem;
 }
 
 .button-row button:hover {
     background-color: #8b63ff;
 }
 
-.close-btn:hover {
-    background-color: #666;
+/* Animation */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(1.875rem); /* 30px */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.form-actions button {
-width: 100%;
+/* Hidden class */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive Media Queries */
+
+/* Tablets */
+@media (max-width: 900px) {
+    .calendar-table td {
+        width: 7rem;   /* 112px */
+        height: 7rem;
+        padding: 0.25rem;
+    }
+
+    .calendar-table {
+        min-width: 100%;
+    }
+
+    .year-form input {
+        max-width: 10rem;
+    }
+
+    .month-buttons button {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+    .content {
+        padding: 1rem;
+    }
+
+    .calendar-table {
+        min-width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .calendar-table td {
+        width: 5.5rem;   /* ca. 88px */
+        height: 5.5rem;
+        padding: 0.2rem;
+    }
+
+    .day-number {
+        font-size: 1rem;
+    }
+
+    .year-form input {
+        max-width: 8rem;
+        font-size: 0.9rem;
+    }
+
+    .year-form button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .month-buttons button {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.85rem;
+        margin: 0.125rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        max-width: 90vw;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+        flex: none;
+    }
 }

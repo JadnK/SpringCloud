@@ -13,6 +13,13 @@
 
 <div class="navbar no-select">
     <div class="brand">SpringCloud</div>
+
+    <div class="burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
     <div class="username-box" id="usernameBox">
         <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff" width="24" height="24" aria-hidden="true">
             <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
@@ -25,6 +32,14 @@
             <a th:href="@{/settings}">Settings</a>
             <a th:href="@{/logout}">Logout</a>
         </div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
+        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
+        <a th:href="@{/calendar}">Calendar</a>
+        <a th:href="@{/settings}">Settings</a>
+        <a th:href="@{/logout}">Logout</a>
     </div>
 </div>
 
@@ -179,272 +194,279 @@
     <div class="loading-content">Uploading...</div>
 </div>
 <script>
-    function filterUsers() {
-      const input = document.getElementById('userSearchInput');
-      const filter = input.value.toLowerCase();
-      const ul = document.querySelector('#editModal .user-list ul');
-      const li = ul.getElementsByTagName('li');
 
-      for (let i = 0; i < li.length; i++) {
-        const label = li[i].querySelector('.user-label span');
-        if (label) {
-          const txtValue = label.textContent || label.innerText;
-          if (txtValue.toLowerCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-          } else {
-            li[i].style.display = "none";
-          }
-        }
+    const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+burger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('show');
+});
+function filterUsers() {
+  const input = document.getElementById('userSearchInput');
+  const filter = input.value.toLowerCase();
+  const ul = document.querySelector('#editModal .user-list ul');
+  const li = ul.getElementsByTagName('li');
+
+  for (let i = 0; i < li.length; i++) {
+    const label = li[i].querySelector('.user-label span');
+    if (label) {
+      const txtValue = label.textContent || label.innerText;
+      if (txtValue.toLowerCase().indexOf(filter) > -1) {
+        li[i].style.display = "";
+      } else {
+        li[i].style.display = "none";
       }
     }
-
-
-    document.querySelectorAll('.user-label').forEach(label => {
-        label.addEventListener('click', e => {
-            const checkbox = label.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-                label.parentElement.classList.add('selected-user');
-            } else {
-                label.parentElement.classList.remove('selected-user');
-            }
-        });
-    });
-
-function openEditPopup(fileId) {
-    document.getElementById('editFileId').value = fileId;
-    const userListItems = document.querySelectorAll('#editModal .user-list li');
-
-    userListItems.forEach(li => {
-        const checkbox = li.querySelector('input[type="checkbox"]');
-        checkbox.checked = false;
-        li.classList.remove('selected-user');
-    });
-
-    fetch(`/api/file/${fileId}/authorizedUsers`)
-        .then(response => response.json())
-        .then(authorizedUserIds => {
-            userListItems.forEach(li => {
-                const checkbox = li.querySelector('input[type="checkbox"]');
-                const userId = parseInt(checkbox.value);
-                if (authorizedUserIds.includes(userId)) {
-                    checkbox.checked = true;
-                    li.classList.add('selected-user');
-                }
-            });
-            document.getElementById('editModal').style.display = 'flex';
-        })
-        .catch(error => {
-            console.error('Error loading authorized users:', error);
-            document.getElementById('editModal').style.display = 'flex';
-        });
+  }
 }
 
 
-    function closeEditPopup() {
-        document.getElementById('editModal').style.display = 'none';
+document.querySelectorAll('.user-label').forEach(label => {
+    label.addEventListener('click', e => {
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+        if (checkbox.checked) {
+            label.parentElement.classList.add('selected-user');
+        } else {
+            label.parentElement.classList.remove('selected-user');
+        }
+    });
+});
+
+function openEditPopup(fileId) {
+document.getElementById('editFileId').value = fileId;
+const userListItems = document.querySelectorAll('#editModal .user-list li');
+
+userListItems.forEach(li => {
+    const checkbox = li.querySelector('input[type="checkbox"]');
+    checkbox.checked = false;
+    li.classList.remove('selected-user');
+});
+
+fetch(`/api/file/${fileId}/authorizedUsers`)
+    .then(response => response.json())
+    .then(authorizedUserIds => {
+        userListItems.forEach(li => {
+            const checkbox = li.querySelector('input[type="checkbox"]');
+            const userId = parseInt(checkbox.value);
+            if (authorizedUserIds.includes(userId)) {
+                checkbox.checked = true;
+                li.classList.add('selected-user');
+            }
+        });
+        document.getElementById('editModal').style.display = 'flex';
+    })
+    .catch(error => {
+        console.error('Error loading authorized users:', error);
+        document.getElementById('editModal').style.display = 'flex';
+    });
+}
+
+
+function closeEditPopup() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+
+    function confirmDeleteFromEdit() {
+        const fileId = document.getElementById('editFileId').value;
+        if (fileId) {
+            if (confirm("Are you sure you want to delete this file? This cannot be undone.")) {
+                window.location.href = `/delete/${fileId}`;
+            }
+        }
     }
 
 
-        function confirmDeleteFromEdit() {
-            const fileId = document.getElementById('editFileId').value;
-            if (fileId) {
-                if (confirm("Are you sure you want to delete this file? This cannot be undone.")) {
-                    window.location.href = `/delete/${fileId}`;
-                }
-            }
+        let deleteFileId = null;
+
+        let shareFileId = null;
+
+        function confirmShare(fileId) {
+            shareFileId = fileId;
+            document.getElementById('confirmSharePopup').style.display = 'flex';
         }
 
+        function closeConfirmSharePopup() {
+            shareFileId = null;
+            document.getElementById('confirmSharePopup').style.display = 'none';
+        }
 
-            let deleteFileId = null;
+        document.getElementById('confirmShareBtn').addEventListener('click', function () {
+            if (shareFileId !== null) {
+                const durationHours = document.getElementById('shareDurationSelect').value;
+                window.location.href = `/share/${shareFileId}?duration=${durationHours}`;
+            }
+        });
 
-            let shareFileId = null;
 
-            function confirmShare(fileId) {
-                shareFileId = fileId;
-                document.getElementById('confirmSharePopup').style.display = 'flex';
+        function confirmDelete(fileId) {
+            deleteFileId = fileId;
+            document.getElementById('confirmDeletePopup').style.display = 'flex';
+        }
+
+        function closeConfirmDeletePopup() {
+            deleteFileId = null;
+            document.getElementById('confirmDeletePopup').style.display = 'none';
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+            if (deleteFileId !== null) {
+                window.location.href = `/delete/${deleteFileId}`;
+            }
+        });
+
+        function showLoadingBar() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function showUploadPopup() {
+            document.getElementById('uploadPopup').style.display = 'flex';
+        }
+
+        function closeUploadPopup() {
+            document.getElementById('uploadPopup').style.display = 'none';
+        }
+
+        function showPreviewPopup(fileId, fileType, fileName) {
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+
+            if (fileType.startsWith('image/')) {
+                previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
             }
 
-            function closeConfirmSharePopup() {
-                shareFileId = null;
-                document.getElementById('confirmSharePopup').style.display = 'none';
+            else if (fileType.startsWith('video/')) {
+                previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
             }
 
-            document.getElementById('confirmShareBtn').addEventListener('click', function () {
-                if (shareFileId !== null) {
-                    const durationHours = document.getElementById('shareDurationSelect').value;
-                    window.location.href = `/share/${shareFileId}?duration=${durationHours}`;
-                }
-            });
+            else if (fileType.startsWith('text/')) {
+                fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
+                    if (fileType === 'application/json') {
 
-
-            function confirmDelete(fileId) {
-                deleteFileId = fileId;
-                document.getElementById('confirmDeletePopup').style.display = 'flex';
-            }
-
-            function closeConfirmDeletePopup() {
-                deleteFileId = null;
-                document.getElementById('confirmDeletePopup').style.display = 'none';
-            }
-
-            document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
-                if (deleteFileId !== null) {
-                    window.location.href = `/delete/${deleteFileId}`;
-                }
-            });
-
-            function showLoadingBar() {
-                document.getElementById('loadingOverlay').style.display = 'flex';
-            }
-
-            function showUploadPopup() {
-                document.getElementById('uploadPopup').style.display = 'flex';
-            }
-
-            function closeUploadPopup() {
-                document.getElementById('uploadPopup').style.display = 'none';
-            }
-
-            function showPreviewPopup(fileId, fileType, fileName) {
-                const previewContainer = document.getElementById('previewContainer');
-                previewContainer.innerHTML = '';
-
-                if (fileType.startsWith('image/')) {
-                    previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
-                }
-
-                else if (fileType.startsWith('video/')) {
-                    previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
-                }
-
-                else if (fileType.startsWith('text/')) {
-                    fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
-                        if (fileType === 'application/json') {
-
-                            try {
-                                data = JSON.stringify(JSON.parse(data), null, 4);
-                            } catch (e) {
-                                data = "Error parsing JSON.";
-                            }
+                        try {
+                            data = JSON.stringify(JSON.parse(data), null, 4);
+                        } catch (e) {
+                            data = "Error parsing JSON.";
                         }
-                        previewContainer.innerHTML = `<pre>${data}</pre>`;
-                    }).catch(error => {
-                        previewContainer.innerHTML = `<p>Error loading text file</p>`;
-                    });
-                }
-
-                else if (fileType === 'application/pdf') {
-                    previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
-                }
-                else {
-                    previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
-                }
-
-                document.getElementById('previewPopup').style.display = 'flex';
-            }
-
-
-            function closePreviewPopup() {
-                document.getElementById('previewPopup').style.display = 'none';
-            }
-
-            function filterFiles() {
-            const input = document.getElementById('fileSearch');
-            const filter = input.value.toLowerCase();
-            const fileList = document.getElementById('fileList');
-            const files = fileList.getElementsByTagName('li');
-
-            for (let i = 0; i < files.length; i++) {
-                const fileInfo = files[i].querySelector('.file-info');
-                if (fileInfo) {
-                    const fileNameSpan = fileInfo.querySelector('span:first-child');
-                    const textValue = fileNameSpan ? fileNameSpan.textContent || fileNameSpan.innerText : '';
-
-                    if (textValue.toLowerCase().indexOf(filter) > -1) {
-                        files[i].style.display = '';
-                    } else {
-                        files[i].style.display = 'none';
                     }
+                    previewContainer.innerHTML = `<pre>${data}</pre>`;
+                }).catch(error => {
+                    previewContainer.innerHTML = `<p>Error loading text file</p>`;
+                });
+            }
+
+            else if (fileType === 'application/pdf') {
+                previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
+            }
+            else {
+                previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
+            }
+
+            document.getElementById('previewPopup').style.display = 'flex';
+        }
+
+
+        function closePreviewPopup() {
+            document.getElementById('previewPopup').style.display = 'none';
+        }
+
+        function filterFiles() {
+        const input = document.getElementById('fileSearch');
+        const filter = input.value.toLowerCase();
+        const fileList = document.getElementById('fileList');
+        const files = fileList.getElementsByTagName('li');
+
+        for (let i = 0; i < files.length; i++) {
+            const fileInfo = files[i].querySelector('.file-info');
+            if (fileInfo) {
+                const fileNameSpan = fileInfo.querySelector('span:first-child');
+                const textValue = fileNameSpan ? fileNameSpan.textContent || fileNameSpan.innerText : '';
+
+                if (textValue.toLowerCase().indexOf(filter) > -1) {
+                    files[i].style.display = '';
+                } else {
+                    files[i].style.display = 'none';
                 }
             }
         }
+    }
 
 function triggerFileInput() {
-    document.getElementById('fileInput').click();
+document.getElementById('fileInput').click();
 }
 
 function updateFileName() {
-    const fileInput = document.getElementById('fileInput');
-    const dropText = document.getElementById('dropText');
-    if (fileInput.files.length > 0) {
-        dropText.textContent = fileInput.files[0].name;
-    }
+const fileInput = document.getElementById('fileInput');
+const dropText = document.getElementById('dropText');
+if (fileInput.files.length > 0) {
+    dropText.textContent = fileInput.files[0].name;
+}
 }
 
 function handleDragOver(e) {
-    e.preventDefault();
-    document.getElementById('dropArea').classList.add('hover');
+e.preventDefault();
+document.getElementById('dropArea').classList.add('hover');
 }
 
 function handleDragLeave(e) {
-    document.getElementById('dropArea').classList.remove('hover');
+document.getElementById('dropArea').classList.remove('hover');
 }
 
 function handleDrop(e) {
-    e.preventDefault();
-    const dropArea = document.getElementById('dropArea');
-    const fileInput = document.getElementById('fileInput');
-    const dropText = document.getElementById('dropText');
-    dropArea.classList.remove('hover');
+e.preventDefault();
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+const dropText = document.getElementById('dropText');
+dropArea.classList.remove('hover');
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        fileInput.files = files;
-        dropText.textContent = files[0].name;
-    }
+const files = e.dataTransfer.files;
+if (files.length > 0) {
+    fileInput.files = files;
+    dropText.textContent = files[0].name;
+}
 }
 
-    function triggerFileInput() {
-    document.getElementById('fileInput').click();
+function triggerFileInput() {
+document.getElementById('fileInput').click();
 }
 
 function updateFileList() {
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('previewFileList');
-    fileList.innerHTML = "";
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('previewFileList');
+fileList.innerHTML = "";
 
-    Array.from(fileInput.files).forEach(file => {
-        const li = document.createElement("li");
-        li.textContent = file.name;
-        fileList.appendChild(li);
-    });
+Array.from(fileInput.files).forEach(file => {
+    const li = document.createElement("li");
+    li.textContent = file.name;
+    fileList.appendChild(li);
+});
 
-    document.getElementById('dropText').textContent = "Files ready to upload!";
+document.getElementById('dropText').textContent = "Files ready to upload!";
 }
 
 function handleDragOver(e) {
-    e.preventDefault();
-    document.getElementById('dropArea').classList.add('hover');
+e.preventDefault();
+document.getElementById('dropArea').classList.add('hover');
 }
 
 function handleDragLeave(e) {
-    document.getElementById('dropArea').classList.remove('hover');
+document.getElementById('dropArea').classList.remove('hover');
 }
 
 function handleDrop(e) {
-    e.preventDefault();
-    const fileInput = document.getElementById('fileInput');
-    const dropArea = document.getElementById('dropArea');
-    dropArea.classList.remove('hover');
+e.preventDefault();
+const fileInput = document.getElementById('fileInput');
+const dropArea = document.getElementById('dropArea');
+dropArea.classList.remove('hover');
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        const dataTransfer = new DataTransfer();
-        Array.from(files).forEach(file => dataTransfer.items.add(file));
-        fileInput.files = dataTransfer.files;
-        updateFileList();
-    }
+const files = e.dataTransfer.files;
+if (files.length > 0) {
+    const dataTransfer = new DataTransfer();
+    Array.from(files).forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files;
+    updateFileList();
+}
 }
 </script>
 </body>
