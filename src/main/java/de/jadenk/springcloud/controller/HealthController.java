@@ -19,7 +19,7 @@ public class HealthController {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private ObjectMapper objectMapper;  // für JSON-Serialisierung
+    private ObjectMapper objectMapper;
 
     @GetMapping("/db-health")
     public String showHealthPage(Model model) throws Exception {
