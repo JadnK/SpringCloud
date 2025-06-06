@@ -61,7 +61,7 @@ public class UserSettingController {
 
 
     @GetMapping("/settings")
-    public String userSettingsPage(Model model) {
+    public String userSettingsPage(@RequestParam(value = "error", required = false) String error,Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -107,6 +107,8 @@ public class UserSettingController {
             user.setEmail(email);
         }
 
+
+
         boolean wantsToChangePassword =
                 currentPassword != null && !currentPassword.trim().isEmpty() &&
                         newPassword != null && !newPassword.trim().isEmpty() &&
@@ -139,6 +141,16 @@ public class UserSettingController {
         user.setNotificationsEnabled(notificationsEnabled);
 
         if (profileImage != null && !profileImage.isEmpty()) {
+            String originalFilename = profileImage.getOriginalFilename();
+            if (originalFilename != null &&
+                    !originalFilename.toLowerCase().endsWith(".png") &&
+                    !originalFilename.toLowerCase().endsWith(".jpg") &&
+                    !originalFilename.toLowerCase().endsWith(".jpeg")) {
+                model.addAttribute("error", messageService.getError("settings.upload.wrong.ending"));
+                model.addAttribute("userAttributes", getUserAttributes(user));
+                return "user-settings";
+            }
+
             try {
                 InputStream is = profileImage.getInputStream();
                 BufferedImage originalImage = ImageIO.read(is);

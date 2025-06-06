@@ -14,6 +14,7 @@ public class MessageService {
             "changepassword.same.password", "You cant Use the same Password as before!",
             "auth.invalid", "Username or password is incorrect.",
             "settings.upload.error", "Error while uploading Profile Picture, try again later.",
+            "settings.upload.wrong.ending", "You can only Upload .jpg, .png and .jpeg files.",
             "settings.username.exists", "This username is already in use.",
             "settings.email.exists", "This mail is already in use.",
             "register.username.exists", "Username already exists."
