@@ -63,6 +63,12 @@ public class AdminController {
     @Autowired
     private ApiTokenService apiTokenService;
 
+    @Autowired
+    private VersionService versionService;
+
+    @Autowired
+    private UpdateService updateService;
+
     @GetMapping("/admin")
     public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
                                  Model model) {
@@ -105,6 +111,8 @@ public class AdminController {
         model.addAttribute("role", authorities.stream().findFirst().map(GrantedAuthority::getAuthority).orElse("UNKNOWN"));
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentVersion", versionService.getCurrentVersion());
+        model.addAttribute("latestVersion", updateService.fetchLatestVersion());
 
         return "admin";
     }
@@ -121,6 +129,35 @@ public class AdminController {
         cloudSettingService.updateSetting(key, value, type);
         return "redirect:/admin";
     }
+
+    @PostMapping("/admin/system/update")
+    public String updateSystem(RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        try {
+            String updateResult = updateService.checkForUpdateAndUpdateIfNeeded();
+
+            if ("SUCCESS".equalsIgnoreCase(updateResult)) {
+                String message = messageService.getLog("admin.system.update.success");
+                logService.log(username, message);
+            } else if ("NO_UPDATE".equalsIgnoreCase(updateResult)) {
+                String message = messageService.getLog("admin.system.update.noUpdate");
+                logService.log(username, message);
+            } else {
+                String message = messageService.getLog("admin.system.update.failed", updateResult);
+                logService.log(username, message);
+            }
+        } catch (Exception e) {
+            String message = messageService.getLog("admin.system.update.exception", e.getMessage());
+            logService.log(username, message);
+            redirectAttributes.addFlashAttribute("errorMessage", message);
+            e.printStackTrace();
+        }
+
+        return "redirect:/admin";
+    }
+
 
 
 

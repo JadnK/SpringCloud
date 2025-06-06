@@ -52,6 +52,10 @@ public class DashboardController {
     @Autowired
     private FileAuthorizationRepository fileAuthorizationRepository;
 
+    @Autowired
+    private UpdateService updateService;
+
+
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(value = "error", required = false) String error, Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
@@ -88,6 +92,11 @@ public class DashboardController {
                     .map(UserDTO::new)
                     .collect(Collectors.toList());
             model.addAttribute("allUsers", userDTOs);
+            if (role.equalsIgnoreCase("ROLE_ADMIN")) {
+                if (updateService.isUpdateAvailable()) {
+                    model.addAttribute("error", "Please update SpringCloud, use the Admin Panel.");
+                }
+            }
         }
         if ("uploadError".equals(error)) {
             model.addAttribute("error", "There was an Error while Uploading. Try again later.");

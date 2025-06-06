@@ -289,8 +289,26 @@
             </div>
         </div>
     </div>
+    <h2 class="no-select">Update</h2>
+    <section class="update-section">
+        <div class="update-box">
+            <p><strong>Current Version:</strong> <span th:text="${currentVersion}">v1.0.0</span></p>
+            <p><strong>Newest Version:</strong> <span th:text="${latestVersion}">v1.0.0</span></p>
 
-    </div>
+            <div th:if="${currentVersion != latestVersion}">
+                <form th:action="@{/admin/system/update}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="button no-select">Update</button>
+                </form>
+            </div>
+            <div th:if="${currentVersion == latestVersion}">
+                <p style="color: green;">✅ System is on the newest Release.</p>
+            </div>
+        </div>
+    </section>
+
+
+</div>
 
 
 </div>

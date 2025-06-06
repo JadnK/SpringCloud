@@ -17,6 +17,44 @@ public class UpdateService {
         this.versionService = versionService;
     }
 
+    public boolean isUpdateAvailable() {
+        try {
+            URL url = new URL("https://api.github.com/repos/Verpxnter/SpringCloud/releases/latest");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "application/vnd.github.v3+json");
+
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                String response = in.lines().collect(Collectors.joining());
+                JSONObject json = new JSONObject(response);
+                String latest = json.getString("tag_name");
+
+                return !latest.equals(versionService.getCurrentVersion());
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String fetchLatestVersion() {
+        try {
+            URL url = new URL("https://api.github.com/repos/Verpxnter/SpringCloud/releases/latest");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "application/vnd.github.v3+json");
+
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                String response = in.lines().collect(Collectors.joining());
+                JSONObject json = new JSONObject(response);
+                return json.getString("tag_name");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public String checkForUpdateAndUpdateIfNeeded() {
         try {
             URL url = new URL("https://api.github.com/repos/Verpxnter/SpringCloud/releases/latest");
@@ -32,7 +70,7 @@ public class UpdateService {
             String latest = json.getString("tag_name");
 
             if (latest.equals(versionService.getCurrentVersion())) {
-                return "Version the newest";
+                return "NO_UPDATE";
             }
 
             JSONArray assets = json.getJSONArray("assets");
@@ -42,18 +80,18 @@ public class UpdateService {
             for (int i = 0; i < assets.length(); i++) {
                 JSONObject asset = assets.getJSONObject(i);
                 String name = asset.getString("name");
-                if (name.equals("springcloud.jar")) {
+                if ("springcloud.jar".equals(name)) {
                     jarUrl = asset.getString("browser_download_url");
-                } else if (name.equals("install.sh")) {
+                } else if ("install.sh".equals(name)) {
                     installScriptUrl = asset.getString("browser_download_url");
                 }
             }
 
             if (jarUrl == null) {
-                return "No springcloud.jar Asset gefunden";
+                return "ERROR_NO_JAR_ASSET";
             }
             if (installScriptUrl == null) {
-                return "No install.sh Asset gefunden";
+                return "ERROR_NO_INSTALL_SCRIPT";
             }
 
             String jarDownloadPath = "/tmp/springcloud.jar";
@@ -66,12 +104,13 @@ public class UpdateService {
 
             runInstallScript(installScriptDownloadPath);
 
-            return "Update auf Version " + latest + " erfolgreich durchgeführt";
+            return "SUCCESS_" + latest;
 
         } catch (Exception e) {
-            return "Fehler beim Update: " + e.getMessage();
+            return "ERROR_EXCEPTION_" + e.getMessage();
         }
     }
+
 
     private void downloadFile(String fileURL, String savePath) throws IOException {
         URL url = new URL(fileURL);
@@ -95,7 +134,7 @@ public class UpdateService {
     }
 
     private void makeExecutable(String filePath) throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder("chmod", "+x", filePath);
+        ProcessBuilder pb = new ProcessBuilder("sudo", "chmod", "+x", filePath);
         Process process = pb.start();
         int exitCode = process.waitFor();
         if (exitCode != 0) {
@@ -104,8 +143,8 @@ public class UpdateService {
     }
 
     private void runInstallScript(String scriptPath) throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder("bash", scriptPath);
-        pb.inheritIO(); // Ausgabe im Terminal sichtbar machen
+        ProcessBuilder pb = new ProcessBuilder("sudo", "bash", scriptPath);
+        pb.inheritIO();
         Process process = pb.start();
         int exitCode = process.waitFor();
         if (exitCode != 0) {
