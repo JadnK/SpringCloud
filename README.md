@@ -75,18 +75,16 @@ To run this project locally, follow these steps:
 
    This assumes you have an external MariaDB database. Update the database connection details as per your setup.
 
-5. The application will run at `http://localhost:8080`. Open this URL in your browser to view the dashboard.
+5. The application will run at `https://localhost:8443`. Open this URL in your browser to view the dashboard.
 
 ---
 
 ### Default Login Credentials
 
-After starting the application, you can log in with the following **default admin user**:
+After starting the application, you can log in with the following **default sysadmin user**:
 
-- **Username**: `admin`
-- **Password**: `jadenk_§!`
-
-⚠️ Make sure to change the password in a production environment!
+- **Username**: `sysadmin`
+- **Password**: Random generated in Console on every Boot.
 
 ---
 
