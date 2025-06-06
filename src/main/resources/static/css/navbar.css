@@ -53,7 +53,7 @@
 .logout-dropdown {
     display: none;
     position: absolute;
-    top: 115%;
+    top: 100%;
     right: 0;
     background-color: #2f2f49;
     border-radius: 0.75rem;

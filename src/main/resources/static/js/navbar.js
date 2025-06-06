@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const usernameBox = document.getElementById('usernameBox');
+  const usernameBox = document.getElementById('username-box');
   const dropdown = document.getElementById('logoutDropdown');
 
   usernameBox.addEventListener('click', (e) => {
