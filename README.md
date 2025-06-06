@@ -49,44 +49,31 @@ To run this project locally, follow these steps:
 
 ### Steps
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/verpxnter/springcloud.git
-   cd springcloud-dashboard
-   ```
-
-2. **Build the project**:
-   ```bash
-   ./gradlew build
-   ```
-
-3. **Download the latest release from GitHub**:
-   - Go to the [GitHub Releases page](https://github.com/verpxnter/springcloud/releases) and download the latest **.jar** file.
+1. **Download the latest release from GitHub**:
+   - Go to the [GitHub Releases page](https://github.com/verpxnter/springcloud/releases) and download the latest **.jar** and **install.sh** file.
    
    **Important**: You should only download the project from the **Releases** section on GitHub, not from the source code directly, as the releases are pre-compiled and ready to run.
 
-4. **Run the application**:
+2. **Run the application**:
 
-   Once you have the **.jar** file from the releases, you can start the application with the following command:
+   Once you have the **.sh** file from the releases, you can start the application with the following command:
 
    ```bash
-   java -jar springcloud.jar --url="jdbc:mariadb://YOUR IP:3306/YOUR DATABASE" --user="YOUR USERNAME" --pw="YOUR PASSWORD"
+   ./install.sh
    ```
 
    This assumes you have an external MariaDB database. Update the database connection details as per your setup.
 
-5. The application will run at `http://localhost:8080`. Open this URL in your browser to view the dashboard.
+5. The application will run at `https://localhost:8443`. Open this URL in your browser to view the dashboard.
 
 ---
 
 ### Default Login Credentials
 
-After starting the application, you can log in with the following **default admin user**:
+After starting the application, you can log in with the following **default sysadmin user**:
 
-- **Username**: `admin`
-- **Password**: `jadenk_§!`
-
-⚠️ Make sure to change the password in a production environment!
+- **Username**: `sysadmin`
+- **Password**: Random generated in Console on every Boot.
 
 ---
 
