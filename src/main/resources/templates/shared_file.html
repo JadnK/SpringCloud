@@ -1,40 +1,67 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Shared File</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/sharedfile.css}">
+    <title>Shared File</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
 </head>
-<body>
+<body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans min-h-screen flex justify-center items-start pt-20">
 
-<div class="container">
-    <h1>Shared File</h1>
-    <p><strong th:text="${fileName}">File Name</strong></p>
+<div class="container bg-[var(--color-bg-alt)]/90 p-10 rounded-2xl shadow-[0_0_20px_rgba(178,89,255,0.4)] w-[90%] max-w-3xl text-center animate-fadeIn">
 
-    <div class="file-preview" th:if="${isPreviewable}">
+    <h1 class="text-4xl md:text-3xl sm:text-2xl font-extrabold mb-5 bg-clip-text text-transparent bg-gradient-to-r from-[#b983ff] to-[#d3bfff]">
+        Shared File
+    </h1>
+
+    <p class="mb-6 text-lg font-semibold text-white">
+        <strong th:text="${fileName}">File Name</strong>
+    </p>
+
+    <!-- Previewable file -->
+    <div class="file-preview my-5" th:if="${isPreviewable}">
         <img th:if="${fileType.startsWith('image/')}"
              th:src="@{'/share/file/download/' + ${token} + '?preview=true'}"
-             th:alt="${fileName}" style="max-width: 100%; max-height: 100%;" />
+             th:alt="${fileName}"
+             class="max-w-full max-h-[24rem] mx-auto rounded-lg shadow-inner"/>
 
         <embed th:if="${fileType == 'application/pdf'}"
                th:src="@{'/share/file/download/' + ${token} + '?preview=true'}"
-               type="application/pdf" width="100%" height="600px"/>
+               type="application/pdf"
+               class="w-full h-96 rounded-lg shadow-lg"/>
 
         <iframe th:if="${fileType.startsWith('text/')}"
                 th:src="@{'/share/file/download/' + ${token} + '?preview=true'}"
-                style="width:100%; height:600px; border:none;"></iframe>
+                class="w-full h-96 border-4 border-purple-800 rounded-lg"></iframe>
     </div>
 
-    <div class="file-preview" th:unless="${isPreviewable}">
-        <p style="color: #ccc;">Preview not available for this file type.</p>
+    <!-- Not previewable -->
+    <div class="file-preview my-5" th:unless="${isPreviewable}">
+        <p class="text-gray-400">Preview not available for this file type.</p>
     </div>
 
-    <div class="meta">
-        <p>Valid until: <strong th:text="${expireDate}">date</strong></p>
+    <!-- Meta info -->
+    <div class="meta mt-5 text-purple-300 text-base">
+        Valid until: <strong th:text="${expireDate}">date</strong>
     </div>
 
-    <a class="download-btn" th:href="@{'/share/file/download/' + ${token}}">Download File</a>
+    <!-- Download button -->
+    <a th:href="@{'/share/file/download/' + ${token}}"
+       class="inline-block mt-6 px-8 py-3 bg-gradient-to-br from-purple-600 to-purple-900 text-white font-semibold rounded-lg shadow hover:from-purple-400 hover:to-purple-700 transition">
+        Download File
+    </a>
 </div>
+
+<style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(1.25rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 1s ease-in-out;
+    }
+</style>
+
 </body>
 </html>

@@ -4,104 +4,127 @@
     <meta charset="UTF-8">
     <title>User Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/user-settings.css}">
-    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
     <script th:src="@{/js/navbar.js}"></script>
 </head>
-<body>
+<body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans min-h-screen">
+
+<!-- Alerts -->
 <div th:replace="~{fragments/alert}"></div>
 
-<div class="navbar no-select">
-    <div class="brand">SpringCloud</div>
+<!-- Navbar (wie Kalender-Seite) -->
+<nav class="flex justify-between items-center flex-wrap
+            bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
+            px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans relative z-50">
 
-    <div class="burger" id="burger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+    <div class="text-2xl md:text-xl sm:text-lg font-extrabold uppercase tracking-wide
+              text-[var(--color-primary)] select-none">SpringCloud</div>
 
-    <div class="username-box" id="usernameBox">
-        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff" width="24" height="24" aria-hidden="true">
+    <!-- Burger (mobile) -->
+    <button id="burger" class="flex flex-col justify-between w-6 h-5 ml-auto md:hidden">
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+    </button>
+
+    <!-- Username Dropdown (Desktop) -->
+    <div id="username-box"
+         class="relative hidden md:flex items-center gap-2 bg-[var(--color-bg-alt)] px-5 py-2 rounded-full cursor-pointer transition duration-300 shadow-md">
+        <svg class="w-6 h-6 flex-shrink-0 drop-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff">
             <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
         </svg>
-        <span th:text="${userAttributes.username}">N/A</span>
-        <div class="logout-dropdown" id="logoutDropdown">
-            <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-            <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
-            <a th:href="@{/calendar}">Calendar</a>
-            <a th:href="@{/logout}">Logout</a>
+        <span th:text="${userAttributes.username}" class="text-white font-semibold">N/A</span>
+
+        <!-- Dropdown -->
+        <div id="logoutDropdown"
+             class="absolute top-full right-0 mt-3 w-56 bg-[var(--color-bg-alt)] rounded-xl shadow-xl opacity-0 pointer-events-none transform -translate-y-2 transition-all duration-300">
+            <div class="flex flex-col py-2">
+                <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/admin}"
+                   class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Admin</a>
+                <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/register}"
+                   class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Add Users</a>
+                <a th:href="@{/dashboard}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Dashboard</a>
+                <a th:href="@{/settings}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Settings</a>
+                <a th:href="@{/logout}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Logout</a>
+            </div>
         </div>
     </div>
 
-    <div class="mobile-menu" id="mobileMenu">
-        <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-        <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/calendar}">Calendar</a>
-        <a th:href="@{/logout}">Logout</a>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
+        <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/admin}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Admin</a>
+        <a th:if="${userAttributes.role.name != null and #strings.endsWith(userAttributes.role.name, 'ADMIN')}" th:href="@{/register}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Add Users</a>
+        <a th:href="@{/dashboard}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Dashboard</a>
+        <a th:href="@{/settings}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Settings</a>
+        <a th:href="@{/logout}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Logout</a>
     </div>
-</div>
+</nav>
 
-<!--<h2>Debug: User Attributes</h2>
-<ul>
-    <li th:each="entry : ${userAttributes}">
-        <b th:text="${entry.key}">key</b>: <span th:text="${entry.value}">value</span>
-    </li>
-</ul> -->
+<!-- Content Wrapper -->
+<div class="content px-6 py-8 max-w-4xl mx-auto mt-28">
 
-<div class="content">
-    <h1>User Settings</h1>
+    <h1 class="text-center text-3xl font-bold mb-6">User Settings</h1>
 
-    <form th:action="@{/user/settings/update}" method="post" enctype="multipart/form-data" class="settings-form">
+    <form th:action="@{/user/settings/update}" method="post" enctype="multipart/form-data" class="flex flex-col gap-6">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-        <div class="settings-box">
-            <h2>Profil Information</h2>
+        <!-- Profile Information -->
+        <div class="bg-[var(--color-bg-alt)] p-6 rounded-xl shadow-md flex flex-col gap-4">
+            <h2 class="text-xl font-semibold border-b border-[var(--color-primary)] pb-2">Profil Information</h2>
 
-            <div class="form-group">
-                <label>Profilpicture:</label>
-                <div class="profile-picture-upload">
-                    <img th:src="${userAttributes.profileImageData}" alt="Profilbild" class="profile-preview">
-                    <input type="file" name="profileImage" accept="image/png, image/jpeg, image/jpg">
-                </div>
+            <div class="flex items-center gap-4">
+                <img th:src="${userAttributes.profileImageData}" alt="Profilbild"
+                     class="w-16 h-16 rounded-full object-cover border-2 border-[var(--color-primary)]">
+                <input type="file" name="profileImage" accept="image/png, image/jpeg, image/jpg"
+                       class="text-sm text-[var(--color-text)]">
             </div>
 
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" th:value="${userAttributes.username}">
+            <label for="username" class="text-[var(--color-text)] font-semibold">Username:</label>
+            <input type="text" id="username" name="username" th:value="${userAttributes.username}"
+                   class="w-full px-3 py-2 rounded-lg bg-[var(--color-input)] text-[var(--color-text)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none">
 
-            <label for="email">E-Mail:</label>
-            <input type="email" id="email" name="email" th:value="${userAttributes.email}">
+            <label for="email" class="text-[var(--color-text)] font-semibold">E-Mail:</label>
+            <input type="email" id="email" name="email" th:value="${userAttributes.email}"
+                   class="w-full px-3 py-2 rounded-lg bg-[var(--color-input)] text-[var(--color-text)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none">
 
-            <label class="toggle-label">
-            <span class="toggle-checkbox">
-            <input type="checkbox"
-                   id="notificationsEnabled"
-                   name="notificationsEnabled"
-                   th:checked="${userAttributes.notificationsEnabled}"
-                   value="true" />
-
-                <span class="toggle-slider"></span>
-            </span>
-                E-Mail-Notification
+            <!-- Toggle -->
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="notificationsEnabled" name="notificationsEnabled"
+                       th:checked="${userAttributes.notificationsEnabled}" value="true"
+                       class="sr-only peer">
+                <div class="w-12 h-6 bg-[var(--color-container-hover)] rounded-full peer-checked:bg-[var(--color-primary)] relative">
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-6"></div>
+                </div>
+                <span class="text-[var(--color-text)] font-semibold">E-Mail-Notification</span>
             </label>
-
         </div>
 
-        <div class="settings-box">
-            <h2>Change Password</h2>
+        <!-- Password Section -->
+        <div class="bg-[var(--color-bg-alt)] p-6 rounded-xl shadow-md flex flex-col gap-4">
+            <h2 class="text-xl font-semibold border-b border-[var(--color-primary)] pb-2">Change Password</h2>
 
-            <label for="currentPassword">Current Password:</label>
-            <input type="password" id="currentPassword" name="currentPassword">
+            <label for="currentPassword" class="text-[var(--color-text)] font-semibold">Current Password:</label>
+            <input type="password" id="currentPassword" name="currentPassword"
+                   class="w-full px-3 py-2 rounded-lg bg-[var(--color-input)] text-[var(--color-text)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none">
 
-            <label for="newPassword">New Password:</label>
-            <input type="password" id="newPassword" name="newPassword">
+            <label for="newPassword" class="text-[var(--color-text)] font-semibold">New Password:</label>
+            <input type="password" id="newPassword" name="newPassword"
+                   class="w-full px-3 py-2 rounded-lg bg-[var(--color-input)] text-[var(--color-text)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none">
 
-            <label for="newPasswordConfirm">Confirm Password:</label>
-            <input type="password" id="newPasswordConfirm" name="newPasswordConfirm">
+            <label for="newPasswordConfirm" class="text-[var(--color-text)] font-semibold">Confirm Password:</label>
+            <input type="password" id="newPasswordConfirm" name="newPasswordConfirm"
+                   class="w-full px-3 py-2 rounded-lg bg-[var(--color-input)] text-[var(--color-text)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none">
         </div>
 
-        <button type="submit" class="button">Save Changes</button>
+        <!-- Save Button -->
+        <button type="submit"
+                class="py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold rounded-lg transition">
+            Save Changes
+        </button>
     </form>
 </div>
 
@@ -110,8 +133,10 @@
     const mobileMenu = document.getElementById('mobileMenu');
 
     burger.addEventListener('click', () => {
-        mobileMenu.classList.toggle('show');
+        mobileMenu.classList.toggle('hidden');
+        mobileMenu.classList.toggle('flex');
     });
 </script>
+
 </body>
 </html>

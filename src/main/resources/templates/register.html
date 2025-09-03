@@ -4,83 +4,151 @@
     <meta charset="UTF-8">
     <title>SpringCloud Registrierung</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/register.css}">
-    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script th:src="@{/js/navbar.js}"></script>
+    <!-- Deine Variablen -->
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
 </head>
-<body>
+<body class="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] font-sans">
+
 <div th:replace="~{fragments/alert}"></div>
 
-<div class="navbar no-select">
-    <div class="brand">SpringCloud</div>
+<!-- Navbar -->
+<nav class="flex justify-between items-center flex-wrap
+            bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
+            px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans relative z-50">
 
-    <div class="burger" id="burger">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- Brand -->
+    <div class="text-2xl md:text-xl sm:text-lg font-extrabold uppercase tracking-wide
+              text-[var(--color-primary)] select-none">
+        SpringCloud
     </div>
 
-    <div class="username-box" id="usernameBox">
-        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff" width="24" height="24" aria-hidden="true">
+    <!-- Burger (mobile only) -->
+    <button id="burger"
+            class="flex flex-col justify-between w-6 h-5 ml-auto cursor-pointer md:hidden">
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+    </button>
+
+    <!-- Username Box -->
+    <div id="username-box"
+         class="relative hidden md:flex items-center gap-2 bg-[var(--color-bg-alt)] px-5 py-2 rounded-full cursor-pointer transition duration-300 shadow-md">
+
+        <!-- Icon -->
+        <svg class="w-6 h-6 flex-shrink-0 drop-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff">
             <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
         </svg>
-        <span th:text="${username}">N/A</span>
-        <div class="logout-dropdown" id="logoutDropdown">
-            <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
-            <a th:href="@{/calendar}">Calendar</a>
-            <a th:href="@{/settings}">Settings</a>
-            <a th:href="@{/logout}">Logout</a>
+
+        <!-- Username -->
+        <span th:text="${username}" class="text-white font-semibold">N/A</span>
+
+        <!-- Dropdown -->
+        <div id="logoutDropdown"
+             class="absolute top-full right-0 mt-3 w-56 bg-[var(--color-bg-alt)] rounded-xl shadow-xl opacity-0 pointer-events-none transform -translate-y-2 transition-all duration-300">
+
+            <div class="flex flex-col py-2">
+                <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}"
+                   class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg transition hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Admin</a>
+                <a th:href="@{/dashboard}"
+                   class="px-5 py-3 text-white rounded-lg transition hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Dashboard</a>
+                <a th:href="@{/calendar}"
+                   class="px-5 py-3 text-white rounded-lg transition hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Calendar</a>
+                <a th:href="@{/settings}"
+                   class="px-5 py-3 text-white rounded-lg transition hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Settings</a>
+                <a th:href="@{/logout}"
+                   class="px-5 py-3 text-white rounded-lg transition hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Logout</a>
+            </div>
         </div>
     </div>
-    <div class="mobile-menu" id="mobileMenu">
-        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/calendar}">Calendar</a>
-        <a th:href="@{/settings}">Settings</a>
-        <a th:href="@{/logout}">Logout</a>
+
+
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu"
+         class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
+        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Admin</a>
+        <a th:href="@{/dashboard}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Dashboard</a>
+        <a th:href="@{/calendar}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Calendar</a>
+        <a th:href="@{/settings}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Settings</a>
+        <a th:href="@{/logout}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Logout</a>
     </div>
-</div>
+</nav>
 
-<div class="container">
-    <form class="register-form" th:action="@{/register}" th:object="${user}" method="post">
-        <h2>Register</h2>
 
-        <div class="input-group">
-            <input type="text" th:field="*{username}" required placeholder=" " />
-            <label>Username</label>
+<!-- Register Form -->
+<div class="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
+    <form class="bg-[var(--color-container)] rounded-xl shadow-lg w-[90%] max-w-md p-8 flex flex-col gap-6 animate-fadeIn"
+          th:action="@{/register}" th:object="${user}" method="post">
+
+        <h2 class="text-center text-2xl uppercase tracking-wide font-normal text-[var(--color-accent)]">
+            Register
+        </h2>
+
+        <!-- Username -->
+        <div class="relative">
+            <input type="text" th:field="*{username}" required placeholder=" "
+                   class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
+            <label class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-accent)] transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm bg-[var(--color-container)] px-1 rounded-sm">
+                Username
+            </label>
         </div>
 
-        <div class="input-group">
-            <input type="email" th:field="*{email}" required placeholder=" " />
-            <label>Mail</label>
+        <!-- Email -->
+        <div class="relative">
+            <input type="email" th:field="*{email}" required placeholder=" "
+                   class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
+            <label class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-accent)] transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm bg-[var(--color-container)] px-1 rounded-sm">
+                Mail
+            </label>
         </div>
 
-        <div class="input-group">
-            <input type="password" id="password" th:field="*{password}" required placeholder=" " />
-            <label>Password</label>
+        <!-- Password -->
+        <div class="relative">
+            <input type="password" id="password" th:field="*{password}" required placeholder=" "
+                   class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
+            <label class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-accent)] transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm bg-[var(--color-container)] px-1 rounded-sm">
+                Password
+            </label>
         </div>
 
-        <button type="submit">Register</button>
+        <!-- Submit -->
+        <button type="submit"
+                class="w-full py-3 rounded-lg font-semibold text-white bg-[var(--color-primary)] shadow-md hover:bg-[var(--color-primary-hover)] transition">
+            Register
+        </button>
     </form>
 </div>
 
-<script>
-    function togglePasswordVisibility() {
-        const passwordField = document.getElementById('password');
-        const confirmPasswordField = document.getElementById('confirmPassword');
-        const type = passwordField.type === 'password' ? 'text' : 'password';
-        passwordField.type = type;
-        confirmPasswordField.type = type;
+
+
+<!-- Animation -->
+<style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(1.25rem); }
+      to { opacity: 1; transform: translateY(0); }
     }
-</script>
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+</style>
+
 <script>
     const burger = document.getElementById('burger');
     const mobileMenu = document.getElementById('mobileMenu');
 
     burger.addEventListener('click', () => {
-        mobileMenu.classList.toggle('show');
+      mobileMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('flex');
     });
 </script>
+
 </body>
 </html>

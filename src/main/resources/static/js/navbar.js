@@ -2,16 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const usernameBox = document.getElementById('username-box');
   const dropdown = document.getElementById('logoutDropdown');
 
-  usernameBox.addEventListener('click', (e) => {
-    e.stopPropagation();
-    dropdown.classList.toggle('show');
-  });
+  if (usernameBox && dropdown) {
+    // Toggle dropdown on click
+    usernameBox.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('show');
+    });
 
-  document.addEventListener('click', () => {
-    dropdown.classList.remove('show');
-  });
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      dropdown.classList.remove('show');
+    });
 
-  dropdown.addEventListener('click', e => {
-    e.stopPropagation();
-  });
+    // Prevent closing when clicking inside dropdown
+    dropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
 });

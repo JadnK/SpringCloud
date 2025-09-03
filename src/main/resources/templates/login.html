@@ -4,36 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpringCloud Login</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center font-sans bg-[var(--color-bg)] text-[var(--color-text)]">
+
 <div th:replace="~{fragments/alert}"></div>
-<div class="container">
-    <form class="login-form" th:action="@{/login}" method="POST">
-        <h2>SpringCloud</h2>
-        <div class="input-group">
-            <input type="text" name="username" required placeholder=" " />
-            <label>Username</label>
+
+<div class="bg-[var(--color-container)] rounded-xl shadow-lg w-[90%] max-w-md p-10 animate-fadeIn">
+    <form class="flex flex-col gap-6" th:action="@{/login}" method="POST">
+        <h2 class="text-center text-2xl uppercase tracking-wide font-normal text-[var(--color-accent)]">SpringCloud</h2>
+
+        <!-- Username -->
+        <div class="relative">
+            <input type="text" name="username" required placeholder=" "
+                   class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
+            <label class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-accent)] transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-[var(--color-accent)] peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-accent)] bg-[var(--color-container)] px-1 rounded-sm">
+                Username
+            </label>
         </div>
-        <div class="input-group">
-            <input type="password" name="password" required placeholder=" " />
-            <label>Password</label>
+
+        <!-- Password -->
+        <div class="relative">
+            <input type="password" name="password" required placeholder=" "
+                   class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
+            <label class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-accent)] transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-[var(--color-accent)] peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-accent)] bg-[var(--color-container)] px-1 rounded-sm">
+                Password
+            </label>
         </div>
-        <div class="checkbox-group">
-            <input type="checkbox" id="remember-me" name="remember-me">
-            <label for="remember-me">Remember me</label>
+
+        <!-- Remember Me -->
+        <div class="flex items-center gap-3">
+            <input id="remember-me" name="remember-me" type="checkbox"
+                   class="h-5 w-5 rounded-md border border-[var(--color-accent)] bg-[var(--color-input)] checked:bg-[var(--color-primary)] checked:border-[var(--color-primary)]"/>
+            <label for="remember-me" class="text-sm text-gray-300 select-none cursor-pointer">Remember me</label>
         </div>
-        <button type="submit">Login</button>
+
+        <!-- Submit Button -->
+        <button type="submit"
+                class="w-full py-3 rounded-lg font-semibold text-white bg-[var(--color-primary)] shadow-md hover:bg-[var(--color-primary-hover)] transition">
+            Login
+        </button>
     </form>
 </div>
 
-<script>
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('focus', () => input.parentElement.classList.add('focused'));
-        input.addEventListener('blur', () => {
-            if (!input.value) input.parentElement.classList.remove('focused');
-        });
-    });
-</script>
+<!-- Animation -->
+<style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(1.25rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+</style>
+
 </body>
 </html>

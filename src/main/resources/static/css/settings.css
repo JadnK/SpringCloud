@@ -1,0 +1,24 @@
+:root {
+  /* Farben */
+  --color-bg: #1f1f2e;
+  --color-container: #29293d;
+  --color-input: #2b2b40;
+  --color-input-focus: #33334d;
+  --color-primary: #8a5dff;
+  --color-primary-hover: #7b4de8;
+  --color-text: #e4e4e4;
+  --color-accent: #b0b0ff;
+
+  /* Spacing & Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --shadow-lg: 0 0.25rem 1.25rem rgba(0,0,0,0.4);
+}
+
+.show {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
