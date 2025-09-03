@@ -4,131 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpringCloud Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
     <script th:src="@{/js/navbar.js}"></script>
 </head>
-<body>
-<div th:replace="~{fragments/alert}"></div>
+<body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans min-h-screen">
 
-<div class="navbar no-select">
-    <div class="brand">SpringCloud</div>
+<!-- Navbar -->
+<nav class="flex justify-between items-center flex-wrap
+            bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
+            px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans relative z-50">
 
-    <div class="burger" id="burger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+    <div class="text-2xl md:text-xl sm:text-lg font-extrabold uppercase tracking-wide
+              text-[var(--color-primary)] select-none">SpringCloud</div>
 
-    <div class="username-box" id="usernameBox">
-        <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff" width="24" height="24" aria-hidden="true">
+    <button id="burger" class="flex flex-col justify-between w-6 h-5 ml-auto md:hidden">
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+        <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
+    </button>
+
+    <div id="username-box"
+         class="relative hidden md:flex items-center gap-2 bg-[var(--color-bg-alt)] px-5 py-2 rounded-full cursor-pointer transition duration-300 shadow-md">
+
+        <svg class="w-6 h-6 flex-shrink-0 drop-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff">
             <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
         </svg>
-        <span th:text="${username}">N/A</span>
-        <div class="logout-dropdown" id="logoutDropdown">
-            <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-            <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
-            <a th:href="@{/calendar}">Calendar</a>
-            <a th:href="@{/settings}">Settings</a>
-            <a th:href="@{/logout}">Logout</a>
+        <span th:text="${username}" class="text-white font-semibold">N/A</span>
+
+        <!-- Dropdown -->
+        <div id="logoutDropdown"
+             class="absolute top-full right-0 mt-3 w-56 bg-[var(--color-bg-alt)] rounded-xl shadow-xl opacity-0 pointer-events-none transform -translate-y-2 transition-all duration-300">
+            <div class="flex flex-col py-2">
+                <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}"
+                   class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Admin</a>
+                <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}"
+                   class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Add Users</a>
+                <a th:href="@{/calendar}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Calendar</a>
+                <a th:href="@{/settings}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Settings</a>
+                <a th:href="@{/logout}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Logout</a>
+            </div>
         </div>
     </div>
 
-    <div class="mobile-menu" id="mobileMenu">
-        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}" class="admin-element">Admin</a>
-        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="admin-element">Add Users</a>
-        <a th:href="@{/calendar}">Calendar</a>
-        <a th:href="@{/settings}">Settings</a>
-        <a th:href="@{/logout}">Logout</a>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
+        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Admin</a>
+        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Add Users</a>
+        <a th:href="@{/calendar}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Calendar</a>
+        <a th:href="@{/settings}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Settings</a>
+        <a th:href="@{/logout}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Logout</a>
     </div>
-</div>
+</nav>
 
-<div class="content">
-    <h1>Welcome to your Cloud Dashboard!</h1>
-    <div class="searching">
-        <input type="text" id="fileSearch" placeholder="Search for Files" oninput="filterFiles()">
+<!-- Content -->
+<div class="content px-6 py-8 max-w-[75rem] mx-auto flex flex-col gap-12">
+
+    <!-- Search -->
+    <div class="flex justify-end mb-4">
+        <input type="text" id="fileSearch" placeholder="Search files..." class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)] w-full md:w-1/3" oninput="filterFiles()">
     </div>
-    <ul class="file-list" id="fileList">
-        <li th:each="file : ${files}" >
-            <div class="file-info">
-                <span th:text="${file.fileName}">File Name</span>
-                <span th:text="${file.fileType}">File Type</span>
-                <span th:text="${file.fileOwner.username}">Uploader</span>
-                <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Upload Date</span>
+
+    <!-- File List -->
+    <ul class="flex flex-col gap-3" id="fileList">
+        <li th:each="file : ${files}" class="bg-[var(--color-bg-alt)] p-4 rounded-xl shadow flex justify-between items-center hover:bg-[var(--color-container-hover)] transition">
+            <div class="flex flex-col md:flex-row md:gap-4">
+                <span th:text="${file.fileName}" class="font-semibold">File Name</span>
+                <span th:text="${file.fileType}" class="text-sm text-[var(--color-text-light)]">File Type</span>
+                <span th:text="${file.fileOwner.username}" class="text-sm text-[var(--color-text-light)]">Uploader</span>
+                <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}" class="text-sm text-[var(--color-text-light)]">Upload Date</span>
             </div>
-            <div class="actions">
-                <a th:if="${file.fileOwner.username == username}" href="#" class="share" th:onclick="confirmShare([[${file.id}]])">Share</a>
-                <a th:href="@{'/download/' + ${file.id}}">Download</a>
-                <a th:onclick='showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])'>Preview</a>
-                <a th:if="${file.fileOwner.username == username}" href="#" class="edit" th:onclick="openEditPopup([[${file.id}]])">Edit</a>
+            <div class="flex gap-2">
+                <a th:if="${file.fileOwner.username == username}" href="#" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition" th:onclick="confirmShare([[${file.id}]])">Share</a>
+                <a th:href="@{'/download/' + ${file.id}}" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition">Download</a>
+                <a href="#" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition" th:onclick="showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])">Preview</a>
+                <a th:if="${file.fileOwner.username == username}" href="#" class="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition" th:onclick="showEditPopup([[${file.id}]])">Edit</a>
             </div>
         </li>
     </ul>
+
+    <!-- Pagination -->
+    <div id="pagination" class="flex justify-center gap-2 mt-4"></div>
+
+    <!-- Upload Button -->
+    <button class="px-4 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition self-end" onclick="showUploadPopup()">Upload file</button>
 </div>
 
-<button class="upload-btn" onclick="showUploadPopup()">Upload file</button>
-
-
-<div id="editModal" class="modal">
-    <div class="modal-content" style="max-height: 70vh; overflow-y: auto;">
-        <h2>Edit File Access</h2>
-        <p>Add or remove users who are allowed to view this file:</p>
-        <form id="editAccessForm" method="post" th:action="@{/edit/file}">
+<!-- Edit Modal -->
+<div id="editModal" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
+    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-[var(--color-primary)]">Edit File Access</h2>
+        <form id="editAccessForm" method="post" th:action="@{/edit/file}" class="flex flex-col gap-3">
             <input type="hidden" name="fileId" id="editFileId">
-            <input
-                    type="text"
-                    id="userSearchInput"
-                    placeholder="Search users..."
-                    autocomplete="off"
-                    style="
-    width: 100%;
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: none;
-    font-size: 1rem;
-    background-color: #26263a;
-    color: #eee;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
-  "
-                    onkeyup="filterUsers()"
-            />
-
-            <div class="user-list" style="max-height: 210px; min-height: 210px; overflow-y: auto; border: 1px solid #444; padding: 15px; border-radius: 12px;">
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li th:each="user : ${allUsers}" th:if="${user.username} != ${username}"
-                        th:classappend="${file != null and file.authorizedUsers.contains(user)} ? 'selected-user'">
-                        <label class="user-label">
-                            <img th:src="'data:image/png;base64,' + ${user.profileImageBase64}" alt="Profilbild" class="profile-img"/>
+            <input type="text" id="userSearchInput" placeholder="Search users..." class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)]" onkeyup="filterUsers()">
+            <div class="user-list max-h-52 overflow-y-auto border border-gray-700 rounded-lg p-3">
+                <ul class="flex flex-col gap-2" style="list-style: none; padding:0; margin:0;">
+                    <li th:each="user : ${allUsers}" th:if="${user.username} != ${username}" th:classappend="${file != null and file.authorizedUsers.contains(user)} ? 'selected-user'">
+                        <label class="flex items-center gap-2 cursor-pointer user-label">
+                            <img th:src="'data:image/png;base64,' + ${user.profileImageBase64}" alt="Profile" class="w-8 h-8 rounded-full"/>
                             <span th:text="${user.username}">Username</span>
-                            <input type="checkbox" name="authorizedUsers" th:value="${user.id}"
-                                   th:checked="${file != null and file.authorizedUsers.contains(user)}" style="display:none;">
+                            <input type="checkbox" name="authorizedUsers" th:value="${user.id}" th:checked="${file != null and file.authorizedUsers.contains(user)}" class="hidden">
                         </label>
                     </li>
                 </ul>
             </div>
-
-            <div class="form-actions" style="margin-top: 20px;">
-                <button type="submit" class="button no-select">Save</button>
-                <button type="button" class="button no-select" onclick="closeEditPopup()">Cancel</button>
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition">Save</button>
+                <button type="button" onclick="closeEditPopup()" class="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Cancel</button>
             </div>
         </form>
-
-        <hr style="margin: 20px 0; border-color: #555;">
-
-        <button class="delete-btn" style="background-color: #e74c3c; width: 100%;" onclick="confirmDeleteFromEdit()">Delete File</button>
+        <button class="py-2 bg-red-600 text-white rounded hover:bg-red-700 transition w-full mt-3" onclick="confirmDeleteFromEdit()">Delete File</button>
     </div>
 </div>
 
-
-
-<div id="confirmSharePopup" class="modal" style="display: none;">
-    <div class="modal-content">
-        <h2>Share this file?</h2>
-        <p>Select how long the link should be valid:</p>
-        <div class="select-container">
+<!-- Share / Delete / Preview Popups -->
+<div id="confirmSharePopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
+    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-[var(--color-primary)]">Share this file?</h2>
+        <div>
             <label for="shareDurationSelect">Link expires after:</label>
-            <select id="shareDurationSelect">
+            <select id="shareDurationSelect" class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)] w-full">
                 <option value="1">1 Hour</option>
                 <option value="12">12 Hours</option>
                 <option value="24">1 Day</option>
@@ -136,338 +133,211 @@
                 <option value="720">30 Days</option>
             </select>
         </div>
-        <div class="popup-buttons" style="margin-top: 20px;">
-            <button id="confirmShareBtn">Share</button>
-            <button class="close-btn" onclick="closeConfirmSharePopup()">Cancel</button>
+        <div class="flex gap-2 mt-4">
+            <button id="confirmShareBtn" class="flex-1 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition">Share</button>
+            <button class="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" onclick="closeConfirmSharePopup()">Cancel</button>
         </div>
     </div>
 </div>
 
-
-<div id="confirmDeletePopup" class="modal" style="display: none;">
-    <div class="modal-content">
-        <h2>Really delete the file?</h2>
-        <p>
-            This file cannot be recovered.<br>
-            All shared links will also be deleted.</p>
-        <div class="popup-buttons">
-            <button id="confirmDeleteBtn">Delete</button>
-            <button class="close-btn" onclick="closeConfirmDeletePopup()">Cancel</button>
+<div id="confirmDeletePopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
+    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-[var(--color-primary)]">Really delete the file?</h2>
+        <p>This file cannot be recovered. All shared links will also be deleted.</p>
+        <div class="flex gap-2">
+            <button id="confirmDeleteBtn" class="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Delete</button>
+            <button class="flex-1 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition" onclick="closeConfirmDeletePopup()">Cancel</button>
         </div>
     </div>
 </div>
 
-<div id="uploadPopup" class="modal">
-    <div class="modal-content">
-        <h2>Upload Your Files</h2>
-        <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" onsubmit="showLoadingBar()">
-            <div id="dropArea"
-                 onclick="triggerFileInput()"
-                 ondrop="handleDrop(event)"
-                 ondragover="handleDragOver(event)"
-                 ondragleave="handleDragLeave(event)">
-                <p id="dropText">Drag & drop your files here<br>or click to browse</p>
-                <input type="file" name="file" id="fileInput" multiple hidden onchange="updateFileList()">
-            </div>
+<div id="previewPopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
+    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[95vw] max-w-4xl h-[80vh] overflow-auto flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-[var(--color-primary)]">Preview</h2>
+        <div id="previewContainer" class="flex-1 overflow-auto"></div>
+        <button class="py-2 bg-red-600 text-white rounded hover:bg-red-700 transition w-full" onclick="closePreviewPopup()">Close</button>
+    </div>
+</div>
 
-            <ul id="previewFileList"></ul>
-
+<!-- Upload Modal -->
+<div id="uploadPopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
+    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[95vw] max-w-lg flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-[var(--color-primary)]">Upload Your Files</h2>
+        <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4" onsubmit="showLoadingBar()">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit">Upload</button>
-        </form>
-        <button class="close-btn" onclick="closeUploadPopup()">Close</button>
-    </div>
-</div>
+            <div id="dropArea" class="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center cursor-pointer">
+                Drag & Drop files here or click to select
+                <input type="file" name="file" id="fileInput" multiple class="hidden" onchange="handleFiles(this.files)">
+            </div>
+            <script>
+                const dropArea = document.getElementById('dropArea');
+                const fileInput = document.getElementById('fileInput');
+                const filePreview = document.getElementById('filePreview');
 
+                // Klick auf Container öffnet File Dialog
+                dropArea.addEventListener('click', () => fileInput.click());
 
-
-<div id="previewPopup" class="modal">
-    <div class="modal-content popup-content">
-        <h2>Preview</h2>
-        <div id="previewContainer"></div>
-        <button class="close-btn" onclick="closePreviewPopup()">Close</button>
-    </div>
-</div>
-<div id="loadingOverlay" class="loading-overlay" style="display: none;">
-    <div class="loading-bar" id="loadingBar" style="width: 0%;"></div>
-    <div class="loading-circle"></div>
-    <div class="loading-content">Uploading...</div>
-</div>
-<script>
-
-    const burger = document.getElementById('burger');
-const mobileMenu = document.getElementById('mobileMenu');
-
-burger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('show');
-});
-function filterUsers() {
-  const input = document.getElementById('userSearchInput');
-  const filter = input.value.toLowerCase();
-  const ul = document.querySelector('#editModal .user-list ul');
-  const li = ul.getElementsByTagName('li');
-
-  for (let i = 0; i < li.length; i++) {
-    const label = li[i].querySelector('.user-label span');
-    if (label) {
-      const txtValue = label.textContent || label.innerText;
-      if (txtValue.toLowerCase().indexOf(filter) > -1) {
-        li[i].style.display = "";
-      } else {
-        li[i].style.display = "none";
-      }
-    }
-  }
-}
-
-
-document.querySelectorAll('.user-label').forEach(label => {
-    label.addEventListener('click', e => {
-        const checkbox = label.querySelector('input[type="checkbox"]');
-        checkbox.checked = !checkbox.checked;
-        if (checkbox.checked) {
-            label.parentElement.classList.add('selected-user');
-        } else {
-            label.parentElement.classList.remove('selected-user');
-        }
-    });
-});
-
-function openEditPopup(fileId) {
-document.getElementById('editFileId').value = fileId;
-const userListItems = document.querySelectorAll('#editModal .user-list li');
-
-userListItems.forEach(li => {
-    const checkbox = li.querySelector('input[type="checkbox"]');
-    checkbox.checked = false;
-    li.classList.remove('selected-user');
-});
-
-fetch(`/api/file/${fileId}/authorizedUsers`)
-    .then(response => response.json())
-    .then(authorizedUserIds => {
-        userListItems.forEach(li => {
-            const checkbox = li.querySelector('input[type="checkbox"]');
-            const userId = parseInt(checkbox.value);
-            if (authorizedUserIds.includes(userId)) {
-                checkbox.checked = true;
-                li.classList.add('selected-user');
-            }
-        });
-        document.getElementById('editModal').style.display = 'flex';
-    })
-    .catch(error => {
-        console.error('Error loading authorized users:', error);
-        document.getElementById('editModal').style.display = 'flex';
-    });
-}
-
-
-function closeEditPopup() {
-    document.getElementById('editModal').style.display = 'none';
-}
-
-
-    function confirmDeleteFromEdit() {
-        const fileId = document.getElementById('editFileId').value;
-        if (fileId) {
-            if (confirm("Are you sure you want to delete this file? This cannot be undone.")) {
-                window.location.href = `/delete/${fileId}`;
-            }
-        }
-    }
-
-
-        let deleteFileId = null;
-
-        let shareFileId = null;
-
-        function confirmShare(fileId) {
-            shareFileId = fileId;
-            document.getElementById('confirmSharePopup').style.display = 'flex';
-        }
-
-        function closeConfirmSharePopup() {
-            shareFileId = null;
-            document.getElementById('confirmSharePopup').style.display = 'none';
-        }
-
-        document.getElementById('confirmShareBtn').addEventListener('click', function () {
-            if (shareFileId !== null) {
-                const durationHours = document.getElementById('shareDurationSelect').value;
-                window.location.href = `/share/${shareFileId}?duration=${durationHours}`;
-            }
-        });
-
-
-        function confirmDelete(fileId) {
-            deleteFileId = fileId;
-            document.getElementById('confirmDeletePopup').style.display = 'flex';
-        }
-
-        function closeConfirmDeletePopup() {
-            deleteFileId = null;
-            document.getElementById('confirmDeletePopup').style.display = 'none';
-        }
-
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
-            if (deleteFileId !== null) {
-                window.location.href = `/delete/${deleteFileId}`;
-            }
-        });
-
-        function showLoadingBar() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
-
-        function showUploadPopup() {
-            document.getElementById('uploadPopup').style.display = 'flex';
-        }
-
-        function closeUploadPopup() {
-            document.getElementById('uploadPopup').style.display = 'none';
-        }
-
-        function showPreviewPopup(fileId, fileType, fileName) {
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = '';
-
-            if (fileType.startsWith('image/')) {
-                previewContainer.innerHTML = `<img src="/file/${fileId}" alt="${fileName}" style="max-width: 100%; max-height: 100%;">`;
-            }
-
-            else if (fileType.startsWith('video/')) {
-                previewContainer.innerHTML = `<video controls style="max-width: 100%; max-height: 100%;"> <source src="/file/${fileId}" type="${fileType}"> Your browser does not support the video tag. </video>`;
-            }
-
-            else if (fileType.startsWith('text/')) {
-                fetch(`/file/${fileId}`).then(response => response.text()).then(data => {
-                    if (fileType === 'application/json') {
-
-                        try {
-                            data = JSON.stringify(JSON.parse(data), null, 4);
-                        } catch (e) {
-                            data = "Error parsing JSON.";
-                        }
-                    }
-                    previewContainer.innerHTML = `<pre>${data}</pre>`;
-                }).catch(error => {
-                    previewContainer.innerHTML = `<p>Error loading text file</p>`;
-                });
-            }
-
-            else if (fileType === 'application/pdf') {
-                previewContainer.innerHTML = `<embed src="/file/${fileId}" type="application/pdf" width="100%" height="100%"></embed>`;
-            }
-            else {
-                previewContainer.innerHTML = `<p>No preview available for this file type</p>`;
-            }
-
-            document.getElementById('previewPopup').style.display = 'flex';
-        }
-
-
-        function closePreviewPopup() {
-            document.getElementById('previewPopup').style.display = 'none';
-        }
-
-        function filterFiles() {
-        const input = document.getElementById('fileSearch');
-        const filter = input.value.toLowerCase();
-        const fileList = document.getElementById('fileList');
-        const files = fileList.getElementsByTagName('li');
-
-        for (let i = 0; i < files.length; i++) {
-            const fileInfo = files[i].querySelector('.file-info');
-            if (fileInfo) {
-                const fileNameSpan = fileInfo.querySelector('span:first-child');
-                const textValue = fileNameSpan ? fileNameSpan.textContent || fileNameSpan.innerText : '';
-
-                if (textValue.toLowerCase().indexOf(filter) > -1) {
-                    files[i].style.display = '';
-                } else {
-                    files[i].style.display = 'none';
+                // Dateien bearbeiten (Preview anzeigen)
+                function handleFiles(files) {
+                    filePreview.innerHTML = ''; // alte Einträge entfernen
+                    Array.from(files).forEach(file => {
+                        const div = document.createElement('div');
+                        div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                        filePreview.appendChild(div);
+                    });
                 }
-            }
+
+                // Optional: Drag & Drop Unterstützung
+                dropArea.addEventListener('dragover', e => e.preventDefault());
+                dropArea.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const files = e.dataTransfer.files;
+                    fileInput.files = files; // setzt die Dateien für das Input-Feld
+                    handleFiles(files);
+                });
+            </script>
+            <div id="filePreview" class="flex flex-col gap-2"></div>
+            <button type="submit" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition">Upload</button>
+            <button type="button" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" onclick="closeUploadPopup()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- Elemente ---
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    const uploadPopup = document.getElementById('uploadPopup');
+    const editModal = document.getElementById('editModal');
+    const editFileIdInput = document.getElementById('editFileId');
+
+    const previewPopup = document.getElementById('previewPopup');
+    const previewContainer = document.getElementById('previewContainer');
+
+    const sharePopup = document.getElementById('confirmSharePopup');
+    let currentShareFileId = null;
+
+    const deletePopup = document.getElementById('confirmDeletePopup');
+    let currentDeleteFileId = null;
+
+    const fileList = document.getElementById('fileList');
+    const paginationContainer = document.getElementById('pagination');
+    const itemsPerPage = 10;
+    let currentPage = 1;
+    let fileItems = Array.from(fileList.children);
+
+    // --- Burger Menu ---
+    burger.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        mobileMenu.classList.toggle('flex');
+    });
+
+    // --- Upload Modal ---
+    function showUploadPopup() { uploadPopup.classList.remove('hidden'); }
+    function closeUploadPopup() { uploadPopup.classList.add('hidden'); }
+
+    // --- Edit Modal ---
+    function showEditPopup(fileId) { editFileIdInput.value = fileId; editModal.classList.remove('hidden'); }
+    function closeEditPopup() { editModal.classList.add('hidden'); }
+
+    // --- Preview Modal ---
+    function showPreviewPopup(fileId, fileType, fileName) {
+        previewContainer.innerHTML = '';
+        if(fileType.startsWith('image')) {
+            const img = document.createElement('img');
+            img.src = '/file/' + fileId;
+            img.className = 'w-full h-auto';
+            previewContainer.appendChild(img);
+        } else if(fileType.startsWith('video')) {
+            const video = document.createElement('video');
+            video.src = '/file/' + fileId;
+            video.controls = true;
+            video.className = 'w-full h-auto';
+            previewContainer.appendChild(video);
+        } else if(fileType === 'application/pdf') {
+            const iframe = document.createElement('iframe');
+            iframe.src = '/file/' + fileId;
+            iframe.className = 'w-full h-full';
+            previewContainer.appendChild(iframe);
+        } else {
+            const pre = document.createElement('pre');
+            fetch('/file/' + fileId).then(r => r.text()).then(t => pre.innerText = t);
+            previewContainer.appendChild(pre);
+        }
+        previewPopup.classList.remove('hidden');
+    }
+    function closePreviewPopup() { previewPopup.classList.add('hidden'); }
+
+    // --- Share Modal ---
+    function confirmShare(fileId) { currentShareFileId = fileId; sharePopup.classList.remove('hidden'); }
+    function closeConfirmSharePopup() { currentShareFileId = null; sharePopup.classList.add('hidden'); }
+    document.getElementById('confirmShareBtn').addEventListener('click', () => {
+        if(currentShareFileId) {
+            const duration = document.getElementById('shareDurationSelect').value;
+            window.location.href = `/share/${currentShareFileId}?duration=${duration}`;
+        }
+    });
+
+    // --- Delete Modal ---
+    function confirmDeleteFromEdit() { currentDeleteFileId = editFileIdInput.value; editModal.classList.add('hidden'); deletePopup.classList.remove('hidden'); }
+    function closeConfirmDeletePopup() { currentDeleteFileId = null; deletePopup.classList.add('hidden'); }
+    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+        if(currentDeleteFileId) { window.location.href = `/delete/${currentDeleteFileId}`; }
+    });
+
+    // --- Filter & Pagination ---
+    function filterFiles() {
+        const filter = document.getElementById('fileSearch').value.toLowerCase();
+
+        // immer alle Items verwenden
+        const allItems = Array.from(fileList.children);
+
+        allItems.forEach(li => {
+            const text = li.innerText.toLowerCase();
+            li.style.display = text.includes(filter) ? '' : 'none';
+        });
+
+        // Pagination nur mit sichtbaren Items berechnen
+        fileItems = allItems.filter(li => li.style.display !== 'none');
+
+        showPage(1);
+    }
+
+
+
+    function filterUsers() {
+        const filter = document.getElementById('userSearchInput').value.toLowerCase();
+        document.querySelectorAll('.user-list li').forEach(li => {
+            const username = li.querySelector('span').innerText.toLowerCase();
+            li.style.display = username.includes(filter) ? '' : 'none';
+        });
+    }
+
+    function showPage(page) {
+        currentPage = page;
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        fileItems.forEach((li, index) => { li.style.display = (index >= start && index < end) ? '' : 'none'; });
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(fileItems.length / itemsPerPage);
+        paginationContainer.innerHTML = '';
+        for(let i=1; i<=totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            btn.className = `px-3 py-1 rounded ${i === currentPage ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg-alt)] text-[var(--color-text)] hover:bg-[var(--color-primary-dark)]'}`;
+            btn.addEventListener('click', () => showPage(i));
+            paginationContainer.appendChild(btn);
         }
     }
 
-function triggerFileInput() {
-document.getElementById('fileInput').click();
-}
-
-function updateFileName() {
-const fileInput = document.getElementById('fileInput');
-const dropText = document.getElementById('dropText');
-if (fileInput.files.length > 0) {
-    dropText.textContent = fileInput.files[0].name;
-}
-}
-
-function handleDragOver(e) {
-e.preventDefault();
-document.getElementById('dropArea').classList.add('hover');
-}
-
-function handleDragLeave(e) {
-document.getElementById('dropArea').classList.remove('hover');
-}
-
-function handleDrop(e) {
-e.preventDefault();
-const dropArea = document.getElementById('dropArea');
-const fileInput = document.getElementById('fileInput');
-const dropText = document.getElementById('dropText');
-dropArea.classList.remove('hover');
-
-const files = e.dataTransfer.files;
-if (files.length > 0) {
-    fileInput.files = files;
-    dropText.textContent = files[0].name;
-}
-}
-
-function triggerFileInput() {
-document.getElementById('fileInput').click();
-}
-
-function updateFileList() {
-const fileInput = document.getElementById('fileInput');
-const fileList = document.getElementById('previewFileList');
-fileList.innerHTML = "";
-
-Array.from(fileInput.files).forEach(file => {
-    const li = document.createElement("li");
-    li.textContent = file.name;
-    fileList.appendChild(li);
-});
-
-document.getElementById('dropText').textContent = "Files ready to upload!";
-}
-
-function handleDragOver(e) {
-e.preventDefault();
-document.getElementById('dropArea').classList.add('hover');
-}
-
-function handleDragLeave(e) {
-document.getElementById('dropArea').classList.remove('hover');
-}
-
-function handleDrop(e) {
-e.preventDefault();
-const fileInput = document.getElementById('fileInput');
-const dropArea = document.getElementById('dropArea');
-dropArea.classList.remove('hover');
-
-const files = e.dataTransfer.files;
-if (files.length > 0) {
-    const dataTransfer = new DataTransfer();
-    Array.from(files).forEach(file => dataTransfer.items.add(file));
-    fileInput.files = dataTransfer.files;
-    updateFileList();
-}
-}
+    // --- Initial ---
+    showPage(1);
 </script>
+
+
 </body>
 </html>

@@ -11,18 +11,23 @@
 <body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans min-h-screen">
 
 <!-- Navbar -->
-<nav class="flex justify-between items-center px-8 py-3 bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)] shadow-lg border-b-4 border-[var(--color-primary)] relative z-50">
-    <div class="text-2xl font-extrabold uppercase text-[var(--color-primary)] select-none">SpringCloud</div>
+<nav class="flex justify-between items-center flex-wrap
+            bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
+            px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans relative z-50">
 
-    <button id="burger" class="flex flex-col justify-between w-6 h-5 md:hidden">
+    <div class="text-2xl md:text-xl sm:text-lg font-extrabold uppercase tracking-wide
+              text-[var(--color-primary)] select-none">SpringCloud</div>
+
+    <button id="burger" class="flex flex-col justify-between w-6 h-5 ml-auto md:hidden">
         <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
         <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
         <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
     </button>
 
-    <div class="relative hidden md:flex items-center gap-2 bg-[var(--color-bg-alt)] px-5 py-2 rounded-full cursor-pointer shadow-md"
-         id="usernameBox">
-        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff">
+    <div id="username-box"
+         class="relative hidden md:flex items-center gap-2 bg-[var(--color-bg-alt)] px-5 py-2 rounded-full cursor-pointer transition duration-300 shadow-md">
+
+        <svg class="w-6 h-6 flex-shrink-0 drop-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff">
             <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
         </svg>
         <span th:text="${username}" class="text-white font-semibold">N/A</span>
@@ -34,7 +39,6 @@
                 <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}"
                    class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Add Users</a>
                 <a th:href="@{/dashboard}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Dashboard</a>
-                <a th:href="@{/calendar}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Calendar</a>
                 <a th:href="@{/settings}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Settings</a>
                 <a th:href="@{/logout}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Logout</a>
             </div>
@@ -42,12 +46,13 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div id="mobileMenu" class="hidden flex-col md:hidden bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full">
-        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}" class="block py-2 px-3 rounded-lg text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Add Users</a>
-        <a th:href="@{/dashboard}" class="block py-2 px-3 rounded-lg text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Dashboard</a>
-        <a th:href="@{/calendar}" class="block py-2 px-3 rounded-lg text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Calendar</a>
-        <a th:href="@{/settings}" class="block py-2 px-3 rounded-lg text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Settings</a>
-        <a th:href="@{/logout}" class="block py-2 px-3 rounded-lg text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Logout</a>
+    <div id="mobileMenu" class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
+        <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}"
+           class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Add Users</a>
+        <a th:href="@{/dashboard}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Dashboard</a>
+        <a th:href="@{/calendar}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Calendar</a>
+        <a th:href="@{/settings}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Settings</a>
+        <a th:href="@{/logout}" class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Logout</a>
     </div>
 </nav>
 
