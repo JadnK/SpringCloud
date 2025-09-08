@@ -39,6 +39,7 @@
                 <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}"
                    class="px-5 py-3 text-[var(--color-primary)] font-bold rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Add Users</a>
                 <a th:href="@{/dashboard}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Dashboard</a>
+                <a th:href="@{/calendar}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Calendar</a>
                 <a th:href="@{/settings}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Settings</a>
                 <a th:href="@{/logout}" class="px-5 py-3 text-white rounded-lg hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)]">Logout</a>
             </div>
