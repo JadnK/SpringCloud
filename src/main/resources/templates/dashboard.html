@@ -93,8 +93,8 @@
 </div>
 
 <!-- Edit Modal -->
-<div id="editModal" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
-    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
+<div id="editModal" class="hidden popup-overlay">
+    <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Edit File Access</h2>
         <form id="editAccessForm" method="post" th:action="@{/edit/file}" class="flex flex-col gap-3">
             <input type="hidden" name="fileId" id="editFileId">
@@ -120,8 +120,8 @@
 </div>
 
 <!-- Share / Delete / Preview Popups -->
-<div id="confirmSharePopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
-    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
+<div id="confirmSharePopup" class="hidden popup-overlay">
+    <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Share this file?</h2>
         <div>
             <label for="shareDurationSelect">Link expires after:</label>
@@ -140,8 +140,8 @@
     </div>
 </div>
 
-<div id="confirmDeletePopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
-    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
+<div id="confirmDeletePopup" class="hidden popup-overlay">
+    <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Really delete the file?</h2>
         <p>This file cannot be recovered. All shared links will also be deleted.</p>
         <div class="flex gap-2">
@@ -151,8 +151,8 @@
     </div>
 </div>
 
-<div id="previewPopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
-    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[95vw] max-w-4xl h-[80vh] overflow-auto flex flex-col gap-4">
+<div id="previewPopup" class="hidden popup-overlay">
+    <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Preview</h2>
         <div id="previewContainer" class="flex-1 overflow-auto"></div>
         <button class="py-2 bg-red-600 text-white rounded hover:bg-red-700 transition w-full" onclick="closePreviewPopup()">Close</button>
