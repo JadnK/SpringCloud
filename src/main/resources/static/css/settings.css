@@ -564,6 +564,7 @@ video {
   --color-primary-hover: #7b4de8;
   --color-text: #e4e4e4;
   --color-accent: #b0b0ff;
+  --color-container-hover: #19191F;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
