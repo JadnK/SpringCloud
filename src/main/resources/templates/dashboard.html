@@ -160,8 +160,8 @@
 </div>
 
 <!-- Upload Modal -->
-<div id="uploadPopup" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
-    <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[95vw] max-w-lg flex flex-col gap-4">
+<div id="uploadPopup" class="hidden popup-overlay">
+    <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Upload Your Files</h2>
         <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4" onsubmit="showLoadingBar()">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
