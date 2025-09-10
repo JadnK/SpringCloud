@@ -34,7 +34,3 @@
 .popup-container {
     @apply bg-[var(--color-bg-alt)] rounded-2xl shadow-2xl p-6 w-[95vw] max-w-lg flex flex-col gap-4;
 }
-
-.popup-container-lg {
-    @apply bg-[var(--color-bg-alt)] rounded-2xl shadow-2xl p-6 w-[95vw] max-w-4xl h-[80vh] overflow-auto flex flex-col gap-4;
-}
