@@ -62,28 +62,75 @@
 <!-- Content -->
 <div class="content px-6 py-8 max-w-[75rem] mx-auto flex flex-col gap-12">
 
+
     <!-- Search -->
     <div class="flex justify-end mb-4">
         <input type="text" id="fileSearch" placeholder="Search files..." class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)] w-full md:w-1/3" oninput="filterFiles()">
     </div>
 
-    <!-- File List -->
-    <ul class="flex flex-col gap-3" id="fileList">
-        <li th:each="file : ${files}" class="bg-[var(--color-bg-alt)] p-4 rounded-xl shadow flex justify-between items-center hover:bg-[var(--color-container-hover)] transition">
-            <div class="flex flex-col md:flex-row md:gap-4">
-                <span th:text="${file.fileName}" class="font-semibold">File Name</span>
-                <span th:text="${file.fileType}" class="text-sm text-[var(--color-text-light)]">File Type</span>
-                <span th:text="${file.fileOwner.username}" class="text-sm text-[var(--color-text-light)]">Uploader</span>
-                <span th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}" class="text-sm text-[var(--color-text-light)]">Upload Date</span>
+
+
+    <!-- File Table -->
+    <!-- Desktop Table -->
+    <div class="overflow-x-auto hidden md:block">
+        <table class="min-w-full bg-[var(--color-bg-alt)] rounded-xl shadow">
+            <thead class="bg-[var(--color-container-hover)]">
+            <tr>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-[var(--color-text-light)]">File Name</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-[var(--color-text-light)]">Type</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-[var(--color-text-light)]">Uploader</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-[var(--color-text-light)]">Uploaded</th>
+                <th class="px-4 py-2 text-right text-sm font-semibold text-[var(--color-text-light)]">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="fileList" class="divide-y divide-gray-700">
+            <tr th:each="file : ${files}" class="hover:bg-[var(--color-container-hover)] transition">
+                <td class="px-4 py-3 font-semibold text-white" th:text="${file.fileName}">File Name</td>
+                <td class="px-4 py-3 text-sm text-[var(--color-text-light)]" th:text="${file.fileType}">File Type</td>
+                <td class="px-4 py-3 text-sm text-[var(--color-text-light)]" th:text="${file.fileOwner.username}">Uploader</td>
+                <td class="px-4 py-3 text-sm text-[var(--color-text-light)]" th:text="${#temporals.format(file.uploadTime, 'dd.MM.yyyy HH:mm')}">Upload Date</td>
+                <td class="px-4 py-3 flex justify-end gap-2">
+                    <a th:if="${file.fileOwner.username == username}"
+                       href="#"
+                       class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                       th:onclick="confirmShare([[${file.id}]])">Share</a>
+                    <a th:href="@{'/download/' + ${file.id}}"
+                       class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition">Download</a>
+                    <a href="#"
+                       class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+                       th:onclick="showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])">Preview</a>
+                    <a th:if="${file.fileOwner.username == username}"
+                       href="#"
+                       class="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
+                       th:onclick="showEditPopup([[${file.id}]])">Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mobile Cards -->
+    <div class="flex flex-col gap-3 md:hidden" id="fileListMobile">
+        <div th:each="file : ${files}"
+             class="file-card bg-[var(--color-bg-alt)] rounded-lg p-4 flex justify-between items-center shadow">
+            <div>
+                <div class="text-white font-semibold" th:text="${file.fileName}">File Name</div>
+                <div class="text-sm text-[var(--color-text-light)]" th:text="${file.fileType}">File Type</div>
             </div>
-            <div class="flex gap-2">
-                <a th:if="${file.fileOwner.username == username}" href="#" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition" th:onclick="confirmShare([[${file.id}]])">Share</a>
-                <a th:href="@{'/download/' + ${file.id}}" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition">Download</a>
-                <a href="#" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition" th:onclick="showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])">Preview</a>
-                <a th:if="${file.fileOwner.username == username}" href="#" class="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition" th:onclick="showEditPopup([[${file.id}]])">Edit</a>
+            <!-- Burger Menü -->
+            <div class="relative">
+                <button onclick="toggleFileMenu(this)" class="p-2 rounded-full hover:bg-[var(--color-container-hover)]">
+                    ⋮
+                </button>
+                <div class="file-menu hidden absolute right-0 mt-2 w-40 bg-[var(--color-bg-alt)] border border-gray-700 rounded-lg shadow-lg z-20 flex flex-col opacity-0 transform scale-95 transition-all duration-200">
+                    <a th:href="@{'/download/' + ${file.id}}" class="px-4 py-2 hover:bg-[var(--color-container-hover)] text-white">Download</a>
+                    <a href="#" class="px-4 py-2 hover:bg-[var(--color-container-hover)] text-white" th:onclick="showPreviewPopup([[${file.id}]], [[${file.fileType}]], [[${file.fileName}]])">Preview</a>
+                    <a th:if="${file.fileOwner.username == username}" href="#" class="px-4 py-2 hover:bg-[var(--color-container-hover)] text-white" th:onclick="confirmShare([[${file.id}]])">Share</a>
+                    <a th:if="${file.fileOwner.username == username}" href="#" class="px-4 py-2 hover:bg-[var(--color-container-hover)] text-white" th:onclick="showEditPopup([[${file.id}]])">Edit</a>
+                </div>
             </div>
-        </li>
-    </ul>
+        </div>
+    </div>
 
     <!-- Pagination -->
     <div id="pagination" class="flex justify-center gap-2 mt-4"></div>
@@ -101,11 +148,13 @@
             <input type="text" id="userSearchInput" placeholder="Search users..." class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)]" onkeyup="filterUsers()">
             <div class="user-list max-h-52 overflow-y-auto border border-gray-700 rounded-lg p-3">
                 <ul class="flex flex-col gap-2" style="list-style: none; padding:0; margin:0;">
-                    <li th:each="user : ${allUsers}" th:if="${user.username} != ${username}" th:classappend="${file != null and file.authorizedUsers.contains(user)} ? 'selected-user'">
-                        <label class="flex items-center gap-2 cursor-pointer user-label">
-                            <img th:src="'data:image/png;base64,' + ${user.profileImageBase64}" alt="Profile" class="w-8 h-8 rounded-full"/>
-                            <span th:text="${user.username}">Username</span>
-                            <input type="checkbox" name="authorizedUsers" th:value="${user.id}" th:checked="${file != null and file.authorizedUsers.contains(user)}" class="hidden">
+                    <li th:each="user : ${allUsers}" th:if="${user.username} != ${username}"
+                        th:classappend="${file != null and file.authorizedUsers.contains(user)} ? ' border-2 border-purple-500 rounded-lg bg-purple-100'">
+                        <label class="flex items-center gap-2 cursor-pointer p-2 user-label">
+                            <img th:src="'data:image/png;base64,' + ${user.profileImageBase64}" alt="Profilbild" class="w-8 h-8 rounded-full"/>
+                            <span th:text="${user.username}" class="text-[var(--color-text)]">Username</span>
+                            <input type="checkbox" name="authorizedUsers" th:value="${user.id}"
+                                   th:checked="${file != null and file.authorizedUsers.contains(user)}" class="hidden">
                         </label>
                     </li>
                 </ul>
@@ -286,23 +335,30 @@
         if(currentDeleteFileId) { window.location.href = `/delete/${currentDeleteFileId}`; }
     });
 
-    // --- Filter & Pagination ---
     function filterFiles() {
         const filter = document.getElementById('fileSearch').value.toLowerCase();
 
-        // immer alle Items verwenden
+        // --- Desktop: Tabelle ---
         const allItems = Array.from(fileList.children);
-
-        allItems.forEach(li => {
-            const text = li.innerText.toLowerCase();
-            li.style.display = text.includes(filter) ? '' : 'none';
+        allItems.forEach(tr => {
+            const text = tr.innerText.toLowerCase();
+            tr.style.display = text.includes(filter) ? '' : 'none';
         });
 
-        // Pagination nur mit sichtbaren Items berechnen
-        fileItems = allItems.filter(li => li.style.display !== 'none');
+        // Pagination nur Desktop berechnen
+        if (window.innerWidth >= 768) {
+            fileItems = allItems.filter(tr => tr.style.display !== 'none');
+            showPage(1);
+        }
 
-        showPage(1);
+        // --- Mobile: Cards ---
+        document.querySelectorAll('#fileListMobile .file-card').forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(filter) ? '' : 'none';
+        });
     }
+
+
 
 
 
@@ -323,16 +379,61 @@
     }
 
     function renderPagination() {
+        if (window.innerWidth < 768) {
+            paginationContainer.innerHTML = ''; // bei Mobile leer
+            return;
+        }
+
         const totalPages = Math.ceil(fileItems.length / itemsPerPage);
         paginationContainer.innerHTML = '';
         for(let i=1; i<=totalPages; i++) {
             const btn = document.createElement('button');
             btn.textContent = i;
-            btn.className = `px-3 py-1 rounded ${i === currentPage ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg-alt)] text-[var(--color-text)] hover:bg-[var(--color-primary-dark)]'}`;
+            btn.className = `px-3 py-1 rounded ${i === currentPage
+                ? 'bg-[var(--color-primary)] text-white'
+                : 'bg-[var(--color-bg-alt)] text-[var(--color-text)] hover:bg-[var(--color-primary-dark)]'}`;
             btn.addEventListener('click', () => showPage(i));
             paginationContainer.appendChild(btn);
         }
     }
+
+
+    function toggleFileMenu(button) {
+    const menu = button.nextElementSibling;
+
+    // andere Menüs schließen
+    document.querySelectorAll('#fileListMobile .file-menu').forEach(m => {
+        if (m !== menu) {
+            m.classList.add('hidden');
+            m.classList.remove('opacity-100', 'scale-100');
+            m.classList.add('opacity-0', 'scale-95');
+        }
+    });
+
+    // eigenes Menü toggeln
+    if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+        setTimeout(() => {
+            menu.classList.remove('opacity-0', 'scale-95');
+            menu.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    } else {
+        menu.classList.add('opacity-0', 'scale-95');
+        menu.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => menu.classList.add('hidden'), 200);
+    }
+}
+
+// Klick außerhalb -> schließen
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#fileListMobile')) {
+        document.querySelectorAll('#fileListMobile .file-menu').forEach(m => {
+            m.classList.add('hidden');
+            m.classList.remove('opacity-100', 'scale-100');
+            m.classList.add('opacity-0', 'scale-95');
+        });
+    }
+});
 
     // --- Initial ---
     showPage(1);
