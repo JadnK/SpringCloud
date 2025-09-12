@@ -41,7 +41,7 @@ public class SharingService {
         String username = authentication.getName();
 
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String fullUrl = baseUrl + "/share/file/" + token;
+        String fullUrl = baseUrl + "/springcloud/share/file/" + token;
 
         String message = messageService.getLog("sharing.file", file.getFileName(), file.getId(), fullUrl);
         logService.log(username, message);

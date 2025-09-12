@@ -144,6 +144,7 @@
 
 <div id="viewModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-[rgba(15,15,30,0.9)]"></div>
 
+
 <!-- Scripts -->
 <script>
     function openCreateModal(cell) {
@@ -154,7 +155,7 @@
 
     function openViewModal(entryElement) {
       const entryId = entryElement.getAttribute("data-id");
-      fetch(`/calendar/entry/view/${entryId}`)
+      fetch(`/springcloud/calendar/entry/view/${entryId}`)
         .then(res => res.text())
         .then(html => {
           const container = document.getElementById("viewModal");

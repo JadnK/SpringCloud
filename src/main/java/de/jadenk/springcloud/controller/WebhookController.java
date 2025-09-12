@@ -57,12 +57,16 @@ public class WebhookController {
         webhook.setUrl(url);
         webhook.setName(webhookName);
 
-        try {
-            byte[] imageBytes = webhookPicture.getBytes();
-            webhook.setWebhook_image_data(uploadToImgur(imageBytes));
-        } catch (CustomRuntimeException e) {
+        if (webhookPicture != null && !webhookPicture.isEmpty()) {
+            try {
+                byte[] imageBytes = webhookPicture.getBytes();
+                webhook.setWebhook_image_data(uploadToImgur(imageBytes));
+            } catch (CustomRuntimeException e) {
+                webhook.setWebhook_image_data(null);
+                webhookService.triggerWebhookEvent(WebhookEvent.ERROR_THROWN, e.getMessage(), 0L);
+            }
+        } else {
             webhook.setWebhook_image_data(null);
-            webhookService.triggerWebhookEvent(WebhookEvent.ERROR_THROWN, e.getMessage(), 0L);
         }
 
         webhook.setEnabled(true);

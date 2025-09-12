@@ -295,23 +295,23 @@
         previewContainer.innerHTML = '';
         if(fileType.startsWith('image')) {
             const img = document.createElement('img');
-            img.src = '/file/' + fileId;
+            img.src = '/springcloud/file/' + fileId;
             img.className = 'w-full h-auto';
             previewContainer.appendChild(img);
         } else if(fileType.startsWith('video')) {
             const video = document.createElement('video');
-            video.src = '/file/' + fileId;
+            video.src = '/springcloud/file/' + fileId;
             video.controls = true;
             video.className = 'w-full h-auto';
             previewContainer.appendChild(video);
         } else if(fileType === 'application/pdf') {
             const iframe = document.createElement('iframe');
-            iframe.src = '/file/' + fileId;
+            iframe.src = '/springcloud/file/' + fileId;
             iframe.className = 'w-full h-full';
             previewContainer.appendChild(iframe);
         } else {
             const pre = document.createElement('pre');
-            fetch('/file/' + fileId).then(r => r.text()).then(t => pre.innerText = t);
+            fetch('/springcloud/file/' + fileId).then(r => r.text()).then(t => pre.innerText = t);
             previewContainer.appendChild(pre);
         }
         previewPopup.classList.remove('hidden');
@@ -324,7 +324,7 @@
     document.getElementById('confirmShareBtn').addEventListener('click', () => {
         if(currentShareFileId) {
             const duration = document.getElementById('shareDurationSelect').value;
-            window.location.href = `/share/${currentShareFileId}?duration=${duration}`;
+            window.location.href = `/springcloud/share/${currentShareFileId}?duration=${duration}`;
         }
     });
 
@@ -332,7 +332,7 @@
     function confirmDeleteFromEdit() { currentDeleteFileId = editFileIdInput.value; editModal.classList.add('hidden'); deletePopup.classList.remove('hidden'); }
     function closeConfirmDeletePopup() { currentDeleteFileId = null; deletePopup.classList.add('hidden'); }
     document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-        if(currentDeleteFileId) { window.location.href = `/delete/${currentDeleteFileId}`; }
+        if(currentDeleteFileId) { window.location.href = `/springcloud/delete/${currentDeleteFileId}`; }
     });
 
     function filterFiles() {
@@ -357,10 +357,6 @@
             card.style.display = text.includes(filter) ? '' : 'none';
         });
     }
-
-
-
-
 
     function filterUsers() {
         const filter = document.getElementById('userSearchInput').value.toLowerCase();

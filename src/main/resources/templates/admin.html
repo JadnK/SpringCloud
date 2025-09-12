@@ -123,7 +123,7 @@
     <!-- Webhook Settings -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">Webhook Settings</h2>
-        <form action="/webhooks/add" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+        <form action="/springcloud/webhooks/add" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <div class="flex flex-col md:flex-row gap-4">
                 <input type="text" id="webhookUrl" name="url" placeholder="Webhook URL"
@@ -146,6 +146,35 @@
             </div>
             <button type="submit" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition">Add Webhook</button>
         </form>
+
+        <div class="flex flex-col gap-3 mt-4">
+            <div class="flex flex-col gap-3" th:each="webhook : ${webhooks}">
+                <div class="flex justify-between items-center bg-[var(--color-container-hover)] p-4 rounded-lg shadow">
+                    <div class="flex flex-col gap-1">
+                        <p><strong>Name:</strong> <span th:text="${webhook.name}">Webhook Name</span></p>
+                        <p><strong>URL:</strong> <span th:text="${webhook.url}">Webhook URL</span></p>
+                    </div>
+                    <div class="flex gap-2 items-center">
+                        <form th:action="@{/webhooks/toggle/{id}(id=${webhook.id})}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" name="active"
+                                       th:checked="${webhook.enabled} ? 'checked' : null"
+                                       onchange="this.form.submit()"
+                                       class="h-5 w-10 rounded-full accent-[var(--color-primary)]"/>
+                            </label>
+                        </form>
+                        <form th:action="@{/webhooks/delete/{id}(id=${webhook.id})}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit"
+                                    class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Site Settings -->
