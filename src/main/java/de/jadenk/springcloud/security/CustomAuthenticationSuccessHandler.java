@@ -50,7 +50,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
 
-        response.sendRedirect("/dashboard");
+        response.sendRedirect(request.getContextPath() + "/dashboard");
 
     }
 }
