@@ -1,6 +1,6 @@
 # 🌤️ SpringCloud Dashboard v3
 
-**SpringCloud Dashboard v3** is a modern, web-based dashboard built with **Spring Boot** and **Thymeleaf**, designed to help users manage cloud files in a secure, responsive, and user-friendly environment. You can upload, preview, download, and delete files, with admin-level file management and improved performance.
+**SpringCloud Dashboard v3** is a modern, cloud-based dashboard built with **Spring Boot** and **Thymeleaf**, designed to help users manage cloud files in a secure, responsive, and user-friendly environment. You can upload, preview, download, and delete files, with admin-level file management and improved performance.
 
 ---
 
