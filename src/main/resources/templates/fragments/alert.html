@@ -1,75 +1,65 @@
-<div th:if="${error}" class="error-box" id="errorBox" th:text="${error}">
-    <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12" y2="16"></line>
-    </svg>
-    <span class="error-message" th:text="${error}">An error has occurred</span>
-</div>
+<!-- Notification Container -->
+<div id="notificationContainer" class="fixed top-5 left-1/2 transform -translate-x-1/2 flex flex-col gap-3 z-[9999]"></div>
 
-<style>
-    .error-box {
-        position: fixed;
-        top: -120px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #ff6a6a, #ff3b3b);
-        color: #fff;
-        padding: 1rem 2.5rem 1rem 3.5rem;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(255, 59, 59, 0.6);
-        font-weight: 700;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        z-index: 10000;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        min-width: 300px;
-        max-width: 90vw;
-    }
-
-    .error-box.show {
-        top: 25px;
-        opacity: 1;
-        pointer-events: auto;
-        animation: slideBounce 0.6s ease forwards;
-    }
-
-    .error-icon {
-        width: 24px;
-        height: 24px;
-        stroke: #fff;
-        flex-shrink: 0;
-        animation: pulse 1.5s infinite;
-    }
-
-    .error-message {
-        font-size: 1.1rem;
-        line-height: 1.3;
-        user-select: none;
-    }
-
-    @keyframes slideBounce {
-        0% { top: -120px; }
-        70% { top: 30px; }
-        100% { top: 25px; }
-    }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.6; }
-    }
-</style>
+<!-- Tailwind + Thymeleaf Error Example -->
+<div th:if="${error}" class="hidden" data-message-type="error" th:data-message-text="${error}"></div>
+<div th:if="${success}" class="hidden" data-message-type="success" th:data-message-text="${success}"></div>
 
 <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const box = document.getElementById('errorBox');
-        if (box) {
-            setTimeout(() => box.classList.add('show'), 100);
-            setTimeout(() => box.classList.remove('show'), 5100);
-        }
+    function createNotification(message, type = 'error', duration = 5000) {
+        const container = document.getElementById('notificationContainer');
+
+        // Farben und Icons
+        const config = {
+            error: {
+                bg: 'bg-gradient-to-r from-red-600 to-red-500',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M12 2a10 10 0 11-0 20 10 10 0 010-20z" />
+                       </svg>`
+            },
+            success: {
+                bg: 'bg-gradient-to-r from-green-500 to-green-400',
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                       </svg>`
+            }
+        };
+
+        const notif = document.createElement('div');
+        notif.className = `${config[type].bg} text-white rounded-xl shadow-lg p-4 flex items-center gap-3 pointer-events-auto transform transition duration-500 scale-95 opacity-0`;
+        notif.innerHTML = `
+            ${config[type].icon}
+            <span class="font-semibold text-sm md:text-base">${message}</span>
+            <button class="ml-auto text-white hover:text-gray-200">&times;</button>
+        `;
+
+        // Close Button
+        notif.querySelector('button').addEventListener('click', () => {
+            notif.classList.remove('scale-100', 'opacity-100');
+            notif.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => notif.remove(), 400);
+        });
+
+        container.appendChild(notif);
+
+        // Animate in
+        setTimeout(() => {
+            notif.classList.remove('scale-95', 'opacity-0');
+            notif.classList.add('scale-100', 'opacity-100');
+        }, 50);
+
+        // Auto-remove after duration
+        setTimeout(() => {
+            notif.classList.remove('scale-100', 'opacity-100');
+            notif.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => notif.remove(), 400);
+        }, duration);
+    }
+
+    // --- Auto-detect Thymeleaf messages ---
+    document.querySelectorAll('[data-message-text]').forEach(el => {
+        const type = el.getAttribute('data-message-type');
+        const msg = el.getAttribute('data-message-text');
+        if(msg) createNotification(msg, type);
     });
 </script>

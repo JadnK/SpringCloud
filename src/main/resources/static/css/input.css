@@ -35,4 +35,13 @@
 
 .popup-container {
     @apply bg-[var(--color-bg-alt)] rounded-2xl shadow-2xl p-6 w-[95vw] max-w-lg flex flex-col gap-4;
+    width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#previewContainer {
+    @apply w-full flex justify-center items-center;
+    max-height: 60vh;
+    overflow: auto;
 }

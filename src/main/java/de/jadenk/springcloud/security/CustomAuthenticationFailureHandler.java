@@ -68,9 +68,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         }
 
         if (locked.get()) {
-            response.sendRedirect("/login?error=locked");
+            response.sendRedirect(request.getContextPath() + "/login?error=locked");
         } else {
-            response.sendRedirect("/login?error");
+            response.sendRedirect(request.getContextPath() + "/login?error");
         }
     }
 

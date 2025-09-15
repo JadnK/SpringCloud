@@ -291,31 +291,33 @@
     function closeEditPopup() { editModal.classList.add('hidden'); }
 
     // --- Preview Modal ---
-    function showPreviewPopup(fileId, fileType, fileName) {
-        previewContainer.innerHTML = '';
-        if(fileType.startsWith('image')) {
-            const img = document.createElement('img');
-            img.src = '/springcloud/file/' + fileId;
-            img.className = 'w-full h-auto';
-            previewContainer.appendChild(img);
-        } else if(fileType.startsWith('video')) {
-            const video = document.createElement('video');
-            video.src = '/springcloud/file/' + fileId;
-            video.controls = true;
-            video.className = 'w-full h-auto';
-            previewContainer.appendChild(video);
-        } else if(fileType === 'application/pdf') {
-            const iframe = document.createElement('iframe');
-            iframe.src = '/springcloud/file/' + fileId;
-            iframe.className = 'w-full h-full';
-            previewContainer.appendChild(iframe);
-        } else {
-            const pre = document.createElement('pre');
-            fetch('/springcloud/file/' + fileId).then(r => r.text()).then(t => pre.innerText = t);
-            previewContainer.appendChild(pre);
-        }
-        previewPopup.classList.remove('hidden');
+function showPreviewPopup(fileId, fileType, fileName) {
+    previewContainer.innerHTML = '';
+    if(fileType.startsWith('image')) {
+        const img = document.createElement('img');
+        img.src = '/springcloud/file/' + fileId;
+        img.className = 'w-auto max-w-full h-auto max-h-[70vh] object-contain';
+        previewContainer.appendChild(img);
+    } else if(fileType.startsWith('video')) {
+        const video = document.createElement('video');
+        video.src = '/springcloud/file/' + fileId;
+        video.controls = true;
+        video.className = 'w-auto max-w-full h-auto max-h-[70vh]';
+        previewContainer.appendChild(video);
+    } else if(fileType === 'application/pdf') {
+        const iframe = document.createElement('iframe');
+        iframe.src = '/springcloud/file/' + fileId;
+        iframe.className = 'w-full h-[70vh]';
+        previewContainer.appendChild(iframe);
+    } else {
+        const pre = document.createElement('pre');
+        pre.className = 'max-h-[70vh] overflow-auto';
+        fetch('/springcloud/file/' + fileId).then(r => r.text()).then(t => pre.innerText = t);
+        previewContainer.appendChild(pre);
     }
+    previewPopup.classList.remove('hidden');
+}
+
     function closePreviewPopup() { previewPopup.classList.add('hidden'); }
 
     // --- Share Modal ---
