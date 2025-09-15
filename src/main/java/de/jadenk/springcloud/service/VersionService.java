@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class VersionService {
-    private final String currentVersion = "3.0";
+    private final String currentVersion = "3.1";
 
     public String getCurrentVersion() {
         return currentVersion;
