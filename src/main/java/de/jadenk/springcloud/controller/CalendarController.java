@@ -15,32 +15,37 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.*;
-import java.time.format.TextStyle;
 import java.util.*;
 
 @Controller
-@RequestMapping("/calendar")
+@RequestMapping("/calendar") // Basis-URL für Kalenderfunktionen
 public class CalendarController {
 
     @Autowired
-    private CalendarEntryRepository entryRepo;
+    private CalendarEntryRepository entryRepo; // Repository für Kalender-Einträge
 
     @Autowired
-    private UserService userService;
+    private UserService userService; // Service, um aktuelle Benutzer zu holen
 
+    /*
+     * GET /calendar
+     * Zeigt den Kalender für einen bestimmten Monat und Jahr an (Standard: aktueller Monat/Jahr)
+     */
     @GetMapping
     public String viewCalendar(@RequestParam(defaultValue = "#{T(java.time.Year).now().value}") int year,
-                               @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().monthValue}") int month, Model model) {
+                               @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().monthValue}") int month,
+                               Model model) {
 
-        User user = getCurrentUser();
+        User user = getCurrentUser(); // Aktuellen Benutzer abrufen
 
-        YearMonth ym = YearMonth.of(year, month);
+        YearMonth ym = YearMonth.of(year, month); // gewähltes Jahr/Monat
         List<List<DayWrapper>> weeks = new ArrayList<>();
 
         LocalDate firstDay = ym.atDay(1);
         LocalDate lastDay = ym.atEndOfMonth();
-        LocalDate cursor = firstDay.with(DayOfWeek.MONDAY);
+        LocalDate cursor = firstDay.with(DayOfWeek.MONDAY); // Kalender beginnt Montag
 
+        // Wochen erstellen, mit DayWrapper für jeden Tag
         while (cursor.isBefore(lastDay.plusDays(7))) {
             List<DayWrapper> week = new ArrayList<>();
             boolean hasValidDay = false;
@@ -75,9 +80,14 @@ public class CalendarController {
         model.addAttribute("role", authorities.stream()
                 .findFirst().map(GrantedAuthority::getAuthority).orElse("UNKNOWN"));
 
-        return "calendar";
+        return "calendar"; // Thymeleaf-Template "calendar.html"
     }
 
+    /*
+     * POST /calendar/toggle-visibility
+     * Sichtbarkeit eines Eintrags zwischen PUBLIC und PRIVATE umschalten
+     * Nur Ersteller oder Admins dürfen ändern
+     */
     @PostMapping("/toggle-visibility")
     public String toggleVisibility(@RequestParam Long id) {
         Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
@@ -91,18 +101,20 @@ public class CalendarController {
                     .anyMatch(auth -> auth.getAuthority().endsWith("ADMIN"));
 
             if (isCreator || isAdmin) {
-                if (entry.getVisibility() == CalendarEntry.Visibility.PUBLIC) {
-                    entry.setVisibility(CalendarEntry.Visibility.PRIVATE);
-                } else {
-                    entry.setVisibility(CalendarEntry.Visibility.PUBLIC);
-                }
+                entry.setVisibility(entry.getVisibility() == CalendarEntry.Visibility.PUBLIC
+                        ? CalendarEntry.Visibility.PRIVATE
+                        : CalendarEntry.Visibility.PUBLIC);
                 entryRepo.save(entry);
             }
         }
-        // zurück zum Kalender (aktuelles Jahr/Monat)
-        return "redirect:/calendar";
+        return "redirect:/calendar"; // zurück zum Kalender
     }
 
+    /*
+     * GET /calendar/entry/{id}
+     * Liefert JSON-Daten für einen einzelnen Eintrag
+     * Mit Berechtigung: nur Ersteller oder Admin darf bearbeiten
+     */
     @GetMapping("/entry/{id}")
     @ResponseBody
     public ResponseEntity<?> getEntry(@PathVariable Long id) {
@@ -130,11 +142,14 @@ public class CalendarController {
         return ResponseEntity.ok(result);
     }
 
-
+    /*
+     * GET /calendar/entry/view/{id}
+     * Liefert das Modal-Fragment für die Anzeige eines Eintrags
+     */
     @GetMapping("/entry/view/{id}")
     public String getViewModal(@PathVariable Long id, Model model) {
         Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
-        if (entryOpt.isEmpty()) return "fragments/error"; // oder 404
+        if (entryOpt.isEmpty()) return "fragments/error"; // Fehlerseite, falls Eintrag fehlt
 
         CalendarEntry entry = entryOpt.get();
         User currentUser = getCurrentUser();
@@ -147,9 +162,13 @@ public class CalendarController {
         model.addAttribute("entry", entry);
         model.addAttribute("canEdit", isCreator || isAdmin);
 
-        return "fragments/modal :: modal-content";
+        return "fragments/modal :: modal-content"; // Thymeleaf Fragment
     }
 
+    /*
+     * POST /calendar/add
+     * Fügt einen neuen Eintrag hinzu
+     */
     @PostMapping("/add")
     public String addEntry(
             @RequestParam String title,
@@ -165,14 +184,16 @@ public class CalendarController {
         entry.setTime(entry_time);
         entry.setUser(user);
 
-        if (visibility == CalendarEntry.Visibility.PUBLIC) {
-            entryRepo.save(entry);
-        } else {
-            entryRepo.save(entry);
-        }
+        entryRepo.save(entry); // speichern (egal ob PUBLIC oder PRIVATE)
+
         return "redirect:/calendar?year=" + date.getYear();
     }
 
+    /*
+     * GET /calendar/delete/{id}
+     * Löscht einen Eintrag
+     * Nur der Ersteller oder Admin darf löschen
+     */
     @GetMapping("/delete/{id}")
     public String deleteEntry(@PathVariable Long id) {
         Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
@@ -180,19 +201,23 @@ public class CalendarController {
             CalendarEntry entry = entryOpt.get();
             if (entry.getUser().equals(getCurrentUser()) || getCurrentUser().getRole().getName().equals("ADMIN")) {
                 entryRepo.delete(entry);
-            } else {
-                return "redirect:/calendar";
             }
         }
         return "redirect:/calendar";
     }
 
-
+    /*
+     * Hilfsmethode, um den aktuell angemeldeten Benutzer abzurufen
+     */
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.getUserByName(username);
     }
 
+    /*
+     * Wrapper-Klasse für einen Tag im Kalender
+     * Enthält Datum, Einträge, Kennzeichnung ob heute, ob zum aktuellen Monat gehörend
+     */
     public class DayWrapper {
         private LocalDate date;
         private int dayOfMonth;
@@ -208,27 +233,10 @@ public class CalendarController {
             this.isCurrentMonth = isCurrentMonth;
         }
 
-        public LocalDate getDate() {
-            return date;
-        }
-
-        public int getDayOfMonth() {
-            return dayOfMonth;
-        }
-
-        public boolean isToday() {
-            return today;
-        }
-
-        public List<CalendarEntry> getEntries() {
-            return entries;
-        }
-
-        public boolean isCurrentMonth() {
-            return isCurrentMonth;
-        }
+        public LocalDate getDate() { return date; }
+        public int getDayOfMonth() { return dayOfMonth; }
+        public boolean isToday() { return today; }
+        public List<CalendarEntry> getEntries() { return entries; }
+        public boolean isCurrentMonth() { return isCurrentMonth; }
     }
-
-
-
 }

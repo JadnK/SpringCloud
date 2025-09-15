@@ -19,7 +19,6 @@
         <strong th:text="${fileName}">File Name</strong>
     </p>
 
-    <!-- Previewable file -->
     <div class="file-preview my-5" th:if="${isPreviewable}">
         <img th:if="${fileType.startsWith('image/')}"
              th:src="@{'/share/file/download/' + ${token} + '?preview=true'}"
@@ -36,17 +35,14 @@
                 class="w-full h-96 border-4 border-purple-800 rounded-lg"></iframe>
     </div>
 
-    <!-- Not previewable -->
     <div class="file-preview my-5" th:unless="${isPreviewable}">
         <p class="text-gray-400">Preview not available for this file type.</p>
     </div>
 
-    <!-- Meta info -->
     <div class="meta mt-5 text-purple-300 text-base">
         Valid until: <strong th:text="${expireDate}">date</strong>
     </div>
 
-    <!-- Download button -->
     <a th:href="@{'/share/file/download/' + ${token}}"
        class="inline-block mt-6 px-8 py-3 bg-gradient-to-br from-purple-600 to-purple-900 text-white font-semibold rounded-lg shadow hover:from-purple-400 hover:to-purple-700 transition">
         Download File

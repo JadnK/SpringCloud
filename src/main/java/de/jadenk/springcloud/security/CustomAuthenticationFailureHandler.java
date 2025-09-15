@@ -20,17 +20,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Autowired
-    private LogService logService;
+    private LogService logService; // Service für Logging von Ereignissen
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepo; // Repository für Zugriff auf User-Daten
 
     @Autowired
-    private MessageService messageService;
+    private MessageService messageService; // Service für Fehler- und Lognachrichten
 
     @Autowired
-    private CloudSettingService cloudSettingService;
+    private CloudSettingService cloudSettingService; // Service für App-Einstellungen
 
+    // Dauer der Sperre nach zu vielen Fehlversuchen (in Minuten)
     private static final long LOCK_TIME_DURATION = 5;
 
     @Override
@@ -39,42 +40,50 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
                                         AuthenticationException exception)
             throws IOException, ServletException {
 
+        // Username aus dem Login-Formular extrahieren
         String username = request.getParameter("username");
+
+        // Flag, ob der Account gesperrt wurde
         AtomicBoolean locked = new AtomicBoolean(false);
 
         if (username != null) {
+            // Benutzer aus der Datenbank holen, falls vorhanden
             userRepo.findByUsername(username).ifPresent(user -> {
 
+                // Max. Login-Versuche aus Cloud-Einstellungen holen (default 3)
                 int maxAttempts = cloudSettingService.getNumberSetting("MAX_LOGIN_ATTEMPTS", 3);
                 LocalDateTime now = LocalDateTime.now();
 
+                // Prüfen, ob der Benutzer bereits gesperrt ist
                 if (user.getLockoutTime() != null && user.getLockoutTime().isAfter(now)) {
                     locked.set(true);
                 } else {
+                    // Fehlversuche erhöhen
                     int attempts = user.getFailedLoginAttempts();
                     attempts++;
 
+                    // Prüfen, ob max. Versuche erreicht wurden
                     if (attempts >= maxAttempts) {
+                        // Account sperren für LOCK_TIME_DURATION Minuten
                         user.setLockoutTime(now.plusMinutes(LOCK_TIME_DURATION));
-                        user.setFailedLoginAttempts(0);
+                        user.setFailedLoginAttempts(0); // Reset der Fehlversuche
                         locked.set(true);
                     } else {
+                        // Fehlversuche aktualisieren
                         user.setFailedLoginAttempts(attempts);
                     }
 
+                    // Änderungen speichern
                     userRepo.save(user);
                 }
             });
         }
 
+        // Redirect auf Login-Seite mit entsprechender Fehlermeldung
         if (locked.get()) {
             response.sendRedirect(request.getContextPath() + "/login?error=locked");
         } else {
             response.sendRedirect(request.getContextPath() + "/login?error");
         }
     }
-
-
-
-
 }

@@ -23,12 +23,12 @@ import java.util.*;
 @Controller
 public class AdminController {
 
+    // Services & Repositories, die für Admin-Operationen benötigt werden
     @Autowired
     private LogService logService;
 
     @Autowired
     private SessionRegistry sessionRegistry;
-
 
     @Autowired
     private WebhookService webhookService;
@@ -69,36 +69,46 @@ public class AdminController {
     @Autowired
     private UpdateService updateService;
 
+
+    /*
+     * GET /admin
+     * Lädt das Admin-Dashboard mit allen nötigen Daten wie Benutzer, Logs, Rollen, Einstellungen etc.
+     * @param page - Paginierung für Logs (default 1)
+     */
     @GetMapping("/admin")
     public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
                                  Model model) {
+        // Aktuellen authentifizierten Benutzer abrufen
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+        // Prüfen, ob der Benutzer die ADMIN-Rolle hat
         boolean hasAdminRole = authorities.stream()
                 .anyMatch(authority -> authority.getAuthority().endsWith("ADMIN"));
 
+        // Wenn der Benutzer keine Admin-Rechte hat, Logging und Weiterleitung zum normalen Dashboard
         if (!hasAdminRole) {
             String username = authentication.getName();
             logService.log(username, messageService.getLog("admin.user.missing.permissions"));
             return "redirect:/dashboard";
         }
 
+        // Daten abrufen: alle Benutzer, Rollen, Logs und Einstellungen
         List<User> users = userRepository.findAll();
         List<Role> roles = roleRepository.findAll();
 
+        // Logs mit Paginierung
         int pageSize = 10;
         long totalLogs = logRepository.count();
         int totalPages = (int) Math.ceil((double) totalLogs / pageSize);
-
         int offset = (page - 1) * pageSize;
         List<Log> logs = logRepository.findLogsPaged(offset, pageSize);
 
-
         Webhook webhook = webhookService.getFirst().orElse(new Webhook());
         List<CloudSetting> settings = cloudSettingRepository.getAllSettings();
-
         ApiToken apiToken = apiTokenService.getFirst().orElse(new ApiToken());
+
+        // Attribute für Thymeleaf-Template setzen
         model.addAttribute("settings", settings);
         model.addAttribute("api", apiToken);
         model.addAttribute("apis", apiTokenService.getAll());
@@ -114,22 +124,31 @@ public class AdminController {
         model.addAttribute("currentVersion", versionService.getCurrentVersion());
         model.addAttribute("latestVersion", updateService.fetchLatestVersion());
 
-        return "admin";
+        return "admin"; // Thymeleaf-Template "admin.html"
     }
 
+    /*
+     * POST /admin/settings/update
+     * Aktualisiert eine Cloud-Einstellung
+     * @param key - Name der Einstellung
+     * @param value - Neuer Wert
+     * @param type - Typ der Einstellung (z.B. CHECKBOX)
+     */
     @PostMapping("/admin/settings/update")
     public String updateSetting(@RequestParam String key,
                                 @RequestParam(required = false) String value,
                                 @RequestParam String type) {
         if ("CHECKBOX".equals(type) && value == null) {
-            value = "false";
-        } else {
-
+            value = "false"; // Checkbox nicht angehakt → false
         }
         cloudSettingService.updateSetting(key, value, type);
         return "redirect:/admin";
     }
 
+    /*
+     * POST /admin/system/update
+     * Prüft, ob ein Systemupdate verfügbar ist und führt es ggf. aus
+     */
     @PostMapping("/admin/system/update")
     public String updateSystem(RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -139,14 +158,11 @@ public class AdminController {
             String updateResult = updateService.checkForUpdateAndUpdateIfNeeded();
 
             if ("SUCCESS".equalsIgnoreCase(updateResult)) {
-                String message = messageService.getLog("admin.system.update.success");
-                logService.log(username, message);
+                logService.log(username, messageService.getLog("admin.system.update.success"));
             } else if ("NO_UPDATE".equalsIgnoreCase(updateResult)) {
-                String message = messageService.getLog("admin.system.update.noUpdate");
-                logService.log(username, message);
+                logService.log(username, messageService.getLog("admin.system.update.noUpdate"));
             } else {
-                String message = messageService.getLog("admin.system.update.failed", updateResult);
-                logService.log(username, message);
+                logService.log(username, messageService.getLog("admin.system.update.failed", updateResult));
             }
         } catch (Exception e) {
             String message = messageService.getLog("admin.system.update.exception", e.getMessage());
@@ -158,9 +174,10 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-
-
-
+    /*
+     * POST /admin/user/update
+     * Aktualisiert Benutzerinformationen: Username, E-Mail, Rolle, Passwort
+     */
     @PostMapping("/admin/user/update")
     public String updateUser(@RequestParam("id") Long id,
                              @RequestParam("username") String username,
@@ -169,38 +186,40 @@ public class AdminController {
                              @RequestParam(value = "password", required = false) String password) {
 
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 
+        // Aktive Sessions des Users ablaufen lassen
         expireUserSessions(user.getUsername());
 
         Log log = null;
 
+        // Username aktualisieren
         if (!user.getUsername().equals(username)) {
             String message = messageService.getLog("admin.user.username.changed", user.getUsername(), username);
             log = logService.log(currentUser.getUsername(), message);
             user.setUsername(username);
         }
 
+        // Email aktualisieren
         if (!user.getEmail().equals(email)) {
             String message = messageService.getLog("admin.user.email.changed", user.getUsername(), email);
             log = logService.log(currentUser.getUsername(), message);
             user.setEmail(email);
         }
 
+        // Rolle aktualisieren
         Role foundRole = roleRepository.findByName(role).orElse(null);
         if (foundRole == null) {
             throw new IllegalArgumentException("Role not found: " + role);
         }
-
-        Role currentRole = user.getRole();
-        if (!currentRole.equals(foundRole)) {
-            String message = messageService.getLog("admin.user.role.changed", user.getUsername(), currentRole.getName(), foundRole.getName());
+        if (!user.getRole().equals(foundRole)) {
+            String message = messageService.getLog("admin.user.role.changed", user.getUsername(), user.getRole().getName(), foundRole.getName());
             log = logService.log(currentUser.getUsername(), message);
             user.setRole(foundRole);
         }
 
+        // Passwort aktualisieren
         if (password != null && !password.trim().isEmpty()) {
             String encodedPassword = securityConfig.passwordEncoder().encode(password);
             user.setPassword(encodedPassword);
@@ -208,13 +227,17 @@ public class AdminController {
             log = logService.log(currentUser.getUsername(), message);
         }
 
+        // Webhook auslösen
         webhookService.triggerWebhookEvent(WebhookEvent.USER_UPDATED, "User " + user.getUsername() + " was updated", log.getId());
-
         userRepository.save(user);
 
         return "redirect:/admin";
     }
 
+    /*
+     * GET /admin/user/delete/{id}
+     * Löscht einen Benutzer
+     */
     @GetMapping("/admin/user/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         User userToDelete = userService.getUserById(id);
@@ -228,16 +251,24 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    /*
+     * GET /admin/user/ban/{id}
+     * Banned oder entbannt einen Benutzer
+     */
     @GetMapping("/admin/user/ban/{id}")
     public String banUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
-            userService.banUser(id);
+            userService.banUser(id); // Toggle ban/unban
             User user = userService.getUserById(id);
+
+            // Aktive Sessions ablaufen lassen
             expireUserSessions(user.getUsername());
+
             String status = user.isBanned() ? "banned" : "unbanned";
             String message = messageService.getLog("admin.user.ban.status", user.getUsername(), status);
             Log log = logService.log(currentUser.getUsername(), message);
+
             webhookService.triggerWebhookEvent(WebhookEvent.USER_BANNED, "User " + user.getUsername() + " was " + status, log.getId());
         } catch (Exception e) {
             System.out.println("Error while banning user.");
@@ -245,6 +276,10 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    /*
+     * GET /users
+     * Liefert alle Benutzer für eine Benutzerliste (Frontend)
+     */
     @GetMapping("/users")
     public String getAllUsers(Model model) {
         List<User> users = userRepository.findAll();
@@ -252,6 +287,9 @@ public class AdminController {
         return "user-list";
     }
 
+    /*
+     * Hilfsmethode: Beendet alle Sessions eines Benutzers (z.B. nach Ban oder Rollenänderung)
+     */
     private void expireUserSessions(String username) {
         List<Object> principals = sessionRegistry.getAllPrincipals();
         for (Object principal : principals) {
@@ -264,6 +302,5 @@ public class AdminController {
             }
         }
     }
-
 
 }

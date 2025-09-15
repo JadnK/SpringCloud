@@ -18,19 +18,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Optional;
 
 @Controller
 public class ShareController {
@@ -53,33 +49,55 @@ public class ShareController {
     @Autowired
     private CloudSettingService cloudSettingService;
 
-
+    // =========================
+    // Datei-Sharing
+    // =========================
+    /*
+     * GET /share/{fileId}?duration=hours
+     *
+     * Erstellt einen temporären Link zum Teilen einer Datei.
+     * - Prüft, ob Sharing aktiviert ist (Cloud-Einstellung ALLOW_SHARING)
+     * - Holt aktuell eingeloggten Benutzer
+     * - Holt Datei anhand der ID
+     * - Generiert temporären Link für angegebene Dauer (in Stunden)
+     * - Redirect zum generierten Link
+     */
     @GetMapping("/share/{fileId}")
     public RedirectView shareFile(HttpServletRequest request, @PathVariable Long fileId, @RequestParam int duration) {
 
+        // Prüfen, ob Sharing erlaubt ist
         if (!cloudSettingService.getBooleanSetting("ALLOW_SHARING", true)) {
-            RedirectView redirectView = new RedirectView("/admin");
+            RedirectView redirectView = new RedirectView("/dashboard");
             redirectView.setExposeModelAttributes(false);
-            redirectView.setUrl("/dashboard");
             return redirectView;
         }
 
+        // Aktuellen Benutzer abrufen
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-
         User user = userService.getUserByName(username);
 
+        // Datei abrufen
         UploadedFile file = fileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found"));
 
+        // Dauer des Links
         Duration linkDuration = Duration.ofHours(duration);
+
+        // Link generieren
         String link = sharingService.generateSharedLink(request, user, file, linkDuration);
 
         return new RedirectView(link);
     }
 
-
-
+    // =========================
+    // Datei-Download / Preview
+    // =========================
+    /*
+     * Hilfsmethode: Gibt die Datei als Resource zurück
+     * - preview=true → inline (z.B. PDF, Image)
+     * - preview=false → als Download
+     */
     private ResponseEntity<Resource> serveFile(UploadedFile file, boolean preview) {
         ByteArrayResource resource = new ByteArrayResource(file.getFileData());
 
@@ -96,6 +114,15 @@ public class ShareController {
                 .body(resource);
     }
 
+    // =========================
+    // Shared Link prüfen
+    // =========================
+    /*
+     * GET /share/file/{token}
+     * Prüft, ob der geteilte Link existiert und noch gültig ist.
+     * - Abgelaufene Links → link-expired.html
+     * - Gültige Links → Weiterleitung zur Anzeige-Seite
+     */
     @GetMapping("/share/file/{token}")
     public String checkLinkAndRedirect(@PathVariable String token) {
         SharedLink link = sharedLinkRepository.findByToken(token)
@@ -108,6 +135,15 @@ public class ShareController {
         return "redirect:/share/file/view/" + token;
     }
 
+    // =========================
+    // Shared File anzeigen
+    // =========================
+    /*
+     * GET /share/file/view/{token}
+     * Zeigt das geteilte File im Browser an (Preview)
+     * - Prüft, ob der Link abgelaufen ist
+     * - Prüft, ob die Datei previewbar ist (Image, PDF, Text)
+     */
     @GetMapping("/share/file/view/{token}")
     public String viewSharedFile(@PathVariable String token, Model model) {
         SharedLink link = sharedLinkRepository.findByToken(token)
@@ -132,11 +168,16 @@ public class ShareController {
         model.addAttribute("expireDate", link.getExpireDate());
         model.addAttribute("isPreviewable", isPreviewable);
 
-        return "shared_file";
+        return "shared_file"; // Thymeleaf Template
     }
 
-
-
+    // =========================
+    // Shared File Download
+    // =========================
+    /*
+     * GET /share/file/download/{token}?preview=false
+     * Liefert die Datei als Download oder inline (Preview)
+     */
     @GetMapping("/share/file/download/{token}")
     public ResponseEntity<Resource> downloadSharedFile(@PathVariable String token,
                                                        @RequestParam(name = "preview", defaultValue = "false") boolean preview) {

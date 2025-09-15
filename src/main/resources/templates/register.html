@@ -4,28 +4,23 @@
     <meta charset="UTF-8">
     <title>SpringCloud Registrierung</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script th:src="@{/js/navbar.js}"></script>
-    <!-- Deine Variablen -->
     <link rel="stylesheet" th:href="@{/css/settings.css}">
 </head>
 <body class="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] font-sans">
 
 <div th:replace="~{fragments/alert}"></div>
 
-<!-- Navbar -->
 <nav class="sticky top-0 z-50 w-full flex justify-between items-center flex-wrap
             bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
             px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans">
 
-    <!-- Brand -->
     <div class="text-2xl md:text-xl sm:text-lg font-extrabold uppercase tracking-wide
               text-[var(--color-primary)] select-none">
         SpringCloud
     </div>
 
-    <!-- Burger (mobile only) -->
     <button id="burger"
             class="flex flex-col justify-between w-6 h-5 ml-auto cursor-pointer md:hidden">
         <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
@@ -33,19 +28,15 @@
         <span class="h-[3px] bg-[var(--color-primary)] rounded transition-all"></span>
     </button>
 
-    <!-- Username Box -->
     <div id="username-box"
          class="relative hidden md:flex items-center gap-2 bg-[var(--color-bg-alt)] px-5 py-2 rounded-full cursor-pointer transition duration-300 shadow-md">
 
-        <!-- Icon -->
         <svg class="w-6 h-6 flex-shrink-0 drop-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#b259ff">
             <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.2 0-9.5 1.6-9.5 4.9v2.7h19v-2.7c0-3.3-6.3-4.9-9.5-4.9z"/>
         </svg>
 
-        <!-- Username -->
         <span th:text="${username}" class="text-white font-semibold">N/A</span>
 
-        <!-- Dropdown -->
         <div id="logoutDropdown"
              class="absolute top-full right-0 mt-3 w-56 bg-[var(--color-bg-alt)] rounded-xl shadow-xl opacity-0 pointer-events-none transform -translate-y-2 transition-all duration-300">
 
@@ -64,9 +55,6 @@
         </div>
     </div>
 
-
-
-    <!-- Mobile Menu -->
     <div id="mobileMenu"
          class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
         <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}"
@@ -82,8 +70,6 @@
     </div>
 </nav>
 
-
-<!-- Register Form -->
 <div class="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
     <form class="bg-[var(--color-container)] rounded-xl shadow-lg w-[90%] max-w-md p-8 flex flex-col gap-6 animate-fadeIn"
           th:action="@{/register}" th:object="${user}" method="post">
@@ -92,7 +78,6 @@
             Register
         </h2>
 
-        <!-- Username -->
         <div class="relative">
             <input type="text" th:field="*{username}" required placeholder=" "
                    class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
@@ -101,7 +86,6 @@
             </label>
         </div>
 
-        <!-- Email -->
         <div class="relative">
             <input type="email" th:field="*{email}" required placeholder=" "
                    class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
@@ -110,7 +94,6 @@
             </label>
         </div>
 
-        <!-- Password -->
         <div class="relative">
             <input type="password" id="password" th:field="*{password}" required placeholder=" "
                    class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
@@ -119,7 +102,6 @@
             </label>
         </div>
 
-        <!-- Submit -->
         <button type="submit"
                 class="w-full py-3 rounded-lg font-semibold text-white bg-[var(--color-primary)] shadow-md hover:bg-[var(--color-primary-hover)] transition">
             Register
@@ -127,9 +109,6 @@
     </form>
 </div>
 
-
-
-<!-- Animation -->
 <style>
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(1.25rem); }

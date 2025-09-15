@@ -1,15 +1,12 @@
 <div class="popup-container" th:fragment="modal-content">
-    <!-- Titel -->
     <h2 class="text-xl font-bold text-[var(--color-primary)] mb-4" th:text="${entry.title}">Entry</h2>
 
-    <!-- Details -->
     <p class="mb-2 text-[var(--color-text-light)]" th:text="${entry.description}">Description</p>
     <p class="mb-1"><strong>Creator:</strong> <span th:text="${entry.user.username}">User</span></p>
     <p class="mb-1"><strong>Time:</strong> <span th:text="${entry.time}">12:00</span></p>
     <p class="mb-1"><strong>Date:</strong> <span th:text="${entry.date}">01.01.2025</span></p>
     <p class="mb-4"><strong>Visibility:</strong> <span th:text="${entry.visibility}">PUBLIC</span></p>
 
-    <!-- Buttons nur wenn editierbar -->
     <div class="flex gap-2 mb-3" th:if="${canEdit}">
         <form method="post" th:action="@{/calendar/toggle-visibility}" class="flex-1">
             <input type="hidden" name="id" th:value="${entry.id}">
@@ -26,7 +23,6 @@
         <input type="hidden" name="id" th:value="${entry.id}">
     </div>
 
-    <!-- Close -->
     <button onclick="closeModal('viewModal')"
             class="w-full py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition">
         Close

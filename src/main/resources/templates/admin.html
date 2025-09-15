@@ -10,7 +10,6 @@
 </head>
 <body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans min-h-screen">
 
-<!-- Navbar -->
 <nav class="sticky top-0 z-50 w-full flex justify-between items-center flex-wrap
             bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
             px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans">
@@ -32,7 +31,6 @@
         </svg>
         <span th:text="${username}" class="text-white font-semibold">N/A</span>
 
-        <!-- Dropdown -->
         <div id="logoutDropdown"
              class="absolute top-full right-0 mt-3 w-56 bg-[var(--color-bg-alt)] rounded-xl shadow-xl opacity-0 pointer-events-none transform -translate-y-2 transition-all duration-300">
             <div class="flex flex-col py-2">
@@ -46,7 +44,6 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
         <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/register}"
            class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Add Users</a>
@@ -57,10 +54,8 @@
     </div>
 </nav>
 
-<!-- Content -->
 <div class="content px-6 py-8 max-w-[75rem] mx-auto flex flex-col gap-12">
 
-    <!-- Users Table -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6">
         <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-4">Users</h2>
         <div class="overflow-x-auto">
@@ -99,7 +94,6 @@
         </div>
     </section>
 
-    <!-- Logs -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">Logs</h2>
         <div class="flex gap-4 flex-wrap mb-4">
@@ -120,7 +114,6 @@
         </div>
     </section>
 
-    <!-- Webhook Settings -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">Webhook Settings</h2>
         <form action="/springcloud/webhooks/add" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
@@ -177,7 +170,6 @@
         </div>
     </section>
 
-    <!-- Site Settings -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">Site Settings</h2>
         <div th:each="setting : ${settings}" class="flex flex-col gap-3">
@@ -220,7 +212,6 @@
         </div>
     </section>
 
-    <!-- API Settings -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">API Settings</h2>
         <form action="/api/s/add" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
@@ -254,7 +245,6 @@
         </div>
     </section>
 
-    <!-- Update Section -->
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">Update</h2>
         <div class="flex flex-col gap-2">
@@ -275,7 +265,6 @@
 
 </div>
 
-<!-- Edit Modal -->
 <div id="editModal" class="hidden fixed inset-0 z-50 bg-[rgba(15,15,30,0.9)] flex items-center justify-center">
     <div class="bg-[var(--color-bg-alt)] rounded-xl shadow-lg p-6 w-[90vw] max-w-md flex flex-col gap-4">
         <form id="editForm" th:action="@{/admin/user/update}" method="post" class="flex flex-col gap-3">

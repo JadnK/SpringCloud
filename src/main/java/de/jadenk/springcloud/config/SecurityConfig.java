@@ -39,37 +39,44 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // Logout-Konfiguration
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
-                        //.deleteCookies("JSESSIONID", "remember-me")
-                        .permitAll())
+                        //.deleteCookies("JSESSIONID", "remember-me") // optional
+                        .permitAll()
+                )
+                // URL-Autorisierung
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login",
-                                "/error",
-                                "/css/**",
-                                "/js/**",
-                                "/share/**",
-                                "/link-expired"
-                        ).permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated())
+                                "/login", "/error", "/css/**", "/js/**",
+                                "/share/**", "/link-expired"
+                        ).permitAll() // öffentlich zugänglich
+                        .requestMatchers("/api/**").permitAll() // Token-Check wird über ApiTokenFilter gemacht
+                        .anyRequest().authenticated() // alles andere erfordert Login
+                )
+                // Remember-Me Cookie
                 .rememberMe(remember -> remember
                         .key("cookie_remember_me_jadenk_292929")
-                        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                        .tokenValiditySeconds(7 * 24 * 60 * 60) // 7 Tage
                 )
+                // FormLogin
                 .formLogin(form -> form
                         .loginPage("/login")
                         .failureHandler(failureHandler)
                         .successHandler(successHandler)
-                        .permitAll())
+                        .permitAll()
+                )
+                // Session Management
                 .sessionManagement(session -> session
                         .invalidSessionUrl("/login")
                         .maximumSessions(10)
                         .sessionRegistry(sessionRegistry())
                 );
+
+        // API Token Filter vor UsernamePasswordAuthenticationFilter einfügen
         http.addFilterBefore(apiTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -83,14 +90,13 @@ public class SecurityConfig {
         return new HttpSessionEventPublisher();
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
+        AuthenticationManagerBuilder authBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(customUserDetailsService)
+        authBuilder.userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();
+        return authBuilder.build();
     }
 
     @Bean
@@ -98,3 +104,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+

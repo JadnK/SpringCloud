@@ -15,7 +15,6 @@
     <form class="flex flex-col gap-6" th:action="@{/login}" method="POST">
         <h2 class="text-center text-2xl uppercase tracking-wide font-normal text-[var(--color-accent)]">SpringCloud</h2>
 
-        <!-- Username -->
         <div class="relative">
             <input type="text" name="username" required placeholder=" "
                    class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
@@ -24,7 +23,6 @@
             </label>
         </div>
 
-        <!-- Password -->
         <div class="relative">
             <input type="password" name="password" required placeholder=" "
                    class="peer w-full px-4 py-3 bg-[var(--color-input)] rounded-md outline-none text-[var(--color-text)] shadow-inner focus:bg-[var(--color-input-focus)] focus:ring-2 focus:ring-[var(--color-primary)]"/>
@@ -33,14 +31,12 @@
             </label>
         </div>
 
-        <!-- Remember Me -->
         <div class="flex items-center gap-3">
             <input id="remember-me" name="remember-me" type="checkbox"
                    class="h-5 w-5 rounded-md border border-[var(--color-accent)] bg-[var(--color-input)] checked:bg-[var(--color-primary)] checked:border-[var(--color-primary)]"/>
             <label for="remember-me" class="text-sm text-gray-300 select-none cursor-pointer">Remember me</label>
         </div>
 
-        <!-- Submit Button -->
         <button type="submit"
                 class="w-full py-3 rounded-lg font-semibold text-white bg-[var(--color-primary)] shadow-md hover:bg-[var(--color-primary-hover)] transition">
             Login
@@ -48,7 +44,6 @@
     </form>
 </div>
 
-<!-- Animation -->
 <style>
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(1.25rem); }

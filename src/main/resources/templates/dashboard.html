@@ -10,7 +10,6 @@
 </head>
 <body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans min-h-screen">
 
-<!-- Navbar -->
 <nav class="sticky top-0 z-50 w-full flex justify-between items-center flex-wrap
             bg-gradient-to-r from-[var(--color-bg)] to-[var(--color-bg-alt)]
             px-8 py-3 shadow-lg border-b-4 border-[var(--color-primary)] font-sans">
@@ -32,7 +31,6 @@
         </svg>
         <span th:text="${username}" class="text-white font-semibold">N/A</span>
 
-        <!-- Dropdown -->
         <div id="logoutDropdown"
              class="absolute top-full right-0 mt-3 w-56 bg-[var(--color-bg-alt)] rounded-xl shadow-xl opacity-0 pointer-events-none transform -translate-y-2 transition-all duration-300">
             <div class="flex flex-col py-2">
@@ -47,7 +45,6 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden flex-col bg-[var(--color-bg-alt)] rounded-xl mt-4 p-4 gap-3 w-full md:hidden">
         <a th:if="${role != null and #strings.endsWith(role, 'ADMIN')}" th:href="@{/admin}"
            class="block py-2 px-3 rounded-lg bg-[var(--color-container-hover)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-primary-dark)]">Admin</a>
@@ -59,19 +56,12 @@
     </div>
 </nav>
 
-<!-- Content -->
 <div class="content px-6 py-8 max-w-[75rem] mx-auto flex flex-col gap-12">
 
-
-    <!-- Search -->
     <div class="flex justify-end mb-4">
         <input type="text" id="fileSearch" placeholder="Search files..." class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)] w-full md:w-1/3" oninput="filterFiles()">
     </div>
 
-
-
-    <!-- File Table -->
-    <!-- Desktop Table -->
     <div class="overflow-x-auto hidden md:block">
         <table class="min-w-full bg-[var(--color-bg-alt)] rounded-xl shadow">
             <thead class="bg-[var(--color-container-hover)]">
@@ -109,7 +99,6 @@
         </table>
     </div>
 
-    <!-- Mobile Cards -->
     <div class="flex flex-col gap-3 md:hidden" id="fileListMobile">
         <div th:each="file : ${files}"
              class="file-card bg-[var(--color-bg-alt)] rounded-lg p-4 flex justify-between items-center shadow">
@@ -117,7 +106,6 @@
                 <div class="text-white font-semibold" th:text="${file.fileName}">File Name</div>
                 <div class="text-sm text-[var(--color-text-light)]" th:text="${file.fileType}">File Type</div>
             </div>
-            <!-- Burger Menü -->
             <div class="relative">
                 <button onclick="toggleFileMenu(this)" class="p-2 rounded-full hover:bg-[var(--color-container-hover)]">
                     ⋮
@@ -132,14 +120,11 @@
         </div>
     </div>
 
-    <!-- Pagination -->
     <div id="pagination" class="flex justify-center gap-2 mt-4"></div>
 
-    <!-- Upload Button -->
     <button class="px-4 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition self-end" onclick="showUploadPopup()">Upload file</button>
 </div>
 
-<!-- Edit Modal -->
 <div id="editModal" class="hidden popup-overlay">
     <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Edit File Access</h2>
@@ -168,7 +153,6 @@
     </div>
 </div>
 
-<!-- Share / Delete / Preview Popups -->
 <div id="confirmSharePopup" class="hidden popup-overlay">
     <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Share this file?</h2>
@@ -208,7 +192,6 @@
     </div>
 </div>
 
-<!-- Upload Modal -->
 <div id="uploadPopup" class="hidden popup-overlay">
     <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Upload Your Files</h2>
@@ -223,12 +206,10 @@
                 const fileInput = document.getElementById('fileInput');
                 const filePreview = document.getElementById('filePreview');
 
-                // Klick auf Container öffnet File Dialog
                 dropArea.addEventListener('click', () => fileInput.click());
 
-                // Dateien bearbeiten (Preview anzeigen)
                 function handleFiles(files) {
-                    filePreview.innerHTML = ''; // alte Einträge entfernen
+                    filePreview.innerHTML = '';
                     Array.from(files).forEach(file => {
                         const div = document.createElement('div');
                         div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
@@ -236,12 +217,11 @@
                     });
                 }
 
-                // Optional: Drag & Drop Unterstützung
                 dropArea.addEventListener('dragover', e => e.preventDefault());
                 dropArea.addEventListener('drop', e => {
                     e.preventDefault();
                     const files = e.dataTransfer.files;
-                    fileInput.files = files; // setzt die Dateien für das Input-Feld
+                    fileInput.files = files;
                     handleFiles(files);
                 });
             </script>
@@ -253,7 +233,6 @@
 </div>
 
 <script>
-    // --- Elemente ---
     const burger = document.getElementById('burger');
     const mobileMenu = document.getElementById('mobileMenu');
 
@@ -282,15 +261,12 @@
         mobileMenu.classList.toggle('flex');
     });
 
-    // --- Upload Modal ---
     function showUploadPopup() { uploadPopup.classList.remove('hidden'); }
     function closeUploadPopup() { uploadPopup.classList.add('hidden'); }
 
-    // --- Edit Modal ---
     function showEditPopup(fileId) { editFileIdInput.value = fileId; editModal.classList.remove('hidden'); }
     function closeEditPopup() { editModal.classList.add('hidden'); }
 
-    // --- Preview Modal ---
 function showPreviewPopup(fileId, fileType, fileName) {
     previewContainer.innerHTML = '';
     if(fileType.startsWith('image')) {
@@ -320,7 +296,6 @@ function showPreviewPopup(fileId, fileType, fileName) {
 
     function closePreviewPopup() { previewPopup.classList.add('hidden'); }
 
-    // --- Share Modal ---
     function confirmShare(fileId) { currentShareFileId = fileId; sharePopup.classList.remove('hidden'); }
     function closeConfirmSharePopup() { currentShareFileId = null; sharePopup.classList.add('hidden'); }
     document.getElementById('confirmShareBtn').addEventListener('click', () => {
@@ -330,7 +305,6 @@ function showPreviewPopup(fileId, fileType, fileName) {
         }
     });
 
-    // --- Delete Modal ---
     function confirmDeleteFromEdit() { currentDeleteFileId = editFileIdInput.value; editModal.classList.add('hidden'); deletePopup.classList.remove('hidden'); }
     function closeConfirmDeletePopup() { currentDeleteFileId = null; deletePopup.classList.add('hidden'); }
     document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
@@ -340,20 +314,17 @@ function showPreviewPopup(fileId, fileType, fileName) {
     function filterFiles() {
         const filter = document.getElementById('fileSearch').value.toLowerCase();
 
-        // --- Desktop: Tabelle ---
         const allItems = Array.from(fileList.children);
         allItems.forEach(tr => {
             const text = tr.innerText.toLowerCase();
             tr.style.display = text.includes(filter) ? '' : 'none';
         });
 
-        // Pagination nur Desktop berechnen
         if (window.innerWidth >= 768) {
             fileItems = allItems.filter(tr => tr.style.display !== 'none');
             showPage(1);
         }
 
-        // --- Mobile: Cards ---
         document.querySelectorAll('#fileListMobile .file-card').forEach(card => {
             const text = card.innerText.toLowerCase();
             card.style.display = text.includes(filter) ? '' : 'none';
@@ -378,7 +349,7 @@ function showPreviewPopup(fileId, fileType, fileName) {
 
     function renderPagination() {
         if (window.innerWidth < 768) {
-            paginationContainer.innerHTML = ''; // bei Mobile leer
+            paginationContainer.innerHTML = '';
             return;
         }
 
@@ -399,7 +370,6 @@ function showPreviewPopup(fileId, fileType, fileName) {
     function toggleFileMenu(button) {
     const menu = button.nextElementSibling;
 
-    // andere Menüs schließen
     document.querySelectorAll('#fileListMobile .file-menu').forEach(m => {
         if (m !== menu) {
             m.classList.add('hidden');
@@ -408,7 +378,6 @@ function showPreviewPopup(fileId, fileType, fileName) {
         }
     });
 
-    // eigenes Menü toggeln
     if (menu.classList.contains('hidden')) {
         menu.classList.remove('hidden');
         setTimeout(() => {
@@ -422,7 +391,6 @@ function showPreviewPopup(fileId, fileType, fileName) {
     }
 }
 
-// Klick außerhalb -> schließen
 document.addEventListener('click', (e) => {
     if (!e.target.closest('#fileListMobile')) {
         document.querySelectorAll('#fileListMobile .file-menu').forEach(m => {
@@ -433,7 +401,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-    // --- Initial ---
     showPage(1);
 </script>
 

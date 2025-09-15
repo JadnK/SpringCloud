@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
-    private LogService logService;
+    private LogService logService; // Service zum Speichern von Logeinträgen
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepo; // Repository zum Zugriff auf User-Daten
 
     @Autowired
-    private MessageService messageService;
+    private MessageService messageService; // Service für Nachrichten-Templates
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -36,21 +36,27 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                                         Authentication authentication)
             throws IOException, ServletException {
 
+        // Benutzername aus dem Authentication-Objekt extrahieren
         String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+
+        // Benutzer aus der Datenbank abrufen
         User user = userRepo.findByUsername(username).orElse(null);
 
-        // System.out.println("Authentication Object: " + authentication);
-
         if (user != null) {
+            // Fehlversuche zurücksetzen, da Login erfolgreich war
             user.setFailedLoginAttempts(0);
+
+            // Eventuelle Sperrzeit zurücksetzen
             user.setLockoutTime(null);
+
+            // Änderungen speichern
             userRepo.save(user);
 
+            // Erfolgreiches Login in LogService protokollieren
             logService.log(user.getUsername(), messageService.getLog("login.success"));
         }
 
-
+        // Nach erfolgreichem Login auf das Dashboard weiterleiten
         response.sendRedirect(request.getContextPath() + "/dashboard");
-
     }
 }

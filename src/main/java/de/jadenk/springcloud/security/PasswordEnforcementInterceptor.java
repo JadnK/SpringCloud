@@ -12,6 +12,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Optional;
 
+
+/*
+Nur für SYSADMIN -> Nichtmehr aktuell ig
+ */
+
 @Component
 public class PasswordEnforcementInterceptor implements HandlerInterceptor {
 

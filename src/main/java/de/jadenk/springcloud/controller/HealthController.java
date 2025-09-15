@@ -16,15 +16,26 @@ import java.util.stream.Collectors;
 public class HealthController {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate; // Für direkte DB-Abfragen
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper; // Zum Umwandeln von Daten in JSON für das Frontend
 
+    /*
+     * GET /db-health
+     * Zeigt eine Health-Seite für die Datenbank an:
+     * - Name der aktuellen DB
+     * - Tabellenstatistiken (Größe, Anzahl der Rows)
+     * - Global Status-Variablen (z.B. Threads_connected, Uptime)
+     * - Konfigurationsvariablen (z.B. max_connections)
+     * Die Daten werden als JSON an das Thymeleaf-Template übergeben.
+     */
     @GetMapping("/db-health")
     public String showHealthPage(Model model) throws Exception {
+        // Aktuell verwendete Datenbank abrufen
         String dbName = jdbcTemplate.queryForObject("SELECT DATABASE()", String.class);
 
+        // Tabellenstatistiken (Größe in MB, Anzahl Rows) für die aktuelle DB
         String tableStatsSql = "SELECT table_name, " +
                 "ROUND((data_length + index_length) / 1024 / 1024, 2) AS size_mb, " +
                 "table_rows " +
@@ -33,16 +44,19 @@ public class HealthController {
 
         List<Map<String, Object>> tableStats = jdbcTemplate.queryForList(tableStatsSql, dbName);
 
+        // Wichtige globale Statusvariablen abrufen
         String statusSql = "SHOW GLOBAL STATUS WHERE Variable_name IN (" +
                 "'Threads_connected', 'Threads_running', 'Connections', 'Uptime', 'Max_used_connections'" +
                 ")";
         List<Map<String, Object>> statusList = jdbcTemplate.queryForList(statusSql);
 
+        // Wichtige Konfigurationsvariablen abrufen
         String variablesSql = "SHOW VARIABLES WHERE Variable_name IN (" +
                 "'max_connections', 'wait_timeout', 'interactive_timeout'" +
                 ")";
         List<Map<String, Object>> variablesList = jdbcTemplate.queryForList(variablesSql);
 
+        // Alle gesammelten Daten in eine Map zusammenfassen
         Map<String, Object> data = Map.of(
                 "dbName", dbName,
                 "tableStats", tableStats,
@@ -60,9 +74,8 @@ public class HealthController {
 
         // Daten als JSON für JS im Template verfügbar machen
         String jsonData = objectMapper.writeValueAsString(data);
-
         model.addAttribute("dbHealthJson", jsonData);
 
-        return "db-health"; // Thymeleaf template db-health.html
+        return "db-health"; // Thymeleaf Template db-health.html
     }
 }

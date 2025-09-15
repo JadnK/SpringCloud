@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +36,19 @@ public class WebhookController {
     @Autowired
     private WebhookService webhookService;
 
+    // =========================
+    // Webhook erstellen
+    // =========================
+    /**
+     * POST /webhooks/add
+     * Erstellt einen neuen Webhook mit optionalem Bild und Konfiguration für Events.
+     *
+     * @param url URL des Webhooks
+     * @param webhookName Name des Webhooks
+     * @param webhookPicture optionales Bild für den Webhook
+     * @param onUserCreation, onUserBan, onUserUpdate, onRegister, onErrorThrown, onFileDeletion, onFileUpload, onSystemEvent, onCalendarNotification
+     *        boolean flags für unterschiedliche Trigger-Ereignisse
+     */
     @PostMapping("/add")
     public String addWebhook(
             @RequestParam String url,
@@ -53,10 +64,12 @@ public class WebhookController {
             @RequestParam(required = false) boolean onSystemEvent,
             @RequestParam(required = false) boolean onCalendarNotification
     ) throws IOException {
+
         Webhook webhook = new Webhook();
         webhook.setUrl(url);
         webhook.setName(webhookName);
 
+        // Bild optional hochladen (Imgur)
         if (webhookPicture != null && !webhookPicture.isEmpty()) {
             try {
                 byte[] imageBytes = webhookPicture.getBytes();
@@ -69,6 +82,7 @@ public class WebhookController {
             webhook.setWebhook_image_data(null);
         }
 
+        // Event Flags setzen
         webhook.setEnabled(true);
         webhook.setOnUserCreation(onUserCreation);
         webhook.setOnUserBan(onUserBan);
@@ -85,7 +99,13 @@ public class WebhookController {
         return "redirect:/admin";
     }
 
-
+    // =========================
+    // Bild hochladen zu Imgur
+    // =========================
+    /**
+     * Uploadet ein Bild zu Imgur und gibt den Link zurück.
+     * Benötigt den IMGUR_CLIENT_ID aus den CloudSettings.
+     */
     public String uploadToImgur(byte[] imageData) {
         Optional<CloudSetting> clientIdSetting = cloudSettingService.getSetting("IMGUR_CLIENT_ID");
 
@@ -125,12 +145,18 @@ public class WebhookController {
         throw new RuntimeException("Imgur upload failed");
     }
 
+    // =========================
+    // Webhook löschen
+    // =========================
     @PostMapping("/delete/{id}")
     public String deleteWebhook(@PathVariable Long id) {
         webhookService.deleteWebhook(id);
         return "redirect:/admin";
     }
 
+    // =========================
+    // Webhook testen
+    // =========================
     @PostMapping("/test/{id}")
     public String testWebhook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         webhookRepository.findById(id).ifPresent(webhook -> {
@@ -139,7 +165,9 @@ public class WebhookController {
         return "redirect:/admin";
     }
 
-
+    // =========================
+    // Webhook aktivieren/deaktivieren
+    // =========================
     @PostMapping("/toggle/{id}")
     public String toggleWebhook(@PathVariable Long id, @RequestParam(required = false) Boolean enabled, RedirectAttributes redirectAttributes) {
         webhookRepository.findById(id).ifPresent(webhook -> {
@@ -148,4 +176,5 @@ public class WebhookController {
         });
         return "redirect:/admin";
     }
+
 }

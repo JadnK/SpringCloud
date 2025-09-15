@@ -38,6 +38,10 @@ public class UserSettingController {
     @Autowired
     private MessageService messageService;
 
+    // =====================================================
+    // Hilfsmethode: Alle User-Felder als Map bereitstellen
+    // => Profile Image wird Base64-codiert für das Frontend
+    // =====================================================
     private Map<String, Object> getUserAttributes(User user) {
         Map<String, Object> attributes = new HashMap<>();
         for (Field field : User.class.getDeclaredFields()) {
@@ -59,34 +63,44 @@ public class UserSettingController {
         return attributes;
     }
 
-
+    // =====================================================
+    // GET /settings
+    // => Benutzer-Einstellungen anzeigen
+    // =====================================================
     @GetMapping("/settings")
-    public String userSettingsPage(@RequestParam(value = "error", required = false) String error,Model model) {
+    public String userSettingsPage(@RequestParam(value = "error", required = false) String error, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User user = userService.getUserByName(username);
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         model.addAttribute("userAttributes", getUserAttributes(user));
         return "user-settings";
     }
 
+    // =====================================================
+    // POST /user/settings/update
+    // => Benutzer-Einstellungen aktualisieren
+    // =====================================================
     @PostMapping("/user/settings/update")
-    public String updateUserSettings(@RequestParam("username") String username,
-                                     @RequestParam("email") String email,
-                                     @RequestParam(value = "currentPassword", required = false) String currentPassword,
-                                     @RequestParam(value = "newPassword", required = false) String newPassword,
-                                     @RequestParam(value = "newPasswordConfirm", required = false) String newPasswordConfirm,
-                                     @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-                                     @RequestParam(value = "notificationsEnabled", required = false, defaultValue = "false") boolean notificationsEnabled,
-                                     Model model) {
+    public String updateUserSettings(
+            @RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam(value = "currentPassword", required = false) String currentPassword,
+            @RequestParam(value = "newPassword", required = false) String newPassword,
+            @RequestParam(value = "newPasswordConfirm", required = false) String newPasswordConfirm,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestParam(value = "notificationsEnabled", required = false, defaultValue = "false") boolean notificationsEnabled,
+            Model model
+    ) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
-
         User user = userService.getUserByName(currentUsername);
 
+        // ----------------------------
+        // Username aktualisieren
+        // ----------------------------
         if (username != null && !user.getUsername().equals(username)) {
             Optional<User> existingByUsername = userRepository.findByUsername(username);
             if (existingByUsername.isPresent()) {
@@ -97,6 +111,9 @@ public class UserSettingController {
             user.setUsername(username);
         }
 
+        // ----------------------------
+        // Email aktualisieren
+        // ----------------------------
         if (email != null && !user.getEmail().equals(email)) {
             Optional<User> existingByEmail = userRepository.findByEmail(email);
             if (existingByEmail.isPresent()) {
@@ -107,28 +124,30 @@ public class UserSettingController {
             user.setEmail(email);
         }
 
-
-
+        // ----------------------------
+        // Passwort ändern
+        // ----------------------------
         boolean wantsToChangePassword =
                 currentPassword != null && !currentPassword.trim().isEmpty() &&
                         newPassword != null && !newPassword.trim().isEmpty() &&
                         newPasswordConfirm != null && !newPasswordConfirm.trim().isEmpty();
 
-
         if (wantsToChangePassword) {
-
+            // Prüfen aktuelles Passwort
             if (!securityConfig.passwordEncoder().matches(currentPassword, user.getPassword())) {
                 model.addAttribute("error", messageService.getError("changepassword.current.invalid"));
                 model.addAttribute("userAttributes", getUserAttributes(user));
                 return "user-settings";
             }
 
+            // Prüfen neue Passwörter stimmen überein
             if (!newPassword.equals(newPasswordConfirm)) {
                 model.addAttribute("error", messageService.getError("changepassword.different.passwords"));
                 model.addAttribute("userAttributes", getUserAttributes(user));
                 return "user-settings";
             }
 
+            // Prüfen, ob neues Passwort nicht identisch mit altem
             if (securityConfig.passwordEncoder().matches(newPassword, user.getPassword())) {
                 model.addAttribute("error", messageService.getError("changepassword.same.password"));
                 model.addAttribute("userAttributes", getUserAttributes(user));
@@ -138,8 +157,14 @@ public class UserSettingController {
             user.setPassword(securityConfig.passwordEncoder().encode(newPassword));
         }
 
+        // ----------------------------
+        // Benachrichtigungseinstellungen
+        // ----------------------------
         user.setNotificationsEnabled(notificationsEnabled);
 
+        // ----------------------------
+        // Profilbild hochladen & skalieren
+        // ----------------------------
         if (profileImage != null && !profileImage.isEmpty()) {
             String originalFilename = profileImage.getOriginalFilename();
             if (originalFilename != null &&
@@ -151,8 +176,7 @@ public class UserSettingController {
                 return "user-settings";
             }
 
-            try {
-                InputStream is = profileImage.getInputStream();
+            try (InputStream is = profileImage.getInputStream()) {
                 BufferedImage originalImage = ImageIO.read(is);
 
                 int targetWidth = 64;
@@ -167,10 +191,8 @@ public class UserSettingController {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(resizedImage, "png", baos);
                 baos.flush();
-                byte[] imageBytes = baos.toByteArray();
+                user.setProfileImageData(baos.toByteArray());
                 baos.close();
-
-                user.setProfileImageData(imageBytes);
             } catch (IOException e) {
                 model.addAttribute("error", messageService.getError("settings.upload.error"));
                 model.addAttribute("userAttributes", getUserAttributes(user));
@@ -179,10 +201,8 @@ public class UserSettingController {
         }
 
         userRepository.save(user);
-
         model.addAttribute("userAttributes", getUserAttributes(user));
         return "user-settings";
     }
-
 
 }

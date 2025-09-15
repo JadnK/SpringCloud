@@ -22,7 +22,6 @@
 }
 
 
-
 .show {
   opacity: 1 !important;
   pointer-events: auto !important;
@@ -44,4 +43,5 @@
     @apply w-full flex justify-center items-center;
     max-height: 60vh;
     overflow: auto;
+    width: 100%;
 }

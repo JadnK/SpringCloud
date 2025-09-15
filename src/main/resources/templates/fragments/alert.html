@@ -1,7 +1,5 @@
-<!-- Notification Container -->
 <div id="notificationContainer" class="fixed top-5 left-1/2 transform -translate-x-1/2 flex flex-col gap-3 z-[9999]"></div>
 
-<!-- Tailwind + Thymeleaf Error Example -->
 <div th:if="${error}" class="hidden" data-message-type="error" th:data-message-text="${error}"></div>
 <div th:if="${success}" class="hidden" data-message-type="success" th:data-message-text="${success}"></div>
 
@@ -9,7 +7,6 @@
     function createNotification(message, type = 'error', duration = 5000) {
         const container = document.getElementById('notificationContainer');
 
-        // Farben und Icons
         const config = {
             error: {
                 bg: 'bg-gradient-to-r from-red-600 to-red-500',
@@ -33,7 +30,6 @@
             <button class="ml-auto text-white hover:text-gray-200">&times;</button>
         `;
 
-        // Close Button
         notif.querySelector('button').addEventListener('click', () => {
             notif.classList.remove('scale-100', 'opacity-100');
             notif.classList.add('scale-95', 'opacity-0');
@@ -42,13 +38,11 @@
 
         container.appendChild(notif);
 
-        // Animate in
         setTimeout(() => {
             notif.classList.remove('scale-95', 'opacity-0');
             notif.classList.add('scale-100', 'opacity-100');
         }, 50);
 
-        // Auto-remove after duration
         setTimeout(() => {
             notif.classList.remove('scale-100', 'opacity-100');
             notif.classList.add('scale-95', 'opacity-0');
@@ -56,7 +50,6 @@
         }, duration);
     }
 
-    // --- Auto-detect Thymeleaf messages ---
     document.querySelectorAll('[data-message-text]').forEach(el => {
         const type = el.getAttribute('data-message-type');
         const msg = el.getAttribute('data-message-text');

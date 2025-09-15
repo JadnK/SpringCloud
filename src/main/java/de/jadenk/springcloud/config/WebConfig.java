@@ -14,24 +14,30 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private BannedUserInterceptor bannedUserInterceptor;
+
     @Autowired
     private PasswordEnforcementInterceptor passwordEnforcementInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // Interceptor für gesperrte Benutzer
         registry.addInterceptor(bannedUserInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/banned", "/logout", "/login", "/css/**", "/js/**");
+                .addPathPatterns("/**") // alle Pfade
+                .excludePathPatterns(
+                        "/banned", "/logout", "/login", "/css/**", "/js/**"
+                ); // Ausnahmen: Login, Logout, statische Ressourcen, Banned-Seite
+
+        // Interceptor für Passwort-Policy Enforcement
         registry.addInterceptor(passwordEnforcementInterceptor);
     }
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins("http://127.0.0.1:8080")
-//                .allowedMethods("GET", "POST")
-//                .allowedHeaders("*")
-//                .allowCredentials(true);
-//    }
-
+    // CORS-Konfiguration (auskommentiert)
+    // @Override
+    // public void addCorsMappings(CorsRegistry registry) {
+    //     registry.addMapping("/**")
+    //             .allowedOrigins("http://127.0.0.1:8080")
+    //             .allowedMethods("GET", "POST")
+    //             .allowedHeaders("*")
+    //             .allowCredentials(true);
+    // }
 }
