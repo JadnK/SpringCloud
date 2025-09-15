@@ -54,7 +54,7 @@
 ### Steps
 
 1. **Download the latest release**:  
-   Go to the [GitHub Releases page](https://github.com/verpxnter/springcloud/releases) and download the latest `.jar` and `install.sh`.
+   Go to the [GitHub Releases page](https://github.com/jadnk/springcloud/releases) and download the latest `.jar` and `install.sh`.
 
 2. **Run the install script**:  
    ./install.sh
@@ -104,7 +104,7 @@ We welcome contributions!
 ### Credit the Original Author
 
 If using or building on this project, please credit:  
-Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud) by [@verpxnter](https://github.com/verpxnter)
+Based on the [SpringCloud Dashboard](https://github.com/jadnk/springcloud) by [@verpxnter](https://github.com/jadnk)
 
 ---
 
