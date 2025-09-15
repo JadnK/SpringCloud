@@ -238,8 +238,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "name VARCHAR(255) NOT NULL," +
                 "owner_id BIGINT NOT NULL," +
                 "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                "FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE," +
-                "FOREIGN KEY (parent_id) REFERENCES folders(id) ON DELETE CASCADE" +
+                "FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE" +
                 ");");
     }
 
