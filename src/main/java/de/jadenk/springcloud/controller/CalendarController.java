@@ -78,7 +78,30 @@ public class CalendarController {
         return "calendar";
     }
 
+    @PostMapping("/toggle-visibility")
+    public String toggleVisibility(@RequestParam Long id) {
+        Optional<CalendarEntry> entryOpt = entryRepo.findById(id);
+        if (entryOpt.isPresent()) {
+            CalendarEntry entry = entryOpt.get();
+            User currentUser = getCurrentUser();
 
+            boolean isCreator = entry.getUser().equals(currentUser);
+            boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                    .getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().endsWith("ADMIN"));
+
+            if (isCreator || isAdmin) {
+                if (entry.getVisibility() == CalendarEntry.Visibility.PUBLIC) {
+                    entry.setVisibility(CalendarEntry.Visibility.PRIVATE);
+                } else {
+                    entry.setVisibility(CalendarEntry.Visibility.PUBLIC);
+                }
+                entryRepo.save(entry);
+            }
+        }
+        // zurück zum Kalender (aktuelles Jahr/Monat)
+        return "redirect:/calendar";
+    }
 
     @GetMapping("/entry/{id}")
     @ResponseBody
