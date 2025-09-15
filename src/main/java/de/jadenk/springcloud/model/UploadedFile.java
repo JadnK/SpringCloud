@@ -18,6 +18,10 @@ public class UploadedFile {
     private String fileName;
     private String fileType;
 
+    @ManyToOne
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
+
     @Lob
     private byte[] fileData;
 
@@ -102,5 +106,13 @@ public class UploadedFile {
 
     public void setAuthorizedUsers(List<User> authorizedUsers) {
         this.authorizedUsers = authorizedUsers;
+    }
+
+    public Folder getFolder() {
+        return folder;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
     }
 }

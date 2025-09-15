@@ -2,11 +2,9 @@ package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.dto.UserDTO;
 import de.jadenk.springcloud.exception.ResourceNotFoundException;
-import de.jadenk.springcloud.model.FileAuthorization;
-import de.jadenk.springcloud.model.Log;
-import de.jadenk.springcloud.model.UploadedFile;
-import de.jadenk.springcloud.model.User;
+import de.jadenk.springcloud.model.*;
 import de.jadenk.springcloud.repository.FileAuthorizationRepository;
+import de.jadenk.springcloud.repository.FolderRepository;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.*;
@@ -27,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +60,9 @@ public class DashboardController {
     private UserRepository userRepository;
 
     @Autowired
+    private FolderRepository folderRepository;
+
+    @Autowired
     private FileAuthorizationService fileAuthorizationService;
 
     // =========================
@@ -76,56 +78,119 @@ public class DashboardController {
      */
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(value = "error", required = false) String error,
-                            Model model, Authentication authentication) {
+                            Model model,
+                            Authentication authentication,
+                            @RequestParam(required = false) Long folderId) {
+
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             model.addAttribute("username", username);
 
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            String role = authorities.stream()
+            // Rolle bestimmen
+            String role = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .findFirst()
                     .orElse("UNKNOWN");
             model.addAttribute("role", role);
 
-            // Dateien, auf die der Benutzer Zugriff hat (Eigentümer oder autorisiert)
-            List<UploadedFile> accessibleFiles = new ArrayList<>();
-            Long userId = userRepository.findByUsername(username).get().getId();
+            // Aktueller Benutzer
+            User currentUser = userRepository.findByUsername(username).orElseThrow();
+            Long userId = currentUser.getId();
 
-            for (UploadedFile file : uploadedFileRepository.findAll()) {
-                if (file.getFileOwner().getId().equals(userId) || fileAuthorizationService.isUserAuthorized(file.getId(), userId)) {
-                    List<User> allowedUsers = fileAuthorizationRepository.findByFileId(file.getId())
-                            .stream()
-                            .map(FileAuthorization::getUser)
-                            .collect(Collectors.toList());
-                    file.setAuthorizedUsers(allowedUsers);
-
-                    accessibleFiles.add(file);
-                }
+            Folder currentFolder;
+            if (folderId != null) {
+                currentFolder = folderRepository.findById(folderId).orElseThrow();
+            } else {
+                currentFolder = null;
             }
-            model.addAttribute("files", accessibleFiles);
 
-            // Alle Benutzer für Admin-/Anzeigezwecke
+            // Unterordner des aktuellen Benutzers
+            List<Folder> subFolders = folderRepository.findByOwner(currentUser);
+
+            List<UploadedFile> accessibleFiles = uploadedFileRepository.findAll().stream()
+                    .filter(file -> file.getFileOwner().getId().equals(userId)
+                            || fileAuthorizationService.isUserAuthorized(file.getId(), userId))
+                    .peek(file -> {
+                        List<User> allowedUsers = fileAuthorizationRepository.findByFileId(file.getId())
+                                .stream()
+                                .map(FileAuthorization::getUser)
+                                .collect(Collectors.toList());
+                        file.setAuthorizedUsers(allowedUsers);
+                    })
+                    .toList();
+
+
+            // Alle Benutzer für Admin/Anzeigezwecke
             List<UserDTO> userDTOs = userRepository.findAll().stream()
                     .map(UserDTO::new)
-                    .collect(Collectors.toList());
+                    .toList();
+
+            // Model Attributes
+            model.addAttribute("currentFolder", currentFolder);
+            model.addAttribute("subFolders", subFolders);
+            model.addAttribute("files", accessibleFiles);
             model.addAttribute("allUsers", userDTOs);
 
             // Hinweis auf verfügbares Update für Admin
-            if (role.equalsIgnoreCase("ROLE_ADMIN") && updateService.isUpdateAvailable()) {
+            if ("ROLE_ADMIN".equalsIgnoreCase(role) && updateService.isUpdateAvailable()) {
                 model.addAttribute("error", "Please update SpringCloud, use the Admin Panel.");
             }
         }
 
-        // Fehlermeldungen
+        // Fehlermeldungen beim Upload
         if ("uploadError".equals(error)) {
             model.addAttribute("error", "There was an Error while Uploading. Try again later.");
         } else if (error != null) {
             model.addAttribute("error", "An Error occurred.");
         }
 
-        return "dashboard"; // Thymeleaf-Template "dashboard.html"
+        return "dashboard";
     }
+
+
+    // =========================
+    // Ordner erstellung
+    // =========================
+    /*
+     * POST /createFolder
+     * Erstellung eines ordners
+     */
+
+    @PostMapping("/createFolder")
+    public String createFolder(@RequestParam String folderName,
+                               Principal principal) {
+        User currentUser = userRepository.findByUsername(principal.getName()).orElseThrow();
+        Folder folder = new Folder();
+        folder.setFolderName(folderName);
+        folder.setOwner(currentUser);
+
+        folderRepository.save(folder);
+        return "redirect:/dashboard";
+    }
+    // =========================
+    // Ordner löschung
+    // =========================
+    /*
+     * POST /deleteFolder
+     * Löschung eines Ordners
+     */
+    @PostMapping("/deleteFolder")
+    public String deleteFolder(@RequestParam Long folderId, Principal principal) {
+        if (folderId == null || folderId == 0) {
+            return "redirect:/dashboard?error=cannotDeleteRoot";
+        }
+
+        Folder folder = folderRepository.findById(folderId).orElseThrow();
+
+        if (!folder.getOwner().getUsername().equals(principal.getName())) {
+            return "redirect:/dashboard?error=notAuthorized";
+        }
+
+        folderRepository.delete(folder);
+
+        return "redirect:/dashboard?success=folderDeleted";
+    }
+
 
     // =========================
     // Datei-Upload
@@ -135,18 +200,27 @@ public class DashboardController {
      * Upload von einem oder mehreren Dateien
      */
     @PostMapping("/upload")
-    public String handleUpload(@RequestParam("file") MultipartFile[] files) {
+    public String handleUpload(@RequestParam("file") MultipartFile[] files,
+                               @RequestParam(required = false) Long folderId,
+                               Principal principal) {
+        User currentUser = userRepository.findByUsername(principal.getName()).orElseThrow();
+
+        Folder folder = null;
+        if (folderId != null) {
+            folder = folderRepository.findById(folderId).orElseThrow();
+        }
+
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
                 try {
-                    fileUploadService.uploadFile(file);
+                    fileUploadService.uploadFile(file, currentUser, folder);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return "redirect:/dashboard?error=uploadError";
                 }
             }
         }
-        return "redirect:/dashboard";
+        return "redirect:/dashboard" + (folderId != null ? "?folderId=" + folderId : "");
     }
 
     // =========================

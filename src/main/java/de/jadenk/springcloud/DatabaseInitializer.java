@@ -61,8 +61,14 @@ public class DatabaseInitializer implements CommandLineRunner {
                 createUsersTable(statement);
             }
 
+            if (!tableExists(statement, "folders")) {
+                createFoldersTable(statement);
+            }
+
             if (!tableExists(statement, "uploaded_files")) {
                 createFilesTable(statement);
+            } else {
+                addFolderColumnToFiles(statement);
             }
 
             if (!tableExists(statement, "shared_links")) {
@@ -91,6 +97,17 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             if (!tableExists(statement, "cloud_settings")) {
                 createSiteSettingsTable(statement);
+            }
+
+        }
+    }
+
+    private void addFolderColumnToFiles(Statement statement) throws SQLException {
+        try (var rs = statement.executeQuery("SHOW COLUMNS FROM uploaded_files LIKE 'folder_id'")) {
+            if (!rs.next()) {
+                statement.executeUpdate("ALTER TABLE uploaded_files " +
+                        "ADD COLUMN folder_id BIGINT NULL, " +
+                        "ADD CONSTRAINT fk_folder FOREIGN KEY (folder_id) REFERENCES folders(id) ON DELETE CASCADE;");
             }
         }
     }
@@ -215,6 +232,16 @@ public class DatabaseInitializer implements CommandLineRunner {
                 ");");
     }
 
+    private void createFoldersTable(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE folders (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "name VARCHAR(255) NOT NULL," +
+                "owner_id BIGINT NOT NULL," +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE," +
+                "FOREIGN KEY (parent_id) REFERENCES folders(id) ON DELETE CASCADE" +
+                ");");
+    }
 
 
     private void createUsersTable(Statement statement) throws SQLException {

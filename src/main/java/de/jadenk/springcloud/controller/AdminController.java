@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.*;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     // Services & Repositories, die für Admin-Operationen benötigt werden
@@ -75,7 +76,7 @@ public class AdminController {
      * Lädt das Admin-Dashboard mit allen nötigen Daten wie Benutzer, Logs, Rollen, Einstellungen etc.
      * @param page - Paginierung für Logs (default 1)
      */
-    @GetMapping("/admin")
+    @GetMapping
     public String adminDashboard(@RequestParam(value = "page", defaultValue = "1") int page,
                                  Model model) {
         // Aktuellen authentifizierten Benutzer abrufen
@@ -134,7 +135,7 @@ public class AdminController {
      * @param value - Neuer Wert
      * @param type - Typ der Einstellung (z.B. CHECKBOX)
      */
-    @PostMapping("/admin/settings/update")
+    @PostMapping("/settings/update")
     public String updateSetting(@RequestParam String key,
                                 @RequestParam(required = false) String value,
                                 @RequestParam String type) {
@@ -149,7 +150,7 @@ public class AdminController {
      * POST /admin/system/update
      * Prüft, ob ein Systemupdate verfügbar ist und führt es ggf. aus
      */
-    @PostMapping("/admin/system/update")
+    @PostMapping("/system/update")
     public String updateSystem(RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -178,7 +179,7 @@ public class AdminController {
      * POST /admin/user/update
      * Aktualisiert Benutzerinformationen: Username, E-Mail, Rolle, Passwort
      */
-    @PostMapping("/admin/user/update")
+    @PostMapping("/user/update")
     public String updateUser(@RequestParam("id") Long id,
                              @RequestParam("username") String username,
                              @RequestParam("email") String email,
@@ -238,7 +239,7 @@ public class AdminController {
      * GET /admin/user/delete/{id}
      * Löscht einen Benutzer
      */
-    @GetMapping("/admin/user/delete/{id}")
+    @GetMapping("/user/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         User userToDelete = userService.getUserById(id);
         boolean deleted = userService.deleteUserById(id);
@@ -255,7 +256,7 @@ public class AdminController {
      * GET /admin/user/ban/{id}
      * Banned oder entbannt einen Benutzer
      */
-    @GetMapping("/admin/user/ban/{id}")
+    @GetMapping("/user/ban/{id}")
     public String banUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
@@ -274,17 +275,6 @@ public class AdminController {
             System.out.println("Error while banning user.");
         }
         return "redirect:/admin";
-    }
-
-    /*
-     * GET /users
-     * Liefert alle Benutzer für eine Benutzerliste (Frontend)
-     */
-    @GetMapping("/users")
-    public String getAllUsers(Model model) {
-        List<User> users = userRepository.findAll();
-        model.addAttribute("users", users);
-        return "user-list";
     }
 
     /*

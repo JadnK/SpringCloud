@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Controller
+@RequestMapping("/share")
 public class ShareController {
 
     @Autowired
@@ -62,7 +63,7 @@ public class ShareController {
      * - Generiert temporären Link für angegebene Dauer (in Stunden)
      * - Redirect zum generierten Link
      */
-    @GetMapping("/share/{fileId}")
+    @GetMapping("/{fileId}")
     public RedirectView shareFile(HttpServletRequest request, @PathVariable Long fileId, @RequestParam int duration) {
 
         // Prüfen, ob Sharing erlaubt ist
@@ -123,7 +124,7 @@ public class ShareController {
      * - Abgelaufene Links → link-expired.html
      * - Gültige Links → Weiterleitung zur Anzeige-Seite
      */
-    @GetMapping("/share/file/{token}")
+    @GetMapping("/file/{token}")
     public String checkLinkAndRedirect(@PathVariable String token) {
         SharedLink link = sharedLinkRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -144,7 +145,7 @@ public class ShareController {
      * - Prüft, ob der Link abgelaufen ist
      * - Prüft, ob die Datei previewbar ist (Image, PDF, Text)
      */
-    @GetMapping("/share/file/view/{token}")
+    @GetMapping("/file/view/{token}")
     public String viewSharedFile(@PathVariable String token, Model model) {
         SharedLink link = sharedLinkRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -178,7 +179,7 @@ public class ShareController {
      * GET /share/file/download/{token}?preview=false
      * Liefert die Datei als Download oder inline (Preview)
      */
-    @GetMapping("/share/file/download/{token}")
+    @GetMapping("/file/download/{token}")
     public ResponseEntity<Resource> downloadSharedFile(@PathVariable String token,
                                                        @RequestParam(name = "preview", defaultValue = "false") boolean preview) {
         SharedLink link = sharedLinkRepository.findByToken(token)

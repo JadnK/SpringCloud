@@ -45,3 +45,10 @@
     overflow: auto;
     width: 100%;
 }
+
+.user-label:has(input:checked) {
+    border: 2px solid var(--color-primary);
+    border-radius: 0.5rem;
+    background-color: var(--color-bg);
+}
+

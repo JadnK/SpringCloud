@@ -1,5 +1,6 @@
 package de.jadenk.springcloud.service;
 
+import de.jadenk.springcloud.model.Folder;
 import de.jadenk.springcloud.model.Log;
 import de.jadenk.springcloud.model.UploadedFile;
 import de.jadenk.springcloud.model.User;
@@ -42,14 +43,10 @@ public class FileUploadService {
     private WebhookService webhookService;
 
 
-    public void uploadFile(MultipartFile file) throws IOException {
+    public void uploadFile(MultipartFile file, User owner, Folder folder) throws IOException {
         FileUploadProgressListener progressListener = new FileUploadProgressListener(file);
 
-        UserDetails currentUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(currentUser.getUsername()).orElse(null);
-
         byte[] fileBytes = file.getBytes();
-
         for (int i = 0; i < fileBytes.length; i++) {
             progressListener.updateProgress(i);
         }
@@ -58,14 +55,18 @@ public class FileUploadService {
                 file.getOriginalFilename(),
                 file.getContentType(),
                 fileBytes,
-                user
+                owner
         );
+
+        uploadedFile.setFolder(folder);  // ← Ordner setzen
+
         uploadedFileRepository.save(uploadedFile);
 
         String message = messageService.getLog("dashboard.file.upload", file.getOriginalFilename());
-        Log log = logService.log(currentUser.getUsername(), message);
+        Log log = logService.log(owner.getUsername(), message);
 
-        webhookService.triggerWebhookEvent(WebhookEvent.FILE_UPLOADED, "User " + currentUser.getUsername() + " uploaded an file", log.getId());
+        webhookService.triggerWebhookEvent(WebhookEvent.FILE_UPLOADED,
+                "User " + owner.getUsername() + " uploaded a file", log.getId());
     }
 
 }
