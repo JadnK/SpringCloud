@@ -18,9 +18,9 @@
 ## Features
 
 - **User Authentication**: Secure login/logout with role-based access.
-- **File Management**: Upload, preview, download, and delete files.
+- **File Management**: Upload, preview, download, and delete files from the cloud.
 - **Responsive UI**: Fully responsive layout for desktop, tablet, and mobile.
-- **File Preview**: Preview images, videos, text files, and PDFs.
+- **File Preview**: Preview images, videos, text files, and PDFs from the cloud.
 - **Admin Panel**: Admins can view and manage all uploaded files.
 - **Improved Performance**: Optimized backend and frontend for faster load times.
 - **Enhanced Overlay**: Redesigned, intuitive overlay for easier navigation.
@@ -57,15 +57,11 @@
    Go to the [GitHub Releases page](https://github.com/verpxnter/springcloud/releases) and download the latest `.jar` and `install.sh`.
 
 2. **Run the install script**:  
-   ```bash
    ./install.sh
-   ```
 
 3. **Access the dashboard**:  
    Open your browser at:  
-   ```
    http://YOUR_IP/springcloud/
-   ```
 
 4. **Default credentials**:  
    - **Username**: `sysadmin`  
@@ -94,10 +90,8 @@ We welcome contributions!
 
 1. Fork the repository  
 2. Create a new branch for your feature or fix:  
-   ```
-   feature/my-new-feature
+   feature/my-new-feature  
    bugfix/fix-issue
-   ```
 3. Implement changes with tests  
 4. Submit a pull request to `main` with a detailed description
 
@@ -110,9 +104,7 @@ We welcome contributions!
 ### Credit the Original Author
 
 If using or building on this project, please credit:  
-```markdown
 Based on the [SpringCloud Dashboard](https://github.com/verpxnter/springcloud) by [@verpxnter](https://github.com/verpxnter)
-```
 
 ---
 
