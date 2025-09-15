@@ -57,7 +57,7 @@ public class UpdateService {
 
     public String checkForUpdateAndUpdateIfNeeded() {
         try {
-            URL url = new URL("https://api.github.com/repos/JadenK/SpringCloud/releases/latest");
+            URL url = new URL("https://api.github.com/repos/JadnK/SpringCloud/releases/latest");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "application/vnd.github.v3+json");
