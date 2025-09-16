@@ -21,4 +21,9 @@ public class GlobalExceptionHandler {
     public String handleResourceNotFound() {
         return "redirect:/dashboard?error=NoAccess";
     }
+
+    @ExceptionHandler(CustomIllegalArgumentException.class)
+    public String handleIllegalArgument() {
+        return "redirect:/dashboard?error=metaData";
+    }
 }

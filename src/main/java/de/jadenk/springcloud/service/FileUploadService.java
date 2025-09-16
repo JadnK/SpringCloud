@@ -44,6 +44,7 @@ public class FileUploadService {
 
 
     public void uploadFile(MultipartFile file, User owner, Folder folder) throws IOException {
+
         FileUploadProgressListener progressListener = new FileUploadProgressListener(file);
 
         byte[] fileBytes = file.getBytes();

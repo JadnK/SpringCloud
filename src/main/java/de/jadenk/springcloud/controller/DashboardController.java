@@ -1,6 +1,8 @@
 package de.jadenk.springcloud.controller;
 
 import de.jadenk.springcloud.dto.UserDTO;
+import de.jadenk.springcloud.exception.CustomIllegalArgumentException;
+import de.jadenk.springcloud.exception.CustomRuntimeException;
 import de.jadenk.springcloud.exception.ResourceNotFoundException;
 import de.jadenk.springcloud.model.*;
 import de.jadenk.springcloud.repository.FileAuthorizationRepository;
@@ -8,6 +10,7 @@ import de.jadenk.springcloud.repository.FolderRepository;
 import de.jadenk.springcloud.repository.UploadedFileRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import de.jadenk.springcloud.service.*;
+import de.jadenk.springcloud.util.FileValidator;
 import de.jadenk.springcloud.util.MessageService;
 import de.jadenk.springcloud.util.WebhookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,6 +149,8 @@ public class DashboardController {
             model.addAttribute("error", "There is an current Upload in Progress.");
         } else if ("NoAccess".equals(error)) {
             model.addAttribute("error", "You aren't Allowed to see this.");
+        } else if ("metaData".equals(error)) {
+            model.addAttribute("error", "Invalid File Meta-Data.");
         } else if (error != null) {
             model.addAttribute("error", "An Error occurred.");
         }
@@ -201,6 +206,14 @@ public class DashboardController {
     // =========================
     // Datei-Upload
     // =========================
+    private boolean isValidContentType(String contentType) {
+        return contentType.matches("(?i)(image/(png|jpg|jpeg|gif|bmp|tiff|webp)|" +
+                "application/(pdf|msword|vnd\\.ms-excel|vnd\\.ms-powerpoint)|" +
+                "text/(plain|csv|rtf)|" +
+                "audio/(mp3|wav|ogg|flac)|" +
+                "video/(mp4|mov|avi|mkv|wmv)|" +
+                "application/(zip|x-rar-compressed|x-7z-compressed|x-tar|gzip|bzip2))");
+    }
     /*
      * POST /upload
      * Upload von einem oder mehreren Dateien
@@ -221,10 +234,12 @@ public class DashboardController {
             }
 
             for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    fileUploadService.uploadFile(file, currentUser, folder);
+                if (!FileValidator.isValid(file)) {
+                    return "redirect:/dashboard?error=metaData";
                 }
+                fileUploadService.uploadFile(file, currentUser, folder);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/dashboard?error=uploadError";
