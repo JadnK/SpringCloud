@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Controller
@@ -140,6 +142,8 @@ public class DashboardController {
         // Fehlermeldungen beim Upload
         if ("uploadError".equals(error)) {
             model.addAttribute("error", "There was an Error while Uploading. Try again later.");
+        } else if ("uploadInProgress".equals(error)) {
+            model.addAttribute("error", "There is an current Upload in Progress.");
         } else if (error != null) {
             model.addAttribute("error", "An Error occurred.");
         }
@@ -203,24 +207,29 @@ public class DashboardController {
     public String handleUpload(@RequestParam("file") MultipartFile[] files,
                                @RequestParam(required = false) Long folderId,
                                Principal principal) {
-        User currentUser = userRepository.findByUsername(principal.getName()).orElseThrow();
 
-        Folder folder = null;
-        if (folderId != null) {
-            folder = folderRepository.findById(folderId).orElseThrow();
-        }
+        String username = principal.getName();
 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                try {
+        try {
+//            System.out.println("DashboardController >> L_214");
+            User currentUser = userRepository.findByUsername(username).orElseThrow();
+            Folder folder = null;
+            if (folderId != null) {
+                folder = folderRepository.findById(folderId).orElseThrow();
+            }
+
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
                     fileUploadService.uploadFile(file, currentUser, folder);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return "redirect:/dashboard?error=uploadError";
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/dashboard?error=uploadError";
         }
-        return "redirect:/dashboard" + (folderId != null ? "?folderId=" + folderId : "");
+
+        return "redirect:/dashboard";
+        //return "redirect:/dashboard" + (folderId != null ? "?folderId=" + folderId : "");
     }
 
     // =========================

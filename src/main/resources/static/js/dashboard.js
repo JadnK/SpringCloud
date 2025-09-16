@@ -217,4 +217,5 @@ function closeDeleteFolderPopup() {
     document.getElementById('deleteFolderPopup').classList.add('hidden');
 }
 
+
 showPage(1);

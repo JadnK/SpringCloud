@@ -266,7 +266,7 @@
 <div id="uploadPopup" class="hidden popup-overlay">
     <div class="popup-container">
         <h2 class="text-xl font-bold text-[var(--color-primary)]">Upload Your Files</h2>
-        <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4" onsubmit="showLoadingBar()">
+        <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div id="dropArea" class="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center cursor-pointer">
                 Drag & Drop files here or click to select
@@ -314,20 +314,9 @@
                 }
 
                 document.getElementById('uploadForm').addEventListener('submit', function(e){
-                    if(selectedFiles.length > 0){
-                        const formData = new FormData(this);
-                        selectedFiles.forEach(file => formData.append('file', file));
-
-                        fetch(this.action, {
-                            method: this.method,
-                            body: formData
-                        }).then(res => {
-                            location.reload();
-                        }).catch(err => console.error(err));
-
-                        e.preventDefault();
-                    }
+                    closeUploadPopup(); // nach fetch aufrufen
                 });
+
             </script>
             <div>
                 <label for="folderSelect" class="block text-[var(--color-text)] font-semibold mb-2">Upload to folder</label>
