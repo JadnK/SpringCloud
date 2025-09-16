@@ -17,4 +17,8 @@ public class GlobalExceptionHandler {
         webhookService.triggerWebhookEvent(WebhookEvent.ERROR_THROWN, ex.getMessage(), 0L);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public String handleResourceNotFound() {
+        return "redirect:/dashboard?error=NoAccess";
+    }
 }

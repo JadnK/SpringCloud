@@ -139,11 +139,13 @@ public class DashboardController {
             }
         }
 
-        // Fehlermeldungen beim Upload
+        // Fehlermeldungen
         if ("uploadError".equals(error)) {
             model.addAttribute("error", "There was an Error while Uploading. Try again later.");
         } else if ("uploadInProgress".equals(error)) {
             model.addAttribute("error", "There is an current Upload in Progress.");
+        } else if ("NoAccess".equals(error)) {
+            model.addAttribute("error", "You aren't Allowed to see this.");
         } else if (error != null) {
             model.addAttribute("error", "An Error occurred.");
         }
@@ -287,8 +289,17 @@ public class DashboardController {
      */
     @GetMapping("/file/{fileId}")
     public ResponseEntity<Resource> getFile(@PathVariable Long fileId) {
+        UserDetails currentUserDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userRepository.findByUsername(currentUserDetails.getUsername()).orElseThrow();
+
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+
+        // Berechtigungsprüfung
+        if (!file.getFileOwner().getId().equals(currentUser.getId())
+                && !fileAuthorizationService.isUserAuthorized(fileId, currentUser.getId())) {
+            throw new ResourceNotFoundException("File not found"); // oder AccessDeniedException
+        }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getFileType()))
