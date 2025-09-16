@@ -19,7 +19,7 @@ public class UpdateService {
 
     public boolean isUpdateAvailable() {
         try {
-            URL url = new URL("https://api.github.com/repos/Verpxnter/SpringCloud/releases/latest");
+            URL url = new URL("https://api.github.com/repos/jadnk/SpringCloud/releases/latest");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "application/vnd.github.v3+json");
@@ -38,7 +38,7 @@ public class UpdateService {
 
     public String fetchLatestVersion() {
         try {
-            URL url = new URL("https://api.github.com/repos/Verpxnter/SpringCloud/releases/latest");
+            URL url = new URL("https://api.github.com/repos/jadnk/SpringCloud/releases/latest");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "application/vnd.github.v3+json");
