@@ -86,7 +86,6 @@ public class UserService {
         Log log = logService.log(user.getUsername(), messageService.getLog("register.success"));
 
         if (log == null) {
-//            throw new RuntimeException("Log entry konnte nicht erstellt werden");
             log = new Log();
             log.setId(0L);
         }

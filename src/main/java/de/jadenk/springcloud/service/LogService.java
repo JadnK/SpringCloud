@@ -6,6 +6,7 @@ import de.jadenk.springcloud.model.User;
 import de.jadenk.springcloud.repository.LogRepository;
 import de.jadenk.springcloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

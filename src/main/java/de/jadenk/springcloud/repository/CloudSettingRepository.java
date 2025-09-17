@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CloudSettingRepository extends JpaRepository<CloudSetting, String> {
-    default List<CloudSetting> getAllSettings() {
-        return findAll();
-    }
+    default List<CloudSetting> getAllSettings() { return findAll(); }
 }
