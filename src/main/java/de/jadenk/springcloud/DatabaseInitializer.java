@@ -199,6 +199,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                         "('MAX_LOGIN_ATTEMPTS', 'NUMBER', 3)," +
                         "('API_RATE_LIMIT_PER_MINUTE', 'NUMBER', 40)," +
                         "('ALLOW_SHARING', 'CHECKBOX', 'true')," +
+                        "('LANGUAGE', 'SELECT', 'de')," +
                         "('ENABLE_LOGGING', 'CHECKBOX', 'true');");
     }
 

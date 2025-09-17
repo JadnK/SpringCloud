@@ -77,11 +77,11 @@
                     </td>
                     <td class="px-4 py-2 flex gap-2">
                         <button class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-                                th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
+                                th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                                 th:attr="data-id=${user.id}, data-username=${user.username}, data-email=${user.email}, data-user-role=${user.role.name}"
                                 onclick="showEditPopupFromButton(this)">Edit
                         </button>
-                        <form th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ROLE_ADMIN' and ${user.role.name} != 'SYSADMIN'))"
+                        <form th:if="${username != user.username} and (${role == 'ROLE_SYSADMIN'} or (${role == 'ROLE_ADMIN'} and ${user.role.name} != 'ADMIN' and ${user.role.name} != 'SYSADMIN'))"
                               th:action="@{/admin/user/ban/{id}(id=${user.id})}" method="get" class="inline">
                             <button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
                                     type="submit"
@@ -179,6 +179,7 @@
 
                 <label th:for="${setting.key}" class="font-semibold" th:text="${setting.key}">Setting Name</label>
 
+                <!-- TEXT -->
                 <input th:if="${setting.type == 'TEXT'}"
                        type="text"
                        th:id="${setting.key}"
@@ -187,18 +188,7 @@
                        placeholder="Enter value"
                        class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)]"/>
 
-                <div th:if="${setting.type == 'CHECKBOX'}" class="flex items-center gap-2">
-                    <span>On</span>
-                    <input th:if="${setting.type == 'CHECKBOX'}"
-                           type="checkbox"
-                           th:id="${setting.key}"
-                           name="value"
-                           value="true"
-                           th:checked="${setting.value == 'true'}"
-                           class="h-5 w-5 accent-[var(--color-primary)]"/>
-                    <span>Off</span>
-                </div>
-
+                <!-- NUMBER -->
                 <input th:if="${setting.type == 'NUMBER'}"
                        type="number"
                        th:id="${setting.key}"
@@ -207,10 +197,32 @@
                        min="1" max="100"
                        class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)]"/>
 
+                <!-- CHECKBOX -->
+                <div th:if="${setting.type == 'CHECKBOX'}" class="flex items-center gap-2">
+                    <span>Off</span>
+                    <input type="checkbox"
+                           th:id="${setting.key}"
+                           name="value"
+                           value="true"
+                           th:checked="${setting.value == 'true'}"
+                           class="h-5 w-5 accent-[var(--color-primary)]"/>
+                    <span>On</span>
+                </div>
+
+                <!-- LANGUAGE SELECT -->
+                <select th:if="${setting.key == 'LANGUAGE'}"
+                        th:id="${setting.key}"
+                        name="value"
+                        class="px-3 py-2 rounded-md bg-[var(--color-input)] text-[var(--color-text)]">
+                    <option value="de" th:selected="${setting.value == 'de'}">Deutsch</option>
+                    <option value="en" th:selected="${setting.value == 'en'}">English</option>
+                </select>
+
                 <button type="submit" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded hover:bg-[var(--color-primary-hover)] transition">Save</button>
             </form>
         </div>
     </section>
+
 
     <section class="bg-[var(--color-bg-alt)] rounded-xl shadow-md p-6 flex flex-col gap-4">
         <h2 class="text-2xl font-bold text-[var(--color-primary)]">API Settings</h2>
